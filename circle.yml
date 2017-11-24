@@ -17,4 +17,4 @@ deployment:
   master:
     branch: master
     commands:
-- ./architect deploy
+      - ./architect deploy
