@@ -39,9 +39,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			}
 
 			block, _ := pem.Decode(file)
-      if block == nil {
-        return nil
-      }
+			if block == nil {
+				return nil
+			}
 			certs, err := x509.ParseCertificates(block.Bytes)
 			if err != nil {
 				e.logger.Log("warning", fmt.Sprintf("%s could not be parsed as a certificate: %s", path, microerror.Mask(err)))
