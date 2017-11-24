@@ -31,17 +31,22 @@ func main() {
 		return
 	}
 	var certPath string
+	var address string
 	flag.StringVar(&certPath, "path", "", "folder containing certs to export")
+	flag.StringVar(&address, "address", "localhost:8000", "address which cert-exporter uses to listen and serve")
 	flag.Parse()
 	if certPath == "" {
 		panic(microerror.Maskf(invalidConfigError, "path to cert folder can not be empty"))
 	}
-	certExporter, err := exporter.New(certPath)
+	config := exporter.DefaultConfig()
+	config.Path = certPath
+
+	certExporter, err := exporter.New(config)
 	if err != nil {
 		panic(microerror.Mask(err))
 	}
 	prometheus.MustRegister(certExporter)
 
 	http.Handle("/metrics", prometheus.Handler())
-	http.ListenAndServe("localhost:8000", nil)
+	http.ListenAndServe(address, nil)
 }

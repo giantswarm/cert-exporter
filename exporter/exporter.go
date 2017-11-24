@@ -12,15 +12,21 @@ import (
 	"github.com/spf13/afero"
 )
 
+type Config struct {
+	Path string
+}
+
 type Exporter struct {
 	cert   *prometheus.Desc
 	fs     afero.Fs
 	logger micrologger.Logger
-	path   string
+
+	path string
 }
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
+
 	ok, err := afero.DirExists(e.fs, e.path)
 	if !ok {
 		e.logger.Log("error", microerror.Maskf(invalidConfigError, "folder with certs has to exist"))
@@ -62,14 +68,21 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	if err != nil {
 		e.logger.Log("error", microerror.Mask(err))
 	}
+
 	e.logger.Log("info", "stop collecting metrics")
+}
+
+func DefaultConfig() Config {
+	return Config{
+		Path: "",
+	}
 }
 
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- e.cert
 }
 
-func New(path string) (*Exporter, error) {
+func New(config Config) (*Exporter, error) {
 	logger, err := micrologger.New(micrologger.DefaultConfig())
 	if err != nil {
 		return nil, err
@@ -88,6 +101,6 @@ func New(path string) (*Exporter, error) {
 		),
 		fs:     fs,
 		logger: logger,
-		path:   path,
+		path:   config.Path,
 	}, nil
 }
