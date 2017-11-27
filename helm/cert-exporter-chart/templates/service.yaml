@@ -11,4 +11,4 @@ spec:
   ports:
   - port: 8000
   selector:
-app: cert-exporter
+    app: cert-exporter
