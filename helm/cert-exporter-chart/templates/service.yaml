@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cert-exporter
+  namespace: giantswarm
+  labels:
+    app: cert-exporter
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  ports:
+  - port: 8000
+  selector:
+app: cert-exporter
