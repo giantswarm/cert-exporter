@@ -32,9 +32,17 @@ func main() {
 	}
 	var certPath string
 	var address string
+	var help bool
 	flag.StringVar(&certPath, "path", "", "folder containing certs to export")
 	flag.StringVar(&address, "address", "localhost:8000", "address which cert-exporter uses to listen and serve")
+	flag.BoolVar(&help, "help", false, "print usage and exit")
 	flag.Parse()
+
+	if help {
+		flag.Usage()
+		return
+	}
+
 	if certPath == "" {
 		panic(microerror.Maskf(invalidConfigError, "path to cert folder can not be empty"))
 	}
