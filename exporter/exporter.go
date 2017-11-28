@@ -89,6 +89,7 @@ func New(config Config) (*Exporter, error) {
 	}
 
 	fs := afero.NewOsFs()
+	logger.Log("info", "creating new exporter")
 
 	return &Exporter{
 		cert: prometheus.NewDesc(
