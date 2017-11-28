@@ -24,6 +24,9 @@ spec:
         image: quay.io/giantswarm/cert-exporter:[[ .SHA ]]
         args:
         - --path=/etc/kubernetes/ssl
+        ports:
+        - name: cert-exporter
+          containerPort: 8000
         resources:
           requests:
             cpu: 50m
