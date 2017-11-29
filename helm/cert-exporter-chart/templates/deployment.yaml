@@ -23,7 +23,7 @@ spec:
       - name: cert-exporter
         image: quay.io/giantswarm/cert-exporter:[[ .SHA ]]
         args:
-        - --path=/etc/kubernetes/ssl
+        - --path={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
         ports:
         - name: cert-exporter
           containerPort: 8000
