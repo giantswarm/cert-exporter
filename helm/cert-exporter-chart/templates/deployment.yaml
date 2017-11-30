@@ -26,7 +26,7 @@ spec:
         - --path={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
         ports:
         - name: cert-exporter
-          containerPort: 8000
+          containerPort: 9005
         resources:
           requests:
             cpu: 50m

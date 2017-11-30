@@ -10,7 +10,7 @@ metadata:
 spec:
   ports:
   - name: cert-exporter
-    port: 8000
-    targetPort: 8000
+    port: 9005
+    targetPort: 9005
   selector:
     app: cert-exporter
