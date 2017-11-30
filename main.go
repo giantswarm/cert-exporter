@@ -34,7 +34,7 @@ func main() {
 	var address string
 	var help bool
 	flag.StringVar(&certPath, "path", "", "folder containing certs to export")
-	flag.StringVar(&address, "address", "0.0.0.0:9005", "address which cert-exporter uses to listen and serve")
+	flag.StringVar(&address, "address", ":9005", "address which cert-exporter uses to listen and serve")
 	flag.BoolVar(&help, "help", false, "print usage and exit")
 	flag.Parse()
 
