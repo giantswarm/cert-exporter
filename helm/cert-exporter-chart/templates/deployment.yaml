@@ -41,5 +41,7 @@ spec:
       - name: host-volume
         hostPath:
           path: /etc/kubernetes/ssl
+      hostNetwork: true
+      hostPID: true
       imagePullSecrets:
       - name: cert-exporter-pull-secret
