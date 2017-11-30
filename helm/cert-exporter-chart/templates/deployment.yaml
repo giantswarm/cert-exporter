@@ -35,12 +35,12 @@ spec:
             cpu: 50m
             memory: 50Mi
         volumeMounts:
-        - mountPath: /etc/kubernetes/ssl
+        - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
           name: host-volume
       volumes:
       - name: host-volume
         hostPath:
-          path: /etc/kubernetes/ssl
+          path: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
       hostNetwork: true
       hostPID: true
       imagePullSecrets:
