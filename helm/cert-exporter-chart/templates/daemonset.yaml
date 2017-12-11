@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: cert-exporter
+  namespace: monitoring
+  labels:
+    app: cert-exporter
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      name: cert-exporter
+      labels:
+        app: cert-exporter
+    spec:
+      tolerations:
+      # Tolerate master taint
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: cert-exporter
+        image: quay.io/giantswarm/cert-exporter:[[ .SHA ]]
+        args:
+        - --path={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+        ports:
+        - name: cert-exporter
+          containerPort: 9005
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 50m
+            memory: 50Mi
+        volumeMounts:
+        - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+          name: host-volume
+      volumes:
+      - name: host-volume
+        hostPath:
+          path: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+      hostNetwork: true
+      hostPID: true
+      imagePullSecrets:
+      - name: cert-exporter-pull-secret

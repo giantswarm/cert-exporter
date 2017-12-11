@@ -61,6 +61,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 				timestamp := float64(cert.NotAfter.Unix())
 				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, path)
 			}
+			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", path))
 
 		}
 		return nil
@@ -89,6 +90,7 @@ func New(config Config) (*Exporter, error) {
 	}
 
 	fs := afero.NewOsFs()
+	logger.Log("info", "creating new exporter")
 
 	return &Exporter{
 		cert: prometheus.NewDesc(
