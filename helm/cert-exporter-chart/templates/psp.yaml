@@ -12,6 +12,9 @@ spec:
     rule: RunAsAny
   supplementalGroups:
     rule: RunAsAny
+  hostPorts:
+  - max: 9006
+    min: 9004
   volumes:
     - 'secret'
     - 'configMap'
