@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: cert-exporter-psp
+rules:
+  - apiGroups:
+      - extensions
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - use
+    resourceNames:
+      - cert-exporter-psp
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-exporter-psp
+subjects:
+  - kind: ServiceAccount
+    name: cert-exporter
+    namespace: monitoring
+roleRef:
+  kind: ClusterRole
+  name: cert-exporter-psp
+  apiGroup: rbac.authorization.k8s.io

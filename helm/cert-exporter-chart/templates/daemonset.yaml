@@ -19,6 +19,7 @@ spec:
       - key: node-role.kubernetes.io/master
         operator: Exists
         effect: NoSchedule
+      serviceAccountName: cert-exporter
       containers:
       - name: cert-exporter
         image: quay.io/giantswarm/cert-exporter:[[ .SHA ]]

@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: cert-exporter-psp
+spec:
+  privileged: false
+  fsGroup:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  hostPorts:
+  - max: 9005
+    min: 9005
+  volumes:
+    - 'secret'
+    - 'hostPath'
+  hostNetwork: true
+  hostIPC: false
+  hostPID: true
