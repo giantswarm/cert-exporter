@@ -13,11 +13,10 @@ spec:
   supplementalGroups:
     rule: RunAsAny
   hostPorts:
-  - max: 9006
-    min: 9004
+  - max: 9005
+    min: 9005
   volumes:
     - 'secret'
-    - 'configMap'
     - 'hostPath'
   hostNetwork: true
   hostIPC: false
