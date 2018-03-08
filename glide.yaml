@@ -1,5 +1,0 @@
-package: github.com/giantswarm/cert-exporter
-import:
-- package: github.com/prometheus/client_golang
-  subpackages:
-  - prometheus
