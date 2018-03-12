@@ -25,6 +25,8 @@ spec:
         image: quay.io/giantswarm/cert-exporter:[[ .SHA ]]
         args:
         - --path={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+        - --token-path={{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+        - --vault-url={{ .Values.Installation.V1.Auth.Vault.Address }}
         ports:
         - name: cert-exporter
           containerPort: 9005
@@ -37,11 +39,21 @@ spec:
             memory: 50Mi
         volumeMounts:
         - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
-          name: host-volume
+          name: certs-volume
+        - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+          name: tokens-volume
+        - mountPath: /etc/ssl/certs/
+          name: ca-certs
       volumes:
-      - name: host-volume
+      - name: certs-volume
         hostPath:
           path: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+      - name: tokens-volume
+        hostPath:
+          path: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+      - name: ca-certs
+        hostPath:
+          path: /etc/ssl/certs/
       hostNetwork: true
       hostPID: true
       imagePullSecrets:

@@ -24,6 +24,14 @@
 #   go-tests = true
 #   unused-packages = true
 [[constraint]]
+  name = "github.com/google/uuid"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/hashicorp/vault"
+  version = "0.7.3"
+
+[[constraint]]
   name = "github.com/prometheus/client_golang"
   branch = "master"
 
