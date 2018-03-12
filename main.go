@@ -7,7 +7,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/giantswarm/cert-exporter/exporter"
+	"github.com/giantswarm/cert-exporter/exporters/cert"
 	"github.com/giantswarm/cert-exporter/exporters/token"
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
@@ -52,10 +52,10 @@ func main() {
 		if certPath == "" {
 			panic(microerror.Maskf(invalidConfigError, "path to cert folder can not be empty"))
 		}
-		config := exporter.DefaultConfig()
+		config := cert.DefaultConfig()
 		config.Path = certPath
 
-		certExporter, err := exporter.New(config)
+		certExporter, err := cert.New(config)
 		if err != nil {
 			panic(microerror.Mask(err))
 		}
@@ -64,8 +64,11 @@ func main() {
 
 	// Expose Vault token metrics.
 	{
-		if tokenPath == "" || vaultURL == "" {
-			panic(microerror.Maskf(invalidConfigError, "path to token folder and Vault URL can not be empty"))
+		if tokenPath == "" {
+			panic(microerror.Maskf(invalidConfigError, "path to token folder can not be empty"))
+		}
+		if vaultURL == "" {
+			panic(microerror.Maskf(invalidConfigError, "Vault URL can not be empty"))
 		}
 		config := token.DefaultConfig()
 		config.Path = tokenPath

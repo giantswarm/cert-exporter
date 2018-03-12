@@ -33,17 +33,17 @@ type Config struct {
 type Exporter struct {
 	metric *prometheus.Desc
 	logger micrologger.Logger
+	client *vaultapi.Client
 
-	path     string
-	vaultURL string
+	path string
 }
 
 // Collect implements metric collection by reading Vault token from files
-// and cheking ttl of this token by calling Vault API /auth/token/lookup-self.
+// and checking ttl of this token by calling Vault API /auth/token/lookup-self.
 // Only first line in every file is read. Files expected to contain
 // either just a uuid token or VAULT_TOKEN=<token> string.
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
-	e.logger.Log("info", "start collecting metrics")
+	e.logger.Log("info", "collecting vault metrics")
 
 	files, err := ioutil.ReadDir(e.path)
 	if err != nil {
@@ -92,15 +92,11 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			continue
 		}
 
-		// Get Vault client.
-		client, err := initVaultClient(e.vaultURL, token)
-		if err != nil {
-			e.logger.Log("error", microerror.Mask(err))
-			continue
-		}
+		// Set Vault token.
+		e.client.SetToken(token)
 
 		// Get token expiration time.
-		expTime, err := getTokenExpireTime(client)
+		expTime, err := getTokenExpireTime(e.client)
 		if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 
@@ -116,29 +112,10 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))
 	}
 
-	e.logger.Log("info", "stop collecting metrics")
+	e.logger.Log("info", "finished collecting vault metrics")
 }
 
-func initVaultClient(vaultURL, token string) (*vaultapi.Client, error) {
-	// Check Vault url is valid.
-	_, err := url.ParseRequestURI(vaultURL)
-	if err != nil {
-		return nil, err
-	}
-
-	config := vaultapi.DefaultConfig()
-	config.Address = vaultURL
-
-	client, err := vaultapi.NewClient(config)
-	if err != nil {
-		return nil, err
-	}
-	client.SetToken(token)
-
-	return client, nil
-}
-
-// Make a call lookup-self call to Vault and try to extract token ttl.
+// getTokenExpireTime makes a lookup-self call to Vault and tries to extract token ttl.
 func getTokenExpireTime(c *vaultapi.Client) (float64, error) {
 	secret, err := c.Auth().Token().LookupSelf()
 	if err != nil {
@@ -187,6 +164,20 @@ func New(config Config) (*Exporter, error) {
 		return nil, err
 	}
 
+	// Check Vault url is valid.
+	_, err = url.ParseRequestURI(config.VaultURL)
+	if err != nil {
+		return nil, err
+	}
+
+	vaultConfig := vaultapi.DefaultConfig()
+	vaultConfig.Address = config.VaultURL
+
+	client, err := vaultapi.NewClient(vaultConfig)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Exporter{
 		metric: prometheus.NewDesc(
 			prometheus.BuildFQName("cert_exporter", "token", "not_after"),
@@ -196,8 +187,8 @@ func New(config Config) (*Exporter, error) {
 			},
 			nil,
 		),
-		logger:   logger,
-		path:     config.Path,
-		vaultURL: config.VaultURL,
+		client: client,
+		logger: logger,
+		path:   config.Path,
 	}, nil
 }
