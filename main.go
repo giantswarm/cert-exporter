@@ -52,10 +52,10 @@ func main() {
 		if certPath == "" {
 			panic(microerror.Maskf(invalidConfigError, "path to cert folder can not be empty"))
 		}
-		config := cert.DefaultConfig()
-		config.Path = certPath
+		c := cert.DefaultConfig()
+		c.Path = certPath
 
-		certExporter, err := cert.New(config)
+		certExporter, err := cert.New(c)
 		if err != nil {
 			panic(microerror.Mask(err))
 		}
@@ -70,11 +70,13 @@ func main() {
 		if vaultURL == "" {
 			panic(microerror.Maskf(invalidConfigError, "Vault URL can not be empty"))
 		}
-		config := token.DefaultConfig()
-		config.Path = tokenPath
-		config.VaultURL = vaultURL
 
-		tokenExporter, err := token.New(config)
+		c := token.Config{
+			Path:     tokenPath,
+			VaultURL: vaultURL,
+		}
+
+		tokenExporter, err := token.New(c)
 		if err != nil {
 			panic(microerror.Mask(err))
 		}
