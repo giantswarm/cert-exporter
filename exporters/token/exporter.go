@@ -134,7 +134,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		e.client.SetToken(token)
 
 		// Get token expiration time.
-		expTime, err := getTokenExpireTime(e.client)
+		expTime, err := e.getTokenExpireTime()
 		if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 
@@ -159,23 +159,29 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 }
 
 // getTokenExpireTime makes a lookup-self call to Vault and tries to extract token ttl.
-func getTokenExpireTime(c *vaultapi.Client) (float64, error) {
-	secret, err := c.Auth().Token().LookupSelf()
+func (e *Exporter) getTokenExpireTime() (float64, error) {
+	secret, err := e.client.Auth().Token().LookupSelf()
 	if err != nil {
 		return 0, microerror.Mask(err)
 	}
 
 	key, ok := secret.Data[expireTimeKey]
 	if !ok {
-		return 0, microerror.Maskf(executionFailedError, "failed to get '%s'", expireTimeKey)
+		return 0, microerror.Maskf(executionFailedError, "value of '%s' must exist in order to collect metrics for the Vault token expiration", expireTimeKey)
 	}
-	e, ok := key.(string)
+
+	if key == nil {
+		e.logger.Log("level", "info", "message", "Vault token does not expire, skipping metric update")
+		return 0, nil
+	}
+
+	s, ok := key.(string)
 	if !ok {
-		return 0, microerror.Maskf(executionFailedError, "failed to convert to string '%#v'", e)
+		return 0, microerror.Maskf(executionFailedError, "'%#v' must be string in order to collect metrics for the Vault token expiration", key)
 	}
-	split := strings.Split(e, ".")
+	split := strings.Split(s, ".")
 	if len(split) == 0 {
-		return 0, microerror.Maskf(executionFailedError, "failed to parse '%#v'", split)
+		return 0, microerror.Maskf(executionFailedError, "'%#v' must have at least one item in order to collect metrics for the Vault token expiration", s)
 	}
 	expireTime := split[0]
 
