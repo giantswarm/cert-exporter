@@ -133,9 +133,18 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		// Set Vault token.
 		e.client.SetToken(token)
 
+		_, err = e.client.Sys().Health()
+		if err != nil {
+			e.logger.Log("warning", "vault is not healthy")
+			continue
+		}
+
 		// Get token expiration time.
 		expTime, err := e.getTokenExpireTime()
-		if err != nil {
+		if IsNoTokenExpiration(err) {
+			e.logger.Log("warning", "token has no expiration")
+			continue
+		} else if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 
 			// Handle corner cases, when token already expired or there are some other Vault issues.
@@ -172,7 +181,7 @@ func (e *Exporter) getTokenExpireTime() (float64, error) {
 
 	if key == nil {
 		e.logger.Log("level", "info", "message", "Vault token does not expire, skipping metric update")
-		return 0, nil
+		return 0, microerror.Mask(noTokenExpirationError)
 	}
 
 	s, ok := key.(string)
