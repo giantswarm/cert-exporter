@@ -38,6 +38,44 @@ type Exporter struct {
 	path string
 }
 
+// New creates new Exporter object.
+func New(config Config) (*Exporter, error) {
+	logger, err := micrologger.New(micrologger.DefaultConfig())
+	if err != nil {
+		return nil, err
+	}
+
+	// Check Vault url is valid.
+	_, err = url.ParseRequestURI(config.VaultURL)
+	if err != nil {
+		return nil, err
+	}
+
+	vaultConfig := vaultapi.DefaultConfig()
+	vaultConfig.Address = config.VaultURL
+
+	client, err := vaultapi.NewClient(vaultConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	e := &Exporter{
+		metric: prometheus.NewDesc(
+			prometheus.BuildFQName("cert_exporter", "token", "not_after"),
+			"Timestamp after which the Vault token is expired.",
+			[]string{
+				"path",
+			},
+			nil,
+		),
+		client: client,
+		logger: logger,
+		path:   config.Path,
+	}
+
+	return e, nil
+}
+
 // Collect implements metric collection by reading Vault token from files
 // and checking ttl of this token by calling Vault API /auth/token/lookup-self.
 // Only first line in every file is read. Files expected to contain
@@ -115,6 +153,11 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "finished collecting vault metrics")
 }
 
+// Describe returns metric metadata.
+func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
+	ch <- e.metric
+}
+
 // getTokenExpireTime makes a lookup-self call to Vault and tries to extract token ttl.
 func getTokenExpireTime(c *vaultapi.Client) (float64, error) {
 	secret, err := c.Auth().Token().LookupSelf()
@@ -142,53 +185,4 @@ func getTokenExpireTime(c *vaultapi.Client) (float64, error) {
 	}
 
 	return float64(t.Unix()), nil
-}
-
-// DefaultConfig creates default configuration.
-func DefaultConfig() Config {
-	return Config{
-		Path:     "",
-		VaultURL: "",
-	}
-}
-
-// Describe returns metric metadata.
-func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
-	ch <- e.metric
-}
-
-// New creates new Exporter object.
-func New(config Config) (*Exporter, error) {
-	logger, err := micrologger.New(micrologger.DefaultConfig())
-	if err != nil {
-		return nil, err
-	}
-
-	// Check Vault url is valid.
-	_, err = url.ParseRequestURI(config.VaultURL)
-	if err != nil {
-		return nil, err
-	}
-
-	vaultConfig := vaultapi.DefaultConfig()
-	vaultConfig.Address = config.VaultURL
-
-	client, err := vaultapi.NewClient(vaultConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Exporter{
-		metric: prometheus.NewDesc(
-			prometheus.BuildFQName("cert_exporter", "token", "not_after"),
-			"Timestamp after which the Vault token is expired.",
-			[]string{
-				"path",
-			},
-			nil,
-		),
-		client: client,
-		logger: logger,
-		path:   config.Path,
-	}, nil
 }
