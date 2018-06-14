@@ -13,6 +13,8 @@ spec:
       name: cert-exporter
       labels:
         app: cert-exporter
+      annotations:
+        releasetime: {{ $.Release.Time }}
     spec:
       tolerations:
       # Tolerate master taint
