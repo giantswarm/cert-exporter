@@ -19,7 +19,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: cert-exporter
-    namespace: monitoring
+    namespace: {{ .Values.namespace }}
 roleRef:
   kind: ClusterRole
   name: cert-exporter-psp
