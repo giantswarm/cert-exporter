@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: cert-exporter
-  namespace: monitoring
+  namespace: {{ .Values.namespace }}
   labels:
     app: cert-exporter
 spec:
