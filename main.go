@@ -37,8 +37,8 @@ func main() {
 	var vaultURL string
 	var help bool
 	flag.StringVar(&address, "address", ":9005", "address which cert-exporter uses to listen and serve")
-	flag.StringVar(&certPath, "path", "", "folder containing certs to export")
-	flag.StringVar(&tokenPath, "token-path", "", "folder containing Vault tokens to export")
+	flag.StringVar(&certPath, "path", "/etc/kubernetes/ssl", "folder containing certs to export")
+	flag.StringVar(&tokenPath, "token-path", "/etc/tokens", "folder containing Vault tokens to export")
 	flag.StringVar(&vaultURL, "vault-url", "", "URL of Vault server")
 	flag.BoolVar(&help, "help", false, "print usage and exit")
 	flag.Parse()
