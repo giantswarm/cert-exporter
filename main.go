@@ -63,14 +63,7 @@ func main() {
 	}
 
 	// Expose Vault token metrics.
-	{
-		if tokenPath == "" {
-			panic(microerror.Maskf(invalidConfigError, "path to token folder can not be empty"))
-		}
-		if vaultURL == "" {
-			panic(microerror.Maskf(invalidConfigError, "Vault URL can not be empty"))
-		}
-
+	if tokenPath != "" && vaultURL != "" {
 		c := token.Config{
 			Path:     tokenPath,
 			VaultURL: vaultURL,
