@@ -8,6 +8,9 @@ metadata:
 spec:
   updateStrategy:
     type: RollingUpdate
+  selector:
+    matchLabels:
+      app: cert-exporter
   template:
     metadata:
       name: cert-exporter
