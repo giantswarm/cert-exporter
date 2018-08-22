@@ -10,7 +10,7 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: {{ .Values.name }}
+      app: cert-exporter
   template:
     metadata:
       name: cert-exporter
