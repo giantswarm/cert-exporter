@@ -143,14 +143,18 @@ func (ms *ManagedServices) Test(ctx context.Context) error {
 	}
 
 	{
-		ms.logger.LogCtx(ctx, "level", "debug", "message", "running release tests")
+		if ms.chartConfig.RunReleaseTests {
+			ms.logger.LogCtx(ctx, "level", "debug", "message", "running release tests")
 
-		err = ms.helmClient.RunReleaseTest(ms.chartConfig.ChartName)
-		if err != nil {
-			return microerror.Mask(err)
+			err = ms.helmClient.RunReleaseTest(ms.chartConfig.ChartName)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			ms.logger.LogCtx(ctx, "level", "debug", "message", "release tests passed")
+		} else {
+			ms.logger.LogCtx(ctx, "level", "debug", "message", "skipping release tests")
 		}
-
-		ms.logger.LogCtx(ctx, "level", "debug", "message", "release tests passed")
 	}
 
 	return nil

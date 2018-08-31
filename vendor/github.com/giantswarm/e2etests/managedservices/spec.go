@@ -8,10 +8,11 @@ import (
 
 // ChartConfig is the chart to test.
 type ChartConfig struct {
-	ChannelName string
-	ChartName   string
-	ChartValues string
-	Namespace   string
+	ChannelName     string
+	ChartName       string
+	ChartValues     string
+	Namespace       string
+	RunReleaseTests bool
 }
 
 func (cc ChartConfig) Validate() error {
