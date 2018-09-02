@@ -40,7 +40,7 @@ type Exporter struct {
 
 // New creates new Exporter object.
 func New(config Config) (*Exporter, error) {
-	logger, err := micrologger.New(micrologger.DefaultConfig())
+	logger, err := micrologger.New(micrologger.Config{})
 	if err != nil {
 		return nil, err
 	}
