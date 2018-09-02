@@ -38,6 +38,6 @@ test: install generate-test-pbs
 
 generate-test-pbs:
 	make install
-	make -C testdata
-	protoc --go_out=Mtestdata/test.proto=github.com/golang/protobuf/proto/testdata,Mgoogle/protobuf/any.proto=github.com/golang/protobuf/ptypes/any:. proto3_proto/proto3.proto
+	make -C test_proto
+	make -C proto3_proto
 	make
