@@ -84,7 +84,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func New(config Config) (*Exporter, error) {
-	logger, err := micrologger.New(micrologger.DefaultConfig())
+	logger, err := micrologger.New(micrologger.Config{})
 	if err != nil {
 		return nil, err
 	}
