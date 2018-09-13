@@ -30,9 +30,9 @@ spec:
         image: quay.io/giantswarm/cert-exporter:[[ .SHA ]]
         args:
         {{ if (.Values.Installation) }}
-        - --path={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+        - --cert-paths={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
         {{ else }}
-        - --path=/etc/kubernetes/ssl
+        - --cert-paths=/etc/kubernetes/ssl
         {{ end }}
         {{ if (.Values.Installation) }}
         - --token-path={{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}

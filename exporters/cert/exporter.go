@@ -13,7 +13,7 @@ import (
 )
 
 type Config struct {
-	Path string
+	Paths []string
 }
 
 type Exporter struct {
@@ -21,24 +21,36 @@ type Exporter struct {
 	fs     afero.Fs
 	logger micrologger.Logger
 
-	path string
+	paths []string
 }
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
-	ok, err := afero.DirExists(e.fs, e.path)
+	// Check every path.
+	for _, p := range e.paths {
+		err := e.collectPath(ch, p)
+		if err != nil {
+			e.logger.Log("error", microerror.Mask(err))
+		}
+	}
+
+	e.logger.Log("info", "stop collecting metrics")
+}
+
+func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
+	ok, err := afero.DirExists(e.fs, path)
 	if !ok {
-		e.logger.Log("error", microerror.Maskf(invalidConfigError, "folder with certs has to exist"))
-		return
+		e.logger.Log("error", microerror.Maskf(invalidConfigError, fmt.Sprintf("folder %s with certs has to exist", path)))
+		return nil
 	}
 	if err != nil {
 		e.logger.Log("error", microerror.Mask(err))
-		return
+		return nil
 	}
-	err = afero.Walk(e.fs, e.path, func(path string, info os.FileInfo, err error) error {
+	err = afero.Walk(e.fs, path, func(fpath string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
-			file, err := afero.ReadFile(e.fs, path)
+			file, err := afero.ReadFile(e.fs, fpath)
 			if err != nil {
 				e.logger.Log("error", microerror.Mask(err))
 				return err
@@ -50,7 +62,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			}
 			certs, err := x509.ParseCertificates(block.Bytes)
 			if err != nil {
-				e.logger.Log("warning", fmt.Sprintf("%s could not be parsed as a certificate: %s", path, microerror.Mask(err)))
+				e.logger.Log("warning", fmt.Sprintf("%s could not be parsed as a certificate: %s", fpath, microerror.Mask(err)))
 				return nil
 			}
 			if certs == nil {
@@ -59,23 +71,23 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 			for _, cert := range certs {
 				timestamp := float64(cert.NotAfter.Unix())
-				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, path)
+				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath)
 			}
-			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", path))
+			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))
 
 		}
 		return nil
 	})
 	if err != nil {
-		e.logger.Log("error", microerror.Mask(err))
+		return err
 	}
 
-	e.logger.Log("info", "stop collecting metrics")
+	return nil
 }
 
 func DefaultConfig() Config {
 	return Config{
-		Path: "",
+		Paths: []string{},
 	}
 }
 
@@ -103,6 +115,6 @@ func New(config Config) (*Exporter, error) {
 		),
 		fs:     fs,
 		logger: logger,
-		path:   config.Path,
+		paths:  config.Paths,
 	}, nil
 }
