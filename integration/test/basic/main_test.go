@@ -104,7 +104,7 @@ func init() {
 				DaemonSets: []managedservices.DaemonSet{
 					{
 						Name:      appName,
-						Namespace: "giantswarm",
+						Namespace: metav1.NamespaceSystem,
 						Labels: map[string]string{
 							"app": appName,
 						},
