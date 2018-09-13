@@ -5,6 +5,7 @@ package basic
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/giantswarm/apprclient"
@@ -95,7 +96,7 @@ func init() {
 			ChartConfig: managedservices.ChartConfig{
 				ChannelName:     fmt.Sprintf("%s-%s", env.CircleSHA(), testName),
 				ChartName:       chartName,
-				ChartValues:     fmt.Sprintf("{ \"image\": { \"tag\": \"%s\" }, \"namespace\": \"giantswarm\" }", env.CircleSHA()),
+				ChartValues:     fmt.Sprintf("{ \"image\": { \"tag\": \"%s\" }, \"namespace\": \"%s\" }", env.CircleSHA(), metav1.NamespaceSystem),
 				Namespace:       metav1.NamespaceSystem,
 				RunReleaseTests: false,
 			},
@@ -103,7 +104,7 @@ func init() {
 				DaemonSets: []managedservices.DaemonSet{
 					{
 						Name:      appName,
-						Namespace: metav1.NamespaceSystem,
+						Namespace: "giantswarm",
 						Labels: map[string]string{
 							"app": appName,
 						},
@@ -132,6 +133,9 @@ func TestMain(m *testing.M) {
 			Host:       h,
 		}
 
-		e2esetup.Setup(ctx, m, c)
+		err := e2esetup.Setup(ctx, m, c)
+		if err != nil {
+			os.Exit(1)
+		}
 	}
 }
