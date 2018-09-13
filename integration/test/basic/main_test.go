@@ -133,9 +133,11 @@ func TestMain(m *testing.M) {
 			Host:       h,
 		}
 
-		err := e2esetup.Setup(ctx, m, c)
+		v, err := e2esetup.Setup(ctx, m, c)
 		if err != nil {
-			os.Exit(1)
+			l.LogCtx(ctx, "level", "error", "message", "e2e test failed", "stack", fmt.Sprintf("%#v\n", err))
 		}
+
+		os.Exit(v)
 	}
 }
