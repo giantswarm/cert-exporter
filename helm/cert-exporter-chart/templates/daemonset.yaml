@@ -27,16 +27,12 @@ spec:
       serviceAccountName: cert-exporter
       containers:
       - name: cert-exporter
-        {{ if .Values.image.tag }}
-        image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
-        {{ else }}
-        image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:[[ .SHA ]]
-        {{ end }}
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         args:
         {{ if (.Values.Installation) }}
-        - --path={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+        - --cert-paths={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
         {{ else }}
-        - --path=/etc/kubernetes/ssl
+        - --cert-paths=/etc/kubernetes/ssl
         {{ end }}
         {{ if (.Values.Installation) }}
         - --token-path={{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}

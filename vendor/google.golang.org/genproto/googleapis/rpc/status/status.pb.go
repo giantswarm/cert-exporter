@@ -90,7 +90,11 @@ func (m *Status) Reset()         { *m = Status{} }
 func (m *Status) String() string { return proto.CompactTextString(m) }
 func (*Status) ProtoMessage()    {}
 func (*Status) Descriptor() ([]byte, []int) {
+<<<<<<< HEAD
 	return fileDescriptor_status_c6e4de62dcdf2edf, []int{0}
+=======
+	return fileDescriptor_24d244abaf643bfe, []int{0}
+>>>>>>> master
 }
 func (m *Status) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Status.Unmarshal(m, b)
@@ -98,8 +102,13 @@ func (m *Status) XXX_Unmarshal(b []byte) error {
 func (m *Status) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Status.Marshal(b, m, deterministic)
 }
+<<<<<<< HEAD
 func (dst *Status) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Status.Merge(dst, src)
+=======
+func (m *Status) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Status.Merge(m, src)
+>>>>>>> master
 }
 func (m *Status) XXX_Size() int {
 	return xxx_messageInfo_Status.Size(m)
@@ -135,9 +144,15 @@ func init() {
 	proto.RegisterType((*Status)(nil), "google.rpc.Status")
 }
 
+<<<<<<< HEAD
 func init() { proto.RegisterFile("google/rpc/status.proto", fileDescriptor_status_c6e4de62dcdf2edf) }
 
 var fileDescriptor_status_c6e4de62dcdf2edf = []byte{
+=======
+func init() { proto.RegisterFile("google/rpc/status.proto", fileDescriptor_24d244abaf643bfe) }
+
+var fileDescriptor_24d244abaf643bfe = []byte{
+>>>>>>> master
 	// 209 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4f, 0xcf, 0xcf, 0x4f,
 	0xcf, 0x49, 0xd5, 0x2f, 0x2a, 0x48, 0xd6, 0x2f, 0x2e, 0x49, 0x2c, 0x29, 0x2d, 0xd6, 0x2b, 0x28,
