@@ -27,7 +27,7 @@ spec:
       serviceAccountName: cert-exporter
       containers:
       - name: cert-exporter
-        image: quay.io/giantswarm/cert-exporter:[[ .SHA ]]
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         args:
         {{ if (.Values.Installation) }}
         - --cert-paths={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
