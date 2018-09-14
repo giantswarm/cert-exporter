@@ -11,12 +11,9 @@ import (
 	"github.com/giantswarm/apprclient"
 	"github.com/giantswarm/e2e-harness/pkg/framework"
 	e2esetup "github.com/giantswarm/e2esetup/chart"
-	"github.com/giantswarm/e2esetup/chart/env"
-	"github.com/giantswarm/e2etests/managedservices"
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/afero"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -81,6 +78,7 @@ func init() {
 			panic(err.Error())
 		}
 	}
+}
 
 // TestMain allows us to have common setup and teardown steps that are run
 // once for all the tests https://golang.org/pkg/testing/#hdr-Main.
