@@ -1,10 +1,7 @@
 package helmclient
 
 import (
-<<<<<<< HEAD
-=======
 	"context"
->>>>>>> master
 	"fmt"
 	"io/ioutil"
 	"time"
@@ -192,22 +189,6 @@ func (c *Client) EnsureTillerInstalled() error {
 		}
 	}
 
-<<<<<<< HEAD
-	// Install the tiller deployment in the guest cluster.
-	{
-		o := &installer.Options{
-			ImageSpec:      tillerImageSpec,
-			MaxHistory:     defaultMaxHistory,
-			Namespace:      c.tillerNamespace,
-			ServiceAccount: tillerPodName,
-		}
-
-		err := installer.Install(c.k8sClient, o)
-		if errors.IsAlreadyExists(err) {
-			c.logger.Log("level", "debug", "message", "tiller deployment installation failed", "stack", fmt.Sprintf("%#v", err))
-			// fall through
-		} else if err != nil {
-=======
 	// Install the tiller deployment in the tenant cluster.
 	{
 		o := func() error {
@@ -233,7 +214,6 @@ func (c *Client) EnsureTillerInstalled() error {
 
 		err := backoff.RetryNotify(o, b, n)
 		if err != nil {
->>>>>>> master
 			return microerror.Mask(err)
 		}
 	}
