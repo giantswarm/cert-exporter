@@ -52,6 +52,7 @@ jobs:
         root: .
         paths:
         - ./architect
+        - ./cert-exporter
 
   e2eTestBasic:
     environment:
