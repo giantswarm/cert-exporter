@@ -73,14 +73,6 @@ jobs:
 
     - run: ./architect deploy
 
-  publish_to_stable:
-    machine: true
-    steps:
-    - checkout
-
-    - attach_workspace:
-        at: .
-
     - run:
         name: Publish to stable
         # Project specific: We deploy cert-exporter to control planes too,
@@ -105,10 +97,3 @@ workflows:
               only: master
           requires:
           - e2eTestBasic
-
-      - publish_to_stable:
-          filters:
-            branches:
-              only: master
-          requires:
-          - deploy
