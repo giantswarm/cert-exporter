@@ -17,7 +17,7 @@ spec:
       labels:
         app: cert-exporter
       annotations:
-        cluster-autoscaler.kubernetes.io/safe-to-evict: true
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         releasetime: {{ $.Release.Time }}
     spec:
       tolerations:
