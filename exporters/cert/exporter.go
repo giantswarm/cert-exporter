@@ -58,7 +58,7 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 			}
 
 			if e.fileIsPrivateKey(file) {
-				e.logger.Log("info", fmt.Sprintf("not adding %s to the metrics", fpath))
+				e.logger.Log("info", fmt.Sprintf("not adding private key %s to the metrics", fpath))
 				return nil
 			}
 
