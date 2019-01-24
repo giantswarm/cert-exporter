@@ -5,6 +5,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -56,6 +57,11 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				return err
 			}
 
+			if e.fileIsPrivateKey(file) {
+				e.logger.Log("info", fmt.Sprintf("not adding %s to the metrics", fpath))
+				return nil
+			}
+
 			block, _ := pem.Decode(file)
 			if block == nil {
 				return nil
@@ -83,6 +89,12 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 	}
 
 	return nil
+}
+
+// fileIsPrivateKey returns true if the given file contents are an RSA private key, false otherwise.
+// As keys don't have expiry date, we don't try to export expiry metrics for them.
+func (e *Exporter) fileIsPrivateKey(f []byte) bool {
+	return strings.Contains(string(f), "RSA PRIVATE KEY")
 }
 
 func DefaultConfig() Config {
