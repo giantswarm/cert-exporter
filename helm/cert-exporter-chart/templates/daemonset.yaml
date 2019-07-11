@@ -25,9 +25,6 @@ spec:
         operator: Exists
         effect: NoSchedule
       serviceAccountName: cert-exporter
-      securityContext:
-        runAsUser: {{ .Values.userID }}
-        runAsGroup: {{ .Values.groupID }}
       containers:
       - name: cert-exporter
         image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"

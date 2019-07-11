@@ -1,8 +1,5 @@
 namespace: monitoring
 
-userID: 1000
-groupID: 1000
-
 image:
   registry: quay.io
   repository: giantswarm/cert-exporter
