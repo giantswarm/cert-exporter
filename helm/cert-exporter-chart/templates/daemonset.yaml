@@ -20,10 +20,8 @@ spec:
         releasetime: {{ $.Release.Time }}
     spec:
       tolerations:
-      # Tolerate master taint
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
+      # Tolerate all taints for observability
+      - operator: "Exists"
       serviceAccountName: cert-exporter
       containers:
       - name: cert-exporter
