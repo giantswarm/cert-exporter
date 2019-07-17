@@ -13,4 +13,4 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 - Tolerations changed to tolerate all taints.
 
-[Unreleased]: https://github.com/giantswarm/kubernetes-cert-exporter/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.1.0...HEAD
