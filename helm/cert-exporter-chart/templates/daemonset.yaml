@@ -23,6 +23,7 @@ spec:
       # Tolerate all taints for observability
       - operator: "Exists"
       serviceAccountName: cert-exporter
+      priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
         image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
