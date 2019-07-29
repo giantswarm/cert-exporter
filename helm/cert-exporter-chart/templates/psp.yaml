@@ -1,13 +1,21 @@
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: cert-exporter-psp
+  name: {{ .Values.name }}-psp
 spec:
   privileged: false
   fsGroup:
-    rule: RunAsAny
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
   runAsUser:
-    rule: RunAsAny
+    rule: MustRunAsNonRoot
+  runAsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
   seLinux:
     rule: RunAsAny
   supplementalGroups:
@@ -16,8 +24,8 @@ spec:
   - max: 9005
     min: 9005
   volumes:
-    - 'secret'
     - 'hostPath'
+  allowPrivilegeEscalation: false
   hostNetwork: true
   hostIPC: false
   hostPID: true
