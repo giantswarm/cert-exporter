@@ -13,7 +13,7 @@ spec:
     rule: MustRunAs
     ranges:
       - min: 1
-        max: 65535i
+        max: 65535
   runAsGroup:
     rule: MustRunAs
     ranges:
