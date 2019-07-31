@@ -7,6 +7,13 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [1.0.0] 2019-07-31
+
+### Changed
+
+The chart release version has been bumped back to `1.0.0-sha256sum` as this is the
+expected format by Draughtsman.
+
 ## [1.1.0] 2019-07-17
 
 ### Changed
