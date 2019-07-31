@@ -44,13 +44,13 @@ jobs:
           chmod +x ./architect
           ./architect version
 
-    - run:
-        name: Publish chart to CNR using a temporary channel for feature branch deploys
-        command: ./architect publish --pipeline=false --channels=wip-${CIRCLE_SHA1}
-
     - run: ./architect build
     - store_test_results:
         path: /tmp/results
+
+    - run:
+        name: Publish chart to CNR using a temporary channel for feature branch deploys
+        command: ./architect publish --pipeline=false --channels=wip-${CIRCLE_SHA1}
 
     - persist_to_workspace:
         root: .
