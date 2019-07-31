@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: cert-exporter-psp
+  name: {{ .Values.name }}-psp
 rules:
   - apiGroups:
       - extensions
@@ -10,17 +10,17 @@ rules:
     verbs:
       - use
     resourceNames:
-      - cert-exporter-psp
+      - {{ .Values.name }}-psp
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: cert-exporter-psp
+  name: {{ .Values.name }}-psp
 subjects:
   - kind: ServiceAccount
-    name: cert-exporter
+    name: {{ .Values.name }}
     namespace: {{ .Values.namespace }}
 roleRef:
   kind: ClusterRole
-  name: cert-exporter-psp
+  name: {{ .Values.name }}-psp
   apiGroup: rbac.authorization.k8s.io
