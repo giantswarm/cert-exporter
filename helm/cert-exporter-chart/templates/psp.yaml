@@ -29,6 +29,7 @@ spec:
   volumes:
     - 'secret'
     - 'hostPath'
+  allowPrivilegeEscalation: false
   hostNetwork: true
   hostIPC: false
   hostPID: true
