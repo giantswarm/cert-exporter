@@ -23,6 +23,9 @@ spec:
       # Tolerate all taints for observability
       - operator: "Exists"
       serviceAccountName: cert-exporter
+      securityContext:
+        runAsUser: {{ .Values.userID }}
+        runAsGroup: {{ .Values.groupID }}
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
