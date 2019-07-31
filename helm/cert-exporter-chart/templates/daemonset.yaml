@@ -1,34 +1,34 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: cert-exporter
+  name: {{ .Values.name }}
   namespace: {{ .Values.namespace }}
   labels:
-    app: cert-exporter
+    app: {{ .Values.name }}
 spec:
   updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: cert-exporter
+      app: {{ .Values.name }}
   template:
     metadata:
-      name: cert-exporter
+      name: {{ .Values.name }}
       labels:
-        app: cert-exporter
+        app: {{ .Values.name }}
       annotations:
         releasetime: {{ $.Release.Time }}
     spec:
       tolerations:
       # Tolerate all taints for observability
       - operator: "Exists"
-      serviceAccountName: cert-exporter
+      serviceAccountName: {{ .Values.name }}
       securityContext:
         runAsUser: {{ .Values.userID }}
         runAsGroup: {{ .Values.groupID }}
       priorityClassName: giantswarm-critical
       containers:
-      - name: cert-exporter
+      - name: {{ .Values.name }}
         image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         args:
         {{ if (.Values.Installation) }}
