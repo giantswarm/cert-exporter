@@ -1,6 +1,10 @@
+name: cert-exporter
 namespace: monitoring
 
 image:
   registry: quay.io
   repository: giantswarm/cert-exporter
   tag: [[ .SHA ]]
+
+userID: 1000
+groupID: 1000
