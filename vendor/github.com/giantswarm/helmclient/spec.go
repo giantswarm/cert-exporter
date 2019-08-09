@@ -2,11 +2,16 @@ package helmclient
 
 import (
 	"context"
+	"time"
 
 	"k8s.io/helm/pkg/helm"
 )
 
 const (
+	// defaultEnsureTillerInstalledMaxWait is how long to wait in
+	// EnsureTillerInstalled to get a running tiller pod.
+	defaultEnsureTillerInstalledMaxWait = 1 * time.Minute
+
 	// defaultMaxHistory is the maximum number of release versions stored per
 	// release by default.
 	defaultMaxHistory = 10
@@ -15,12 +20,13 @@ const (
 	// runReleaseTestTimeout is the timeout in seconds when running tests.
 	runReleaseTestTimout = 300
 
-	defaultTillerImage     = "quay.io/giantswarm/tiller:v2.12.0"
-	defaultTillerNamespace = "kube-system"
-	roleBindingNamePrefix  = "tiller"
-	tillerLabelSelector    = "app=helm,name=tiller"
-	tillerPodName          = "tiller-giantswarm"
-	tillerPort             = 44134
+	defaultTillerImage      = "quay.io/giantswarm/tiller:v2.12.0"
+	defaultTillerNamespace  = "kube-system"
+	roleBindingNamePrefix   = "tiller"
+	runningPodFieldSelector = "status.phase=Running"
+	tillerLabelSelector     = "app=helm,name=tiller"
+	tillerPodName           = "tiller-giantswarm"
+	tillerPort              = 44134
 )
 
 // Interface describes the methods provided by the helm client.
@@ -32,6 +38,11 @@ type Interface interface {
 	// As a first step, it checks if Tiller is already ready, in which case it
 	// returns early.
 	EnsureTillerInstalled(ctx context.Context) error
+	// EnsureTillerInstalledWithValues installs Tiller by creating its deployment
+	// and waiting for it to start. A service account and cluster role binding are
+	// also created. Values can be provided to pass through to Tiller
+	// and overwrite its deployment defaults.
+	EnsureTillerInstalledWithValues(ctx context.Context, values []string) error
 	// GetReleaseContent gets the current status of the Helm Release. The
 	// releaseName is the name of the Helm Release that is set when the Chart
 	// is installed.
