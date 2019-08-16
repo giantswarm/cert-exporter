@@ -14,6 +14,7 @@ import (
 	"github.com/giantswarm/e2esetup/k8s"
 	"github.com/giantswarm/e2etests/managedservices"
 	"github.com/giantswarm/helmclient"
+	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/afero"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -61,14 +62,14 @@ func init() {
 		}
 	}
 
-	var k8sClients *k8s.Clients
+	var k8sClients *k8sclient.Clients
 	{
-		c := k8s.ClientsConfig{
+		c := k8sclient.ClientsConfig{
 			Logger: l,
 
 			KubeConfigPath: env.KubeConfigPath(),
 		}
-		k8sClients, err = k8s.NewClients(c)
+		k8sClients, err = k8sclient.NewClients(c)
 		if err != nil {
 			panic(err.Error())
 		}
