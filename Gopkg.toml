@@ -38,16 +38,16 @@ required = [
   version = "9.1.0"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/docker/distribution"
+  branch = "master"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/giantswarm/e2esetup"
+  branch = "master"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/giantswarm/helmclient"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/google/uuid"
@@ -63,15 +63,35 @@ required = [
 
 [[constraint]]
   name = "k8s.io/api"
-  version = "kubernetes-1.13.2"
+  version = "kubernetes-1.15.4"
 
 [[constraint]]
   name = "k8s.io/apimachinery"
-  version = "kubernetes-1.13.2"
+  version = "kubernetes-1.15.4"
 
 [[constraint]]
   name = "k8s.io/apiserver"
-  version = "kubernetes-1.13.2"
+  version = "kubernetes-1.15.4"
+
+[[override]]
+  name = "k8s.io/cli-runtime"
+  version = "kubernetes-1.15.4"
+
+[[override]]
+  name = "k8s.io/component-base"
+  version = "kubernetes-1.15.4"
+
+[[override]]
+  name = "k8s.io/kubernetes"
+  version = "1.15.4"
+
+[[override]]
+  name = "github.com/ghodss/yaml"
+  branch = "master"
+
+[[override]]
+  name = "github.com/russross/blackfriday"
+  version = "v1.5.2"
 
 [prune]
   go-tests = true

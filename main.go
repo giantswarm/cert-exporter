@@ -10,26 +10,20 @@ import (
 
 	"github.com/giantswarm/cert-exporter/exporters/cert"
 	"github.com/giantswarm/cert-exporter/exporters/token"
+	"github.com/giantswarm/cert-exporter/pkg/project"
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
-)
-
-var (
-	description string = "The cert-exporter walks a directory path it has gotten as input and emits all NotAfter timestamps as metrics."
-	gitCommit   string = "n/a"
-	name        string = "cert-exporter"
-	source      string = "https://github.com/giantswarm/cert-exporter"
 )
 
 func main() {
 	// Print version.
 	if (len(os.Args) > 1) && (os.Args[1] == "version") {
-		fmt.Printf("Description:    %s\n", description)
-		fmt.Printf("Git Commit:     %s\n", gitCommit)
+		fmt.Printf("Description:    %s\n", project.Description())
+		fmt.Printf("Git Commit:     %s\n", project.GitSHA())
 		fmt.Printf("Go Version:     %s\n", runtime.Version())
-		fmt.Printf("Name:           %s\n", name)
+		fmt.Printf("Name:           %s\n", project.Name())
 		fmt.Printf("OS / Arch:      %s / %s\n", runtime.GOOS, runtime.GOARCH)
-		fmt.Printf("Source:         %s\n", source)
+		fmt.Printf("Source:         %s\n", project.Source())
 		return
 	}
 	var address string
