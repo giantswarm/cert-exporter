@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cert-exporter
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: cert-exporter
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: cert-exporter
+  template:
+    metadata:
+      name: cert-exporter
+      labels:
+        app: cert-exporter
+      annotations:
+        releasetime: {{ $.Release.Time }}
+    spec:
+      tolerations:
+      # Tolerate all taints for observability
+      - operator: "Exists"
+      serviceAccountName: cert-exporter
+      priorityClassName: giantswarm-critical
+      containers:
+      - name: cert-exporter
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        args:
+        {{ if (.Values.Installation) }}
+        - --cert-paths={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+        {{ else }}
+        - --cert-paths=/etc/kubernetes/ssl
+        {{ end }}
+        {{ if (.Values.Installation) }}
+        - --token-path={{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+        {{ end }}
+        {{ if (.Values.Installation) }}
+        - --vault-url={{ .Values.Installation.V1.Auth.Vault.Address }}
+        {{ end }}
+        ports:
+        - name: cert-exporter
+          containerPort: 9005
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 50m
+            memory: 50Mi
+        volumeMounts:
+        {{ if (.Values.Installation) }}
+        - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+          name: certs-volume
+        {{ else }}
+        - mountPath: /etc/kubernetes/ssl
+          name: certs-volume
+        {{ end }}
+        {{ if (.Values.Installation) }}
+        - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+          name: tokens-volume
+        {{ end }}
+        - mountPath: /etc/ssl/certs/
+          name: ca-certs
+      volumes:
+      - name: certs-volume
+        hostPath:
+          {{ if (.Values.Installation) }}
+          path: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+          {{ else }}
+          path: /etc/kubernetes/ssl
+          {{ end }}
+      {{ if (.Values.Installation) }}
+      - name: tokens-volume
+        hostPath:
+          path: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+      {{ end }}
+      - name: ca-certs
+        hostPath:
+          path: /etc/ssl/certs/
+      hostNetwork: true
+      hostPID: true

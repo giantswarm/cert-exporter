@@ -1,0 +1,6 @@
+namespace: monitoring
+
+image:
+  registry: quay.io
+  repository: giantswarm/cert-exporter
+  tag: "[[ .Version ]]"
