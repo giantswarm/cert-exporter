@@ -1,4 +1,4 @@
-namespace: monitoring
+namespace: kube-system
 
 image:
   registry: quay.io
