@@ -1,4 +1,5 @@
-namespace: kube-system
+exporter:
+  namespace: kube-system
 
 image:
   registry: quay.io
