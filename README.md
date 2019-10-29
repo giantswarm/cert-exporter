@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/giantswarm/cert-exporter.svg?&style=svg)](https://circleci.com/gh/giantswarm/cert-exporter)
+[![CircleCI](https://circleci.com/gh/giantswarm/cert-exporter.svg?&style=shield)](https://circleci.com/gh/giantswarm/cert-exporter)
 
 # cert-exporter
 
