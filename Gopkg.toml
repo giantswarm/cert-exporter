@@ -50,6 +50,10 @@ required = [
   branch = "master"
 
 [[constraint]]
+  name = "github.com/giantswarm/k8sclient"
+  branch = "master"
+
+[[constraint]]
   name = "github.com/google/uuid"
   branch = "master"
 
@@ -83,7 +87,7 @@ required = [
 
 [[override]]
   name = "k8s.io/kubernetes"
-  version = "1.15.4"
+  version = "=1.15.4"
 
 [[override]]
   name = "github.com/ghodss/yaml"
@@ -96,7 +100,3 @@ required = [
 [prune]
   go-tests = true
   unused-packages = true
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/giantswarm/k8sclient"
