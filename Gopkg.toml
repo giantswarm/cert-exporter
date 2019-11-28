@@ -42,7 +42,15 @@ required = [
   branch = "master"
 
 [[constraint]]
+  name = "github.com/giantswarm/apprclient"
+  branch = "master"
+
+[[constraint]]
   name = "github.com/giantswarm/e2esetup"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/giantswarm/e2etests"
   branch = "master"
 
 [[constraint]]
