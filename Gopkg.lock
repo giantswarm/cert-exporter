@@ -294,14 +294,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:05cb6533a801e2a154f1d7dd3e6ed3c319d000a3958f8ce30832b079d60ffab2"
+  digest = "1:e4d78572f2a3bee23e41c567dd82fc22018c8f0d736aa376d8db86448f43a7db"
   name = "github.com/giantswarm/k8sclient"
   packages = [
     ".",
     "k8scrdclient",
   ]
   pruneopts = "UT"
-  revision = "8680e194c7eed1bb0121972ca46ca4b0396536fd"
+  revision = "059a94fd04e59aceab384413cf9608ae1640a2ca"
 
 [[projects]]
   branch = "master"
