@@ -26,7 +26,7 @@ spec:
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
-        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         args:
         {{ if (.Values.Installation) }}
         - --cert-paths={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
