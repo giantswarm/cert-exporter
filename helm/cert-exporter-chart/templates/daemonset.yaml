@@ -28,15 +28,15 @@ spec:
       - name: cert-exporter
         image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         args:
-        {{ if (.Values.Installation) }}
+        {{ if (.Values.Installation.V1.Monitoring) }}
         - --cert-paths={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
         {{ else }}
         - --cert-paths=/etc/kubernetes/ssl
         {{ end }}
-        {{ if (.Values.Installation) }}
+        {{ if (.Values.Installation.V1.Monitoring) }}
         - --token-path={{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
         {{ end }}
-        {{ if (.Values.Installation) }}
+        {{ if (.Values.Installation.V1.Monitoring) }}
         - --vault-url={{ .Values.Installation.V1.Auth.Vault.Address }}
         {{ end }}
         ports:
@@ -50,14 +50,14 @@ spec:
             cpu: 50m
             memory: 50Mi
         volumeMounts:
-        {{ if (.Values.Installation) }}
+        {{ if (.Values.Installation.V1.Monitoring) }}
         - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
           name: certs-volume
         {{ else }}
         - mountPath: /etc/kubernetes/ssl
           name: certs-volume
         {{ end }}
-        {{ if (.Values.Installation) }}
+        {{ if (.Values.Installation.V1.Monitoring) }}
         - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
           name: tokens-volume
         {{ end }}
@@ -66,12 +66,12 @@ spec:
       volumes:
       - name: certs-volume
         hostPath:
-          {{ if (.Values.Installation) }}
+          {{ if (.Values.Installation.V1.Monitoring) }}
           path: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
           {{ else }}
           path: /etc/kubernetes/ssl
           {{ end }}
-      {{ if (.Values.Installation) }}
+      {{ if (.Values.Installation.V1.Monitoring) }}
       - name: tokens-volume
         hostPath:
           path: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
