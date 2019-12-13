@@ -1,9 +1,6 @@
 namespace: monitoring
 
 image:
+  registry: quay.io
   repository: giantswarm/cert-exporter
   tag: [[ .SHA ]]
-Installation:
-  V1:
-    Registry:
-      Domain: quay.io
