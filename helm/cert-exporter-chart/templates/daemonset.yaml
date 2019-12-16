@@ -27,9 +27,9 @@ spec:
       containers:
       - name: cert-exporter
         {{ if (.Values.Installation) }}
-        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.image.name }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         {{ else }}
-        image: "{{ .Values.image.registry }}/{{ .Values.image.name }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         {{ end }}
         args:
         {{ if (.Values.Installation) }}
