@@ -51,7 +51,6 @@ spec:
             cpu: 50m
             memory: 50Mi
           limits:
-            cpu: 50m
             memory: 50Mi
         volumeMounts:
         {{ if (.Values.Installation) }}

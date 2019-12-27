@@ -7,11 +7,23 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [1.2.1] 2019-12-24
+
+### Changed
+
+- Remove CPU limits.
+
+## [1.2.0] 2019-10-23
+
+### Added
+
+- Push cert-exporter to default app catalog.
+
 ## [1.1.0] 2019-07-17
 
 ### Changed
 
 - Tolerations changed to tolerate all taints.
-- Change prioty class to `giantswarm-critical`.
+- Change priority class to `giantswarm-critical`.
 
 [Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.1.0...HEAD
