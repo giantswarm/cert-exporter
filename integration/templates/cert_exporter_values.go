@@ -3,7 +3,4 @@
 package templates
 
 // CertExporterValues values used for cert-exporter-chart in e2e integration test.
-const CertExporterValues = `namespace: kube-system
-
-e2e: true
-`
+const CertExporterValues = `namespace: kube-system`
