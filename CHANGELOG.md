@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Change daemonset to use release revision not time for Helm 3 support.
+
 ## [1.2.1] 2019-12-24
 
 ### Changed
