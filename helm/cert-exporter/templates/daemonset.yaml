@@ -17,7 +17,7 @@ spec:
       labels:
         app: cert-exporter
       annotations:
-        releasetime: {{ $.Release.Time }}
+        releaseRevision: {{ $.Release.Revision | quote }}
     spec:
       tolerations:
       # Tolerate all taints for observability
