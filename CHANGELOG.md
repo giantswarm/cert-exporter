@@ -9,25 +9,33 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Changed
 
+## [v1.2.2] 2020-04-01
+
+### Changed
+
 - Change daemonset to use release revision not time for Helm 3 support.
 
-## [1.2.1] 2019-12-24
+## [v1.2.1] 2019-12-24
 
 ### Changed
 
 - Remove CPU limits.
 
-## [1.2.0] 2019-10-23
+## [v1.2.0] 2019-10-23
 
 ### Added
 
 - Push cert-exporter to default app catalog.
 
-## [1.1.0] 2019-07-17
+## [v1.1.0] 2019-07-17
 
 ### Changed
 
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.2.2...HEAD
+[v1.2.2]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.2.2
+[v1.2.1]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.2.1
+[v1.2.0]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.2.0
+[v1.2.0]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.1.0
