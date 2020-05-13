@@ -8,11 +8,13 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/giantswarm/microerror"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/giantswarm/cert-exporter/exporters/cert"
 	"github.com/giantswarm/cert-exporter/exporters/token"
 	"github.com/giantswarm/cert-exporter/pkg/project"
-	"github.com/giantswarm/microerror"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 func main() {
@@ -71,6 +73,6 @@ func main() {
 		prometheus.MustRegister(tokenExporter)
 	}
 
-	http.Handle("/metrics", prometheus.Handler())
+	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(address, nil)
 }
