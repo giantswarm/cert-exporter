@@ -11,7 +11,6 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Update prometheus/client_golang dependency
 - Migrate from dep to go modules
 - Move to App deployment
-- Remove E2E test
 
 ## [v1.2.2] 2020-04-01
 
