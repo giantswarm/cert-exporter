@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cert-exporter
-  namespace: {{ .Values.exporter.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: cert-exporter
 spec:
