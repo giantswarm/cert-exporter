@@ -124,9 +124,21 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-app-catalog:
-          name: push-cert-exporter-to-app-catalog
+          name: push-cert-exporter-to-default-app-catalog
           app_catalog: "default-catalog"
           app_catalog_test: "default-test-catalog"
+          chart: "cert-exporter"
+          requires:
+            - push-cert-exporter-to-quay
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-catalog:
+          name: push-cert-exporter-to-control-plane-app-catalog
+          app_catalog: "control-plane-catalog"
+          app_catalog_test: "control-plane-test-catalog"
           chart: "cert-exporter"
           requires:
             - push-cert-exporter-to-quay
@@ -173,3 +185,45 @@ workflows:
           filters:
             branches:
               only: master
+
+      - architect/push-to-app-collection:
+          context: architect
+          name: push-cert-exporter-to-aws-app-collection
+          app_name: "cert-exporter"
+          app_collection_repo: "aws-app-collection"
+          unique: "true"
+          requires:
+            - push-cert-exporter-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: architect
+          name: push-cert-exporter-to-azure-app-collection
+          app_name: "cert-exporter"
+          app_collection_repo: "azure-app-collection"
+          unique: "true"
+          requires:
+            - push-cert-exporter-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: architect
+          name: push-cert-exporter-to-kvm-app-collection
+          app_name: "cert-exporter"
+          app_collection_repo: "kvm-app-collection"
+          unique: "true"
+          requires:
+            - push-cert-exporter-to-control-plane-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
