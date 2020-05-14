@@ -3,7 +3,7 @@ orbs:
   architect: giantswarm/architect@0.8.14
 
 workflows:
-  build:
+  build_e2e:
     jobs:
       - architect/go-build:
           name: build
@@ -61,6 +61,10 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+
+      - e2eTestBasic:
+          requires:
+          - build
 
       - hold-push-cert-exporter-to-aliyun-pr:
           type: approval
