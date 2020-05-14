@@ -3,18 +3,12 @@ module github.com/giantswarm/cert-exporter
 go 1.14
 
 require (
-	github.com/giantswarm/apprclient v0.2.0
-	github.com/giantswarm/e2esetup v0.2.0
-	github.com/giantswarm/e2etests v0.2.1
-	github.com/giantswarm/helmclient v0.2.2
-	github.com/giantswarm/k8sclient v0.2.0
 	github.com/giantswarm/microerror v0.2.0
 	github.com/giantswarm/micrologger v0.3.1
 	github.com/google/uuid v1.1.1
 	github.com/hashicorp/vault/api v1.0.4
 	github.com/prometheus/client_golang v1.6.0
 	github.com/spf13/afero v1.2.2
-	k8s.io/apimachinery v0.16.6
 )
 
 replace (
