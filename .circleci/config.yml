@@ -88,24 +88,6 @@ jobs:
       E2E_TEST_NAME: "basic"
     <<: *e2eTest
 
-  deploy:
-    machine: true
-    steps:
-    - checkout
-
-    - attach_workspace:
-        at: .
-
-    - run: ./architect deploy
-
-    - run:
-        name: Publish to stable
-        # Project specific: We deploy cert-exporter to control planes too,
-        # and draughtsman requires the special version format.
-        command: |
-          sed -i 's/version:.*/version: 1.0.0-'"${CIRCLE_SHA1}"'/' helm/cert-exporter-chart/Chart.yaml
-          ./architect publish --pipeline=false --channels=stable
-
 workflows:
   build_e2e:
     jobs:
@@ -191,11 +173,3 @@ workflows:
           filters:
             branches:
               only: master
-
-      - deploy:
-          filters:
-            branches:
-              only: master
-          requires:
-          - e2eTestBasic
-          - push-cert-exporter-to-aliyun-master
