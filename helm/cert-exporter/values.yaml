@@ -1,5 +1,5 @@
 exporter:
-  namespace: kube-system
+  namespace: monitoring
 
 image:
   registry: quay.io

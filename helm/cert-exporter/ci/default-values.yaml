@@ -1,0 +1,11 @@
+Installation:
+  V1:
+    Auth:
+      Vault:
+        Address: ""
+    Registry:
+      Domain: ""
+    Monitoring:
+      CertExporter:
+        CertPath: ""
+        TokenPath: ""
