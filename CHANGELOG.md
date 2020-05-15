@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [v1.2.3] 2020-05-15
+
 ### Changed
 - Update prometheus/client_golang dependency
 - Migrate from dep to go modules
