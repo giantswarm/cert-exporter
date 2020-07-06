@@ -32,15 +32,15 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 - Push cert-exporter to default app catalog.
 
-## [v1.1.0] 2019-07-17
+## v1.1.0 2019-07-17
 
 ### Changed
 
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.2.2...HEAD
-[v1.2.2]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.2.2
-[v1.2.1]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.2.1
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.2.3...HEAD
+[v1.2.3]: https://github.com/giantswarm/cert-exporter/compare/v1.2.2...v1.2.3
+[v1.2.2]: https://github.com/giantswarm/cert-exporter/compare/v1.2.1...v1.2.2
+[v1.2.1]: https://github.com/giantswarm/cert-exporter/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.2.0
-[v1.2.0]: https://github.com/giantswarm/cert-exporter/releases/tag/v1.1.0
