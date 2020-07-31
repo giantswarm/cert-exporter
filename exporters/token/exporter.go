@@ -7,12 +7,12 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
-	"github.com/google/uuid"
 	vaultapi "github.com/hashicorp/vault/api"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -124,7 +124,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		}
 
 		// Make sure token is in uuid format.
-		_, err = uuid.Parse(token)
+		_, err = regexp.MatchString(".\\..{24}", token)
 		if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 			continue
