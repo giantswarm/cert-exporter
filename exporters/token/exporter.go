@@ -95,6 +95,12 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		return
 	}
 
+	tokenRegex, err := regexp.Compile(".\\..{24}")
+	if err != nil {
+		e.logger.Log("error", microerror.Mask(err))
+		return
+	}
+
 	for _, file := range files {
 		if file.IsDir() {
 			continue
@@ -123,10 +129,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			continue
 		}
 
-		// Make sure token is in uuid format.
-		_, err = regexp.MatchString(".\\..{24}", token)
-		if err != nil {
-			e.logger.Log("error", microerror.Mask(err))
+		// Make sure token is in expected format.
+		if match := tokenRegex.MatchString(token); !match {
+			e.logger.Log("error", "bad token format")
 			continue
 		}
 
