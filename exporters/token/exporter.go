@@ -95,7 +95,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		return
 	}
 
-	tokenRegex, err := regexp.Compile(".\\..{24}")
+	tokenRegex, err := regexp.Compile(`.\\..{24}`)
 	if err != nil {
 		e.logger.Log("error", microerror.Mask(err))
 		return
