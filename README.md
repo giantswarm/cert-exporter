@@ -8,7 +8,7 @@ Exposes two metrics to Prometheus reagrding certificates/tokens:
 
 Timestamp after which the cert is invalid
 
-## `cert_operator_vault_token_expire_time`
+## `cert_exporter_token_not_after`
 
 Timestamp after which the Vault token is expired
 

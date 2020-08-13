@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Fixed
+
+- Adjusted vault token format check for base62 tokens.
+
 ## [v1.2.3] 2020-05-15
 
 ### Changed
