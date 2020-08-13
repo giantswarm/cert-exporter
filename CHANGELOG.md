@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [1.2.4] - 2020-08-13
+
 ### Fixed
 
 - Adjusted vault token format check for base62 tokens.
@@ -43,7 +45,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.2.4...HEAD
+[1.2.4]: https://github.com/giantswarm/cert-exporter/compare/v1.2.3...v1.2.4
 [v1.2.3]: https://github.com/giantswarm/cert-exporter/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/giantswarm/cert-exporter/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/giantswarm/cert-exporter/compare/v1.2.0...v1.2.1
