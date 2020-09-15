@@ -82,5 +82,3 @@ spec:
       - name: ca-certs
         hostPath:
           path: /etc/ssl/certs/
-      hostNetwork: true
-      hostPID: true
