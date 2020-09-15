@@ -18,6 +18,6 @@ spec:
   volumes:
     - 'secret'
     - 'hostPath'
-  hostNetwork: true
+  hostNetwork: false
   hostIPC: false
-  hostPID: true
+  hostPID: false
