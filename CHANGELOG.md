@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Remove `hostNetwork` and `hostPID` capabilities.
+
 ## [1.2.4] - 2020-08-13
 
 ### Fixed
