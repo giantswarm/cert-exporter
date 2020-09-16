@@ -1,0 +1,28 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: cert-exporter
+  labels:
+    app: cert-exporter
+spec:
+  podSelector:
+    matchLabels:
+      app: cert-exporter
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+  - ports:
+    - port: 9005
+      protocol: TCP
+    from:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    {{ $privateSubnets := list "10.0.0.0/8" "172.16.0.0/12" "192.168.0.0/16" "100.64.0.0/10" }}
+    {{ range $index, $privateSubnet := $privateSubnets }}
+    - ipBlock:
+        cidr: {{ $privateSubnet }}
+    {{ end }}
+  egress: {}
