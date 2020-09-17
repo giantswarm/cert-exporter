@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- Add Network Policy.
+
 ### Changed
 
 - Remove `hostNetwork` and `hostPID` capabilities.
