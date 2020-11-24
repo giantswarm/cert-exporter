@@ -13,6 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/giantswarm/cert-exporter/exporters/cert"
+	"github.com/giantswarm/cert-exporter/exporters/secret"
 	"github.com/giantswarm/cert-exporter/exporters/token"
 	"github.com/giantswarm/cert-exporter/pkg/project"
 )
@@ -61,6 +62,20 @@ func main() {
 			panic(microerror.Mask(err))
 		}
 		prometheus.MustRegister(certExporter)
+	}
+
+	// Monitor expiry of secrets of type kubernetes.io/tls
+	if monitorSecrets {
+		c := secret.DefaultConfig()
+		if namespaceWhitelist != "" {
+			c.Namespaces = strings.Split(namespaceWhitelist, ",")
+		}
+
+		secretExporter, err := secret.New(c)
+		if err != nil {
+			panic(microerror.Mask(err))
+		}
+		prometheus.MustRegister(secretExporter)
 	}
 
 	// Expose Vault token metrics.
