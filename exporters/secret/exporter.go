@@ -81,7 +81,11 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, namespace string, secret v1.Secret) error {
 	secretName := secret.Name
-	certBytes := secret.Data["tls.crt"]
+	certBytes, ok := secret.Data["tls.crt"]
+	if !ok {
+		e.logger.Log("error", microerror.Maskf(certNotFoundError, fmt.Sprintf("secret %s/%s contains no key matching 'tls.crt'", namespace, secretName)))
+		return nil
+	}
 
 	block, _ := pem.Decode(certBytes)
 	if block == nil {
