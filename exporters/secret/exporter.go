@@ -145,7 +145,7 @@ func New(config Config) (*Exporter, error) {
 
 	return &Exporter{
 		cert: prometheus.NewDesc(
-			prometheus.BuildFQName("cert_exporter", "", "not_after"),
+			prometheus.BuildFQName("cert_exporter", "secret", "not_after"),
 			"Timestamp after which the cert is invalid.",
 			[]string{
 				"name",
