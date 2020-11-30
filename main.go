@@ -31,14 +31,14 @@ func main() {
 	}
 	var address string
 	var certPaths string
-	var namespaceWhitelist string
+	var namespaces string
 	var tokenPath string
 	var vaultURL string
 	var help bool
 	var monitorSecrets bool
 	flag.StringVar(&address, "address", ":9005", "address which cert-exporter uses to listen and serve")
 	flag.StringVar(&certPaths, "cert-paths", "", "comma separated folders containing certs to export")
-	flag.StringVar(&namespaceWhitelist, "namespace-whitelist", "", "comma separated namespaces in which to monitor TLS secrets")
+	flag.StringVar(&namespaces, "namespaces", "", "comma separated namespaces in which to monitor TLS secrets")
 	flag.StringVar(&tokenPath, "token-path", "", "folder containing Vault tokens to export")
 	flag.StringVar(&vaultURL, "vault-url", "", "URL of Vault server")
 	flag.BoolVar(&help, "help", false, "print usage and exit")
@@ -67,8 +67,8 @@ func main() {
 	// Monitor expiry of secrets of type kubernetes.io/tls
 	if monitorSecrets {
 		c := secret.DefaultConfig()
-		if namespaceWhitelist != "" {
-			c.Namespaces = strings.Split(namespaceWhitelist, ",")
+		if namespaces != "" {
+			c.Namespaces = strings.Split(namespaces, ",")
 		}
 
 		secretExporter, err := secret.New(c)
