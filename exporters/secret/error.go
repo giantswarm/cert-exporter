@@ -8,7 +8,7 @@ var certNotFoundError = &microerror.Error{
 	Kind: "certNotFoundError",
 }
 
-// NoCertFound asserts cerNotFoundError
-func NoCertFound(err error) bool {
+// IsCertNotFound asserts certNotFoundError
+func IsCertNotFound(err error) bool {
 	return microerror.Cause(err) == certNotFoundError
 }
