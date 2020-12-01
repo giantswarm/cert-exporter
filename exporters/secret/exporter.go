@@ -21,6 +21,11 @@ const (
 	certType      = "secret"
 )
 
+var (
+	clusterSecrets    []v1.Secret
+	namespacesToCheck []string
+)
+
 type Config struct {
 	Namespaces []string
 }
@@ -43,16 +48,20 @@ func DefaultConfig() Config {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
-	var clusterSecrets []v1.Secret
-
 	listOpts := metav1.ListOptions{
 		FieldSelector: fieldSelector,
 	}
 
-	// Build list of secrets to check
+	// Create a list of namespaces to check
 	if len(e.namespaces) == 0 {
-		// If no namespaces are provided then get all secrets matching selector
-		secrets, err := e.k8sClient.CoreV1().Secrets("").List(e.ctx, listOpts)
+		namespacesToCheck = append(namespacesToCheck, "")
+	} else {
+		namespacesToCheck = e.namespaces
+	}
+
+	// Loop over namespaces
+	for _, namespace := range namespacesToCheck {
+		secrets, err := e.k8sClient.CoreV1().Secrets(namespace).List(e.ctx, listOpts)
 		if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 		}
@@ -60,22 +69,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		for _, secret := range secrets.Items {
 			clusterSecrets = append(clusterSecrets, secret)
 		}
-	} else {
-		// get secrets from given namespaces and append to list
-		for _, namespace := range e.namespaces {
-			// Get secrets in namespace
-			secrets, err := e.k8sClient.CoreV1().Secrets(namespace).List(e.ctx, listOpts)
-			if err != nil {
-				e.logger.Log("error", microerror.Mask(err))
-			}
-
-			for _, secret := range secrets.Items {
-				clusterSecrets = append(clusterSecrets, secret)
-			}
-		}
 	}
 
-	// Range over discovered secrets
+	// Loop over discovered secrets
 	for _, secret := range clusterSecrets {
 		err := e.calculateExpiry(ch, secret)
 		if err != nil {
