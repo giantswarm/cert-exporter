@@ -43,48 +43,55 @@ func DefaultConfig() Config {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
-	// If no namespace whitelist is provided then we check all namespaces
-	if len(e.namespaces) == 0 {
-		allNamespaces, err := e.k8sClient.CoreV1().Namespaces().List(e.ctx, metav1.ListOptions{})
-		if err != nil {
-			e.logger.Log("error", microerror.Mask(err))
-		}
-
-		for _, ns := range allNamespaces.Items {
-			// We just need the namespace's name
-			nsName := ns.Name
-			e.namespaces = append(e.namespaces, nsName)
-		}
-	}
+	var clusterSecrets []v1.Secret
 
 	listOpts := metav1.ListOptions{
 		FieldSelector: fieldSelector,
 	}
 
-	// Range over namespaces
-	for _, namespace := range e.namespaces {
-		// Get secrets in namespace
-		secrets, err := e.k8sClient.CoreV1().Secrets(namespace).List(e.ctx, listOpts)
+	// Build list of secrets to check
+	if len(e.namespaces) == 0 {
+		// If no namespaces are provided then get all secrets matching selector
+		secrets, err := e.k8sClient.CoreV1().Secrets("").List(e.ctx, listOpts)
 		if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 		}
-		// Range over secrets
+
 		for _, secret := range secrets.Items {
-			err := e.calculateExpiry(ch, namespace, secret)
+			clusterSecrets = append(clusterSecrets, secret)
+		}
+	} else {
+		// get secrets from given namespaces and append to list
+		for _, namespace := range e.namespaces {
+			// Get secrets in namespace
+			secrets, err := e.k8sClient.CoreV1().Secrets(namespace).List(e.ctx, listOpts)
 			if err != nil {
 				e.logger.Log("error", microerror.Mask(err))
 			}
+
+			for _, secret := range secrets.Items {
+				clusterSecrets = append(clusterSecrets, secret)
+			}
+		}
+	}
+
+	// Range over discovered secrets
+	for _, secret := range clusterSecrets {
+		err := e.calculateExpiry(ch, secret)
+		if err != nil {
+			e.logger.Log("error", microerror.Mask(err))
 		}
 	}
 
 	e.logger.Log("info", "finished collecting metrics")
 }
 
-func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, namespace string, secret v1.Secret) error {
+func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret) error {
 	secretName := secret.Name
+	secretNamespace := secret.Namespace
 	certBytes, ok := secret.Data["tls.crt"]
 	if !ok {
-		e.logger.Log("error", microerror.Maskf(certNotFoundError, fmt.Sprintf("secret %s/%s contains no key matching 'tls.crt'", namespace, secretName)))
+		e.logger.Log("error", microerror.Maskf(certNotFoundError, fmt.Sprintf("secret %s/%s contains no key matching 'tls.crt'", secretNamespace, secretName)))
 		return nil
 	}
 
@@ -101,9 +108,9 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, namespace string
 
 	for _, cert := range certs {
 		timestamp := float64(cert.NotAfter.Unix())
-		ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, namespace, certType)
+		ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certType)
 	}
-	e.logger.Log("info", fmt.Sprintf("added secret %s/%s to the metrics", namespace, secretName))
+	e.logger.Log("info", fmt.Sprintf("added secret %s/%s to the metrics", secretNamespace, secretName))
 
 	return nil
 }
