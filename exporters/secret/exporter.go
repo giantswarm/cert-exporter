@@ -66,9 +66,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			e.logger.Log("error", microerror.Mask(err))
 		}
 
-		for _, secret := range secrets.Items {
-			clusterSecrets = append(clusterSecrets, secret)
-		}
+		clusterSecrets = append(clusterSecrets, secrets.Items...)
 	}
 
 	// Loop over discovered secrets
