@@ -21,11 +21,6 @@ const (
 	certType      = "secret"
 )
 
-var (
-	clusterSecrets    []v1.Secret
-	namespacesToCheck []string
-)
-
 type Config struct {
 	Namespaces []string
 }
@@ -52,6 +47,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		FieldSelector: fieldSelector,
 	}
 
+	namespacesToCheck := []string{}
 	// Create a list of namespaces to check
 	if len(e.namespaces) == 0 {
 		namespacesToCheck = append(namespacesToCheck, "")
@@ -59,6 +55,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		namespacesToCheck = e.namespaces
 	}
 
+	clusterSecrets := []v1.Secret{}
 	// Loop over namespaces
 	for _, namespace := range namespacesToCheck {
 		secrets, err := e.k8sClient.CoreV1().Secrets(namespace).List(e.ctx, listOpts)
