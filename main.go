@@ -13,6 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/giantswarm/cert-exporter/exporters/cert"
+	"github.com/giantswarm/cert-exporter/exporters/secret"
 	"github.com/giantswarm/cert-exporter/exporters/token"
 	"github.com/giantswarm/cert-exporter/pkg/project"
 )
@@ -30,14 +31,18 @@ func main() {
 	}
 	var address string
 	var certPaths string
+	var namespaces string
 	var tokenPath string
 	var vaultURL string
 	var help bool
+	var monitorSecrets bool
 	flag.StringVar(&address, "address", ":9005", "address which cert-exporter uses to listen and serve")
 	flag.StringVar(&certPaths, "cert-paths", "", "comma separated folders containing certs to export")
+	flag.StringVar(&namespaces, "namespaces", "", "comma separated namespaces in which to monitor TLS secrets")
 	flag.StringVar(&tokenPath, "token-path", "", "folder containing Vault tokens to export")
 	flag.StringVar(&vaultURL, "vault-url", "", "URL of Vault server")
 	flag.BoolVar(&help, "help", false, "print usage and exit")
+	flag.BoolVar(&monitorSecrets, "monitor-secrets", true, "monitor expiry of TLS secrets")
 	flag.Parse()
 
 	if help {
@@ -57,6 +62,20 @@ func main() {
 			panic(microerror.Mask(err))
 		}
 		prometheus.MustRegister(certExporter)
+	}
+
+	// Monitor expiry of secrets of type kubernetes.io/tls
+	if monitorSecrets {
+		c := secret.DefaultConfig()
+		if namespaces != "" {
+			c.Namespaces = strings.Split(namespaces, ",")
+		}
+
+		secretExporter, err := secret.New(c)
+		if err != nil {
+			panic(microerror.Mask(err))
+		}
+		prometheus.MustRegister(secretExporter)
 	}
 
 	// Expose Vault token metrics.
