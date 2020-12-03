@@ -11,7 +11,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Changed
 
-- Scrape expiry of Secrets of type `kubernetes.io/tls`. ([#92](https://github.com/giantswarm/cert-exporter/pull/92))
+- Add metric which tracks expiry of TLS certificates stored in Kubernetes secrets. ([#92](https://github.com/giantswarm/cert-exporter/pull/92))
 
 ## [1.3.0] - 2020-09-17
 
