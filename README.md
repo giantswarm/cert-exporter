@@ -2,7 +2,7 @@
 
 # cert-exporter
 
-Exposes three metrics to Prometheus reagrding certificates/tokens:
+Exposes three metrics to Prometheus regarding certificates/tokens:
 
 ## `cert_exporter_not_after`
 
