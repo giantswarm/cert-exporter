@@ -2,15 +2,19 @@
 
 # cert-exporter
 
-Exposes two metrics to Prometheus reagrding certificates/tokens:
+Exposes three metrics to Prometheus regarding certificates/tokens:
 
 ## `cert_exporter_not_after`
 
-Timestamp after which the cert is invalid
+Timestamp after which the cert is invalid (for certificate files mounted from the host filesystem).
+
+## `cert_exporter_secret_not_after`
+
+Timestamp after which the cert is invalid (for certificates stored in Kubernetes secrets).
 
 ## `cert_exporter_token_not_after`
 
-Timestamp after which the Vault token is expired
+Timestamp after which the Vault token is expired.
 
 ## Deployment
 
