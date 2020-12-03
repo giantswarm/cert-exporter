@@ -9,9 +9,9 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [1.4.0] - 2020-12-02
 
-### Changed
+### Added
 
-- Add metric which tracks expiry of TLS certificates stored in Kubernetes secrets. ([#92](https://github.com/giantswarm/cert-exporter/pull/92))
+- Add new metric (`cert_exporter_secret_not_after`) which tracks expiry of TLS certificates stored in Kubernetes secrets. ([#92](https://github.com/giantswarm/cert-exporter/pull/92))
 
 ## [1.3.0] - 2020-09-17
 
