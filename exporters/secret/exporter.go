@@ -80,26 +80,30 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret) error {
 	secretName := secret.Name
 	secretNamespace := secret.Namespace
-	certBytes, ok := secret.Data["tls.crt"]
-	if !ok {
-		e.logger.Log("error", microerror.Maskf(certNotFoundError, fmt.Sprintf("secret %s/%s contains no key matching 'tls.crt'", secretNamespace, secretName)))
-		return nil
-	}
+	certKeys := [...]string{"ca.crt", "tls.crt"}
 
-	block, _ := pem.Decode(certBytes)
-	if block == nil {
-		return nil
-	}
+	for _, certKey := range certKeys {
+		certBytes, ok := secret.Data[certKey]
+		if !ok {
+			e.logger.Log("error", microerror.Maskf(certNotFoundError, fmt.Sprintf("secret %s/%s contains no key matching '%s'", secretNamespace, secretName, certKey)))
+			continue
+		}
 
-	certs, err := x509.ParseCertificates(block.Bytes)
-	if err != nil {
-		e.logger.Log("warning", fmt.Sprintf("%s could not be parsed as a certificate: %s", secretName, microerror.Mask(err)))
-		return nil
-	}
+		block, _ := pem.Decode(certBytes)
+		if block == nil {
+			continue
+		}
 
-	for _, cert := range certs {
-		timestamp := float64(cert.NotAfter.Unix())
-		ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certType)
+		certs, err := x509.ParseCertificates(block.Bytes)
+		if err != nil {
+			e.logger.Log("warning", fmt.Sprintf("%s in secret %s/%s could not be parsed as a certificate: %s", certKey, secretName, secretNamespace, microerror.Mask(err)))
+			continue
+		}
+
+		for _, cert := range certs {
+			timestamp := float64(cert.NotAfter.Unix())
+			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certType)
+		}
 	}
 	e.logger.Log("info", fmt.Sprintf("added secret %s/%s to the metrics", secretNamespace, secretName))
 
@@ -148,6 +152,7 @@ func New(config Config) (*Exporter, error) {
 			[]string{
 				"name",
 				"namespace",
+				"secretkey",
 				"type",
 			},
 			nil,
