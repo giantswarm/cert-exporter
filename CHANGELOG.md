@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- Add exceptions in NetworkPolicies to allow DNS to work correctly through port 53.
+
 ## [1.5.0] - 2021-01-05
 
 ### Changed
