@@ -27,6 +27,8 @@ spec:
     {{ end }}
   egress:
   - ports:
+    - port: 53
+      protocol: UDP
     - port: 443
       protocol: TCP
     # legacy port kept for compatibility
