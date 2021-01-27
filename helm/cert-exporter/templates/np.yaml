@@ -29,6 +29,9 @@ spec:
   - ports:
     - port: 53
       protocol: UDP
+    # DNS uses TCP when the response is larger than 512 bytes
+    - port: 53
+      protocol: TCP
     - port: 443
       protocol: TCP
     # legacy port kept for compatibility
