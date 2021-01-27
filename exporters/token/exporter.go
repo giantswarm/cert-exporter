@@ -140,7 +140,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 		_, err = e.client.Sys().Health()
 		if err != nil {
-			e.logger.Log("warning", "vault is not healthy")
+			e.logger.Log("vault is not healthy error:", microerror.Mask(err))
 			continue
 		}
 
