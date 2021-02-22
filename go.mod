@@ -3,7 +3,7 @@ module github.com/giantswarm/cert-exporter
 go 1.14
 
 require (
-	github.com/giantswarm/k8sclient/v5 v5.10.0
+	github.com/giantswarm/k8sclient/v5 v5.11.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/hashicorp/vault/api v1.0.4
