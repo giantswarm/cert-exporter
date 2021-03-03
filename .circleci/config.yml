@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@0.11.0
+  architect: giantswarm/architect@2.2.0
 
 workflows:
   build:
@@ -71,7 +71,8 @@ workflows:
             branches:
               ignore: master
 
-      - architect/push-to-docker-legacy:
+      - architect/push-to-docker:
+          context: architect
           name: push-cert-exporter-to-aliyun-pr
           image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/cert-exporter"
           username_envar: "ALIYUN_USERNAME"
@@ -85,8 +86,9 @@ workflows:
               ignore: master
 
       # Push to Aliyun should execute without manual approval on master.
-      - architect/push-to-docker-legacy:
+      - architect/push-to-docker:
           name: push-cert-exporter-to-aliyun-master
+          context: architect
           image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/cert-exporter"
           username_envar: "ALIYUN_USERNAME"
           password_envar: "ALIYUN_PASSWORD"
@@ -103,7 +105,6 @@ workflows:
           app_name: "cert-exporter"
           app_namespace: "monitoring"
           app_collection_repo: "aws-app-collection"
-          unique: "true"
           requires:
             - push-cert-exporter-to-control-plane-app-catalog
           filters:
@@ -118,7 +119,6 @@ workflows:
           app_name: "cert-exporter"
           app_namespace: "monitoring"
           app_collection_repo: "azure-app-collection"
-          unique: "true"
           requires:
             - push-cert-exporter-to-control-plane-app-catalog
           filters:
@@ -133,7 +133,6 @@ workflows:
           app_name: "cert-exporter"
           app_namespace: "monitoring"
           app_collection_repo: "kvm-app-collection"
-          unique: "true"
           requires:
             - push-cert-exporter-to-control-plane-app-catalog
           filters:
