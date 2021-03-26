@@ -2,6 +2,6 @@ exporter:
   namespace: monitoring
 
 image:
-  registry: quay.io
+  registry: docker.io
   repository: giantswarm/cert-exporter
   tag: "[[ .Version ]]"
