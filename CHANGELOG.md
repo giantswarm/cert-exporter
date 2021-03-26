@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [1.6.1] - 2021-03-26
+
 ### Changed
 
 - Set docker.io as the default registry
@@ -77,7 +79,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/giantswarm/cert-exporter/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/giantswarm/cert-exporter/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/giantswarm/cert-exporter/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/giantswarm/cert-exporter/compare/v1.3.0...v1.4.0
