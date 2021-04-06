@@ -16,6 +16,6 @@ require (
 
 replace github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 
-replace github.com/gorilla/websocket => github.com/gorilla/websocket v1.4.2
+replace github.com/gorilla/websocket v1.4.0 => github.com/gorilla/websocket v1.4.2
 
 replace github.com/coreos/etcd v3.3.10+incompatible => github.com/coreos/etcd v3.3.25+incompatible
