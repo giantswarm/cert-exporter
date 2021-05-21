@@ -18,7 +18,6 @@ import (
 
 const (
 	fieldSelector = "type=kubernetes.io/tls"
-	certType      = "secret"
 )
 
 type Config struct {
@@ -102,7 +101,8 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 
 		for _, cert := range certs {
 			timestamp := float64(cert.NotAfter.Unix())
-			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certType)
+			issuer := cert.Issuer.String()
+			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, issuer)
 		}
 	}
 	e.logger.Log("info", fmt.Sprintf("added secret %s/%s to the metrics", secretNamespace, secretName))
@@ -153,7 +153,7 @@ func New(config Config) (*Exporter, error) {
 				"name",
 				"namespace",
 				"secretkey",
-				"type",
+				"issuer",
 			},
 			nil,
 		),
