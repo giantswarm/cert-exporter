@@ -1,5 +1,5 @@
 exporter:
-  certPath: "/etc/kubernetes/ssl"
+  certPath: ""
   tokenPath: ""
   namespace: monitoring
 
