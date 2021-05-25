@@ -1,7 +1,13 @@
 exporter:
+  certPath: "/etc/kubernetes/ssl"
+  tokenPath: ""
   namespace: monitoring
 
 image:
-  registry: docker.io
   repository: giantswarm/cert-exporter
   tag: "[[ .Version ]]"
+
+registry:
+  domain: docker.io
+
+vaultAddress: ""

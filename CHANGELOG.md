@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Prepare helm values to configuration management.
+
 ## [1.6.1] - 2021-03-26
 
 ### Changed
