@@ -26,22 +26,18 @@ spec:
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
-        {{ if (.Values.Installation) }}
-        image: "{{ .Values.Installation.V1.Registry.Domain }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        {{ else }}
-        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        {{ end }}
+        image: "{{ .Values.registry.domain }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         args:
-        {{ if (.Values.Installation) }}
-        - --cert-paths={{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+        {{ if ne .Values.exporter.certPath "" }}
+        - --cert-paths={{ .Values.exporter.certPath }} 
         {{ else }}
         - --cert-paths=/etc/kubernetes/ssl
         {{ end }}
-        {{ if (.Values.Installation) }}
-        - --token-path={{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+        {{ if ne .Values.exporter.tokenPath "" }}
+        - --token-path={{ .Values.exporter.tokenPath }}
         {{ end }}
-        {{ if (.Values.Installation) }}
-        - --vault-url={{ .Values.Installation.V1.Auth.Vault.Address }}
+        {{ if ne .Values.vaultAddress "" }}
+        - --vault-url={{ .Values.vaultAddress }}
         {{ end }}
         ports:
         - name: cert-exporter
@@ -53,15 +49,15 @@ spec:
           limits:
             memory: 50Mi
         volumeMounts:
-        {{ if (.Values.Installation) }}
-        - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+        {{ if ne .Values.exporter.certPath "" }}
+        - mountPath: {{ .Values.exporter.certPath }}
           name: certs-volume
         {{ else }}
         - mountPath: /etc/kubernetes/ssl
           name: certs-volume
         {{ end }}
-        {{ if (.Values.Installation) }}
-        - mountPath: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+        {{ if ne .Values.exporter.tokenPath "" }}
+        - mountPath: {{ .Values.exporter.tokenPath }}
           name: tokens-volume
         {{ end }}
         - mountPath: /etc/ssl/certs/
@@ -69,15 +65,15 @@ spec:
       volumes:
       - name: certs-volume
         hostPath:
-          {{ if (.Values.Installation) }}
-          path: {{ .Values.Installation.V1.Monitoring.CertExporter.CertPath }}
+          {{ if ne .Values.exporter.certPath "" }}
+          path: {{ .Values.exporter.certPath }}
           {{ else }}
           path: /etc/kubernetes/ssl
           {{ end }}
-      {{ if (.Values.Installation) }}
+      {{ if ne .Values.exporter.tokenPath "" }}
       - name: tokens-volume
         hostPath:
-          path: {{ .Values.Installation.V1.Monitoring.CertExporter.TokenPath }}
+          path: {{ .Values.exporter.tokenPath }}
       {{ end }}
       - name: ca-certs
         hostPath:
