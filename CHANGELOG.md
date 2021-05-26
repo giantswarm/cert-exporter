@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix configuration version in `Chart.yaml`.
+
 ## [1.7.0] - 2021-05-26
 
 ### Changed
