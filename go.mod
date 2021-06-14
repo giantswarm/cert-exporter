@@ -9,9 +9,9 @@ require (
 	github.com/hashicorp/vault/api v1.1.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/spf13/afero v1.6.0
-	k8s.io/api v0.18.18
-	k8s.io/apimachinery v0.18.18
-	k8s.io/client-go v0.18.9
+	k8s.io/api v0.18.19
+	k8s.io/apimachinery v0.18.19
+	k8s.io/client-go v0.18.19
 )
 
 replace github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
