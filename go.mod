@@ -10,7 +10,7 @@ require (
 	github.com/prometheus/client_golang v1.11.0
 	github.com/spf13/afero v1.6.0
 	k8s.io/api v0.18.18
-	k8s.io/apimachinery v0.18.18
+	k8s.io/apimachinery v0.18.19
 	k8s.io/client-go v0.18.9
 )
 
