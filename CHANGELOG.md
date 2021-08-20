@@ -7,6 +7,14 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- Add certificate issuer label to `cert_exporter_secret_not_after` and `cert_exporter_not_after` metrics.
+
+### Changed
+
+- Remove static certificate source label from `cert_exporter_secret_not_after` (static value `secret`) and `cert_exporter_not_after` (static value `file`) metrics.
+
 ## [1.7.1] - 2021-05-26
 
 ### Fixed

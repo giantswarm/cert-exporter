@@ -18,7 +18,6 @@ import (
 
 const (
 	fieldSelector = "type=kubernetes.io/tls"
-	certType      = "secret"
 )
 
 type Config struct {
@@ -153,7 +152,7 @@ func New(config Config) (*Exporter, error) {
 				"name",
 				"namespace",
 				"secretkey",
-				"type",
+				"issuer",
 			},
 			nil,
 		),
