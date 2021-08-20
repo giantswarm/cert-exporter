@@ -10,6 +10,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Added
 
 - Add certificate issuer label to `cert_exporter_secret_not_after` and `cert_exporter_not_after` metrics.
+- Add certificate CR name to `cert_exporter_secret_not_after` metric.
 
 ### Changed
 
