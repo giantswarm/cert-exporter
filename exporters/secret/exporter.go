@@ -151,7 +151,7 @@ func (e *Exporter) findCertCRName(secretName, secretNamespace string) (string, e
 		return "", err
 	}
 	if len(certificateGroupVersionResources) == 0 {
-		e.logger.Log("info", "cert-manager Certificate not available, skipping secret collection")
+		e.logger.Log("info", "cert-manager Certificate custom resource definition not available, skipping secret collection")
 		return "", nil
 	}
 
