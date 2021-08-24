@@ -9,7 +9,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Added
 
-- Add new `cert_exporter_certificate_cr_not_after` metric. This metric exports the `spec.notAfter` field of cert-manager `Certificate` CR.
+- Add new `cert_exporter_certificate_cr_not_after` metric. This metric exports the `status.notAfter` field of cert-manager `Certificate` CR.
 
 ### Changed
 
