@@ -45,7 +45,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
 	namespacesToCheck := []string{}
-	// Create a list of namespaces to check
+	// Create a list of namespaces to check.
 	if len(e.namespaces) == 0 {
 		namespacesToCheck = append(namespacesToCheck, "")
 	} else {
@@ -54,7 +54,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 	listOptions := metav1.ListOptions{}
 
-	// Loop over namespaces
+	// Loop over namespaces.
 	for _, namespace := range namespacesToCheck {
 		certs, err := e.dynamicClient.Resource(certManagerCertificateGroupVersionResource).Namespace(namespace).List(e.ctx, listOptions)
 		if err != nil {
@@ -100,7 +100,7 @@ func New(config Config) (*Exporter, error) {
 		return nil, err
 	}
 
-	// Create k8s api client
+	// Create k8s api client.
 	var restConfig *rest.Config
 	{
 		c := k8srestconfig.Config{
