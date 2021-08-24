@@ -13,6 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/giantswarm/cert-exporter/exporters/cert"
+	"github.com/giantswarm/cert-exporter/exporters/cr"
 	"github.com/giantswarm/cert-exporter/exporters/secret"
 	"github.com/giantswarm/cert-exporter/exporters/token"
 	"github.com/giantswarm/cert-exporter/pkg/project"
@@ -36,6 +37,7 @@ func main() {
 	var vaultURL string
 	var help bool
 	var monitorSecrets bool
+	var monitorCertificates bool
 	flag.StringVar(&address, "address", ":9005", "address which cert-exporter uses to listen and serve")
 	flag.StringVar(&certPaths, "cert-paths", "", "comma separated folders containing certs to export")
 	flag.StringVar(&namespaces, "namespaces", "", "comma separated namespaces in which to monitor TLS secrets")
@@ -43,6 +45,7 @@ func main() {
 	flag.StringVar(&vaultURL, "vault-url", "", "URL of Vault server")
 	flag.BoolVar(&help, "help", false, "print usage and exit")
 	flag.BoolVar(&monitorSecrets, "monitor-secrets", true, "monitor expiry of TLS secrets")
+	flag.BoolVar(&monitorCertificates, "monitor-certificates", true, "monitor expiry of cert-manager certificates")
 	flag.Parse()
 
 	if help {
@@ -90,6 +93,19 @@ func main() {
 			panic(microerror.Mask(err))
 		}
 		prometheus.MustRegister(tokenExporter)
+	}
+
+	if monitorCertificates {
+		c := cr.DefaultConfig()
+		if namespaces != "" {
+			c.Namespaces = strings.Split(namespaces, ",")
+		}
+
+		crExporter, err := cr.New(c)
+		if err != nil {
+			panic(microerror.Mask(err))
+		}
+		prometheus.MustRegister(crExporter)
 	}
 
 	http.Handle("/metrics", promhttp.Handler())
