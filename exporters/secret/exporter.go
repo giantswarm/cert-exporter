@@ -43,11 +43,9 @@ func DefaultConfig() Config {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
-	namespacesToCheck := []string{}
-	// Create a list of namespaces to check
-	if len(e.namespaces) == 0 {
-		namespacesToCheck = append(namespacesToCheck, "")
-	} else {
+	namespacesToCheck := []string{""}
+	// Create a list of namespaces to check.
+	if len(e.namespaces) != 0 {
 		namespacesToCheck = e.namespaces
 	}
 

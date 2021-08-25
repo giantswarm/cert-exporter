@@ -44,11 +44,9 @@ func DefaultConfig() Config {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
-	namespacesToCheck := []string{}
+	namespacesToCheck := []string{""}
 	// Create a list of namespaces to check.
-	if len(e.namespaces) == 0 {
-		namespacesToCheck = append(namespacesToCheck, "")
-	} else {
+	if len(e.namespaces) != 0 {
 		namespacesToCheck = e.namespaces
 	}
 
@@ -59,28 +57,30 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		certs, err := e.dynamicClient.Resource(certManagerCertificateGroupVersionResource).Namespace(namespace).List(e.ctx, listOptions)
 		if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
-			return
+			continue
 		}
 		for _, cert := range certs.Items {
+			notAfterStatusString, _, err := unstructured.NestedString(cert.UnstructuredContent(), "status", "notAfter")
+			if err != nil {
+				e.logger.Log("error", microerror.Mask(err))
+				continue
+			}
+
+			notAfter, err := time.Parse(time.RFC3339, notAfterStatusString)
+			if err != nil {
+				e.logger.Log("error", microerror.Mask(err))
+				continue
+			}
+			notAfterUnix := float64(notAfter.Unix())
+
 			issuerRefName, _, err := unstructured.NestedString(cert.UnstructuredContent(), "spec", "issuerRef", "name")
 			if err != nil {
 				e.logger.Log("error", microerror.Mask(err))
 			}
 
-			notAfter, _, err := unstructured.NestedString(cert.UnstructuredContent(), "status", "notAfter")
-			if err != nil {
-				e.logger.Log("error", microerror.Mask(err))
-			}
-
-			NotAfter, err := time.Parse(time.RFC3339, notAfter)
-			if err != nil {
-				e.logger.Log("error", microerror.Mask(err))
-			}
-
-			timestamp := float64(NotAfter.Unix())
 			certficateName := cert.GetName()
 			certificateNamespace := cert.GetNamespace()
-			ch <- prometheus.MustNewConstMetric(e.certNotAfter, prometheus.GaugeValue, timestamp, certficateName, certificateNamespace, issuerRefName)
+			ch <- prometheus.MustNewConstMetric(e.certNotAfter, prometheus.GaugeValue, notAfterUnix, certficateName, certificateNamespace, issuerRefName)
 
 			e.logger.Log("info", fmt.Sprintf("added cert-manager certificate CR %s/%s to the metrics", certificateNamespace, certficateName))
 		}
