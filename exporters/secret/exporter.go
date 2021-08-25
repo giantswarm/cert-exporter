@@ -16,10 +16,10 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-const (
-	fieldSelector = "type=kubernetes.io/tls"
-	certType      = "secret"
-)
+var certKeys = [2]string{"ca.crt", "tls.crt"}
+var listOpts = metav1.ListOptions{
+	FieldSelector: "type=kubernetes.io/tls",
+}
 
 type Config struct {
 	Namespaces []string
@@ -43,15 +43,9 @@ func DefaultConfig() Config {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
-	listOpts := metav1.ListOptions{
-		FieldSelector: fieldSelector,
-	}
-
-	namespacesToCheck := []string{}
-	// Create a list of namespaces to check
-	if len(e.namespaces) == 0 {
-		namespacesToCheck = append(namespacesToCheck, "")
-	} else {
+	namespacesToCheck := []string{""}
+	// Create a list of namespaces to check.
+	if len(e.namespaces) != 0 {
 		namespacesToCheck = e.namespaces
 	}
 
@@ -80,7 +74,6 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret) error {
 	secretName := secret.Name
 	secretNamespace := secret.Namespace
-	certKeys := [...]string{"ca.crt", "tls.crt"}
 
 	for _, certKey := range certKeys {
 		certBytes, ok := secret.Data[certKey]
@@ -102,7 +95,7 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 
 		for _, cert := range certs {
 			timestamp := float64(cert.NotAfter.Unix())
-			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certType)
+			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey)
 		}
 	}
 	e.logger.Log("info", fmt.Sprintf("added secret %s/%s to the metrics", secretNamespace, secretName))
@@ -153,7 +146,6 @@ func New(config Config) (*Exporter, error) {
 				"name",
 				"namespace",
 				"secretkey",
-				"type",
 			},
 			nil,
 		),
