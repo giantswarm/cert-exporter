@@ -9,6 +9,7 @@ import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -21,6 +22,25 @@ var certManagerCertificateGroupVersionResource = schema.GroupVersionResource{
 	Resource: "certificates",
 	Version:  "v1",
 }
+
+var certManagerIssuerGroupVersionResource = schema.GroupVersionResource{
+	Group:    "cert-manager.io",
+	Resource: "issuers",
+	Version:  "v1",
+}
+
+var certManagerClusterIssuerGroupVersionResource = schema.GroupVersionResource{
+	Group:    "cert-manager.io",
+	Resource: "clusterissuers",
+	Version:  "v1",
+}
+
+const (
+	issuerLabelSelector = "giantswarm.io/service-type=managed"
+	trueString          = "true"
+	falseString         = "false"
+	unknownString       = ""
+)
 
 type Config struct {
 	Namespaces []string
@@ -56,7 +76,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	for _, namespace := range namespacesToCheck {
 		certs, err := e.dynamicClient.Resource(certManagerCertificateGroupVersionResource).Namespace(namespace).List(e.ctx, listOptions)
 		if err != nil {
-			e.logger.Log("error", microerror.Mask(err))
+			if !apierrors.IsNotFound(err) {
+				e.logger.Log("error", microerror.Mask(err))
+			}
 			continue
 		}
 		for _, cert := range certs.Items {
@@ -77,10 +99,22 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			if err != nil {
 				e.logger.Log("error", microerror.Mask(err))
 			}
+			issuerRefKind, _, err := unstructured.NestedString(cert.UnstructuredContent(), "spec", "issuerRef", "kind")
+			if err != nil {
+				e.logger.Log("error", microerror.Mask(err))
+			}
 
 			certficateName := cert.GetName()
 			certificateNamespace := cert.GetNamespace()
-			ch <- prometheus.MustNewConstMetric(e.certNotAfter, prometheus.GaugeValue, notAfterUnix, certficateName, certificateNamespace, issuerRefName)
+			isManaged := ""
+
+			if issuerRefKind == "ClusterIssuer" {
+				isManaged = e.CheckClusterIssuerManaged(issuerRefName)
+			} else {
+				isManaged = e.CheckIssuerManaged(issuerRefName, certificateNamespace)
+			}
+
+			ch <- prometheus.MustNewConstMetric(e.certNotAfter, prometheus.GaugeValue, notAfterUnix, certficateName, certificateNamespace, issuerRefName, isManaged)
 
 			e.logger.Log("info", fmt.Sprintf("added cert-manager certificate CR %s/%s to the metrics", certificateNamespace, certficateName))
 		}
@@ -92,6 +126,44 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- e.certNotAfter
+}
+
+func (e *Exporter) CheckIssuerManaged(name, namespace string) string {
+	listOptions := metav1.ListOptions{
+		FieldSelector: fmt.Sprintf("metadata.name=%s", name),
+		LabelSelector: issuerLabelSelector,
+	}
+
+	issuersList, err := e.dynamicClient.Resource(certManagerIssuerGroupVersionResource).Namespace(namespace).List(e.ctx, listOptions)
+	if err != nil {
+		e.logger.Log("error", microerror.Mask(err))
+		return unknownString
+	}
+
+	if len(issuersList.Items) == 1 {
+		return trueString
+	}
+
+	return falseString
+}
+
+func (e *Exporter) CheckClusterIssuerManaged(name string) string {
+	listOptions := metav1.ListOptions{
+		FieldSelector: fmt.Sprintf("metadata.name=%s", name),
+		LabelSelector: issuerLabelSelector,
+	}
+
+	clusterIssuersList, err := e.dynamicClient.Resource(certManagerClusterIssuerGroupVersionResource).List(e.ctx, listOptions)
+	if err != nil {
+		e.logger.Log("error", microerror.Mask(err))
+		return unknownString
+	}
+
+	if len(clusterIssuersList.Items) == 1 {
+		return trueString
+	}
+
+	return falseString
 }
 
 func New(config Config) (*Exporter, error) {
@@ -131,6 +203,7 @@ func New(config Config) (*Exporter, error) {
 				"name",
 				"namespace",
 				"issuer_ref",
+				"managed_issuer",
 			},
 			nil,
 		),
