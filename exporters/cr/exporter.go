@@ -9,7 +9,7 @@ import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
-	"k8s.io/apimachinery/pkg/api/errors"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -76,7 +76,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	for _, namespace := range namespacesToCheck {
 		certs, err := e.dynamicClient.Resource(certManagerCertificateGroupVersionResource).Namespace(namespace).List(e.ctx, listOptions)
 		if err != nil {
-			if !errors.IsNotFound(err) {
+			if !apierrors.IsNotFound(err) {
 				e.logger.Log("error", microerror.Mask(err))
 			}
 			continue
