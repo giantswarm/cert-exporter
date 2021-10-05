@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@4.5.0
+  architect: giantswarm/architect@4.6.0
 
 workflows:
   build:
@@ -39,6 +39,7 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-app-catalog:
+          executor: app-build-suite
           name: push-cert-exporter-to-default-app-catalog
           app_catalog: "default-catalog"
           app_catalog_test: "default-test-catalog"
@@ -51,12 +52,14 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-app-catalog:
+          executor: app-build-suite
           name: push-cert-exporter-to-control-plane-app-catalog
           app_catalog: "control-plane-catalog"
           app_catalog_test: "control-plane-test-catalog"
           chart: "cert-exporter"
           requires:
             - push-cert-exporter-to-quay
+          persist_chart_archive: true
           # Needed to trigger job also on git tag.
           filters:
             tags:
@@ -154,7 +157,7 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
-              
+
       - architect/push-to-app-collection:
           context: architect
           name: push-cert-exporter-to-vmware-app-collection
@@ -168,3 +171,16 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+
+      # - architect/run-tests-with-ats:
+      #     name: execute tests
+      #     requires:
+      #       - push-cert-exporter-to-control-plane-app-catalog
+      #     resource_class: xlarge
+      #     filters:
+      #       # Do not trigger the job on master branch or release tags.
+      #       branches:
+      #         ignore:
+      #           - master
+      #       tags:
+      #         ignore: /^v.*/

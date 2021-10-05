@@ -2,3 +2,7 @@
 
 # don't apply earlier restrictions under vendor
 !vendor/**
+
+.vscode
+
+build
