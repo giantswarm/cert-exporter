@@ -14,3 +14,21 @@ spec:
     targetPort: 9005
   selector:
     app: cert-exporter
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cert-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: cert-exporter
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  ports:
+  - name: cert-exporter
+    port: 9005
+    targetPort: 9005
+  selector:
+    app: cert-exporter

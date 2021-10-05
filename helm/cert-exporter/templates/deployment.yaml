@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata :
+  name: secret-cert-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: secret-cert-exporter
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: secret-cert-exporter
+  template:
+    metadata:
+      name: secret-cert-exporter
+      labels:
+        app: secret-cert-exporter
+      annotations:
+        releaseRevision: {{ .Release.Revision | quote }}
+    spec:
+      tolerations:
+      # Tolerate all taints for observability
+      - operator: "Exists"
+      serviceAccountName: cert-exporter
+      priorityClassName: giantswarm-critical
+      containers:
+      - name: cert-exporter
+        image: {{ include "certExporter.containerImage" . | quote }}
+        args:
+        - --monitor-secrets=true
+        - --monitor-certificates=true
+        - --monitor-files=false
+        ports:
+        - name: secret-cert-exporter
+          containerPort: 9005
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 150m
+            memory: 50Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000

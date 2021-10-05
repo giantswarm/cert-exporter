@@ -4,20 +4,28 @@ metadata:
   name: cert-exporter-psp
 spec:
   privileged: false
-  fsGroup:
-    rule: RunAsAny
+  allowPrivilegeEscalation: false
   runAsUser:
-    rule: RunAsAny
+    ranges:
+      - max: 1000
+        min: 1000
+    rule: MustRunAs
   seLinux:
     rule: RunAsAny
   supplementalGroups:
-    rule: RunAsAny
-  hostPorts:
-  - max: 9005
-    min: 9005
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 1000
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 1000
   volumes:
     - 'secret'
     - 'hostPath'
   hostNetwork: false
   hostIPC: false
   hostPID: false
+  readOnlyRootFilesystem: true

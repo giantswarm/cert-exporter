@@ -4,7 +4,7 @@ description: >-
   The cert-exporter walks a directory path it has gotten as input and emits all
   NotAfter timestamps as metrics.
 home: https://github.com/giantswarm/cert-exporter
-version: [[ .Version ]]
-appVersion: [[ .AppVersion ]]
+version: 1.8.0
+appVersion: 1.8.0
 annotations:
   config.giantswarm.io/version: 1.x.x
