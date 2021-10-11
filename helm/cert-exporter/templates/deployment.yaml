@@ -22,7 +22,7 @@ spec:
       tolerations:
       # Tolerate all taints for observability
       - operator: "Exists"
-      serviceAccountName: cert-exporter
+      serviceAccountName: secret-cert-exporter
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
@@ -32,7 +32,7 @@ spec:
         - --monitor-certificates=true
         - --monitor-files=false
         ports:
-        - name: secret-cert-exporter
+        - name: cert-exporter
           containerPort: 9005
         resources:
           requests:

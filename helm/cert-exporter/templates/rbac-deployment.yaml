@@ -1,0 +1,67 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: secret-cert-exporter
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - "cert-manager.io"
+    resources:
+      - "certificates"
+      - "clusterissuers"
+      - "issuers"
+    verbs:
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secret-cert-exporter
+roleRef:
+  kind: ClusterRole
+  name: secret-cert-exporter
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: secret-cert-exporter
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: secret-cert-exporter-psp
+rules:
+  - apiGroups:
+      - extensions
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - use
+    resourceNames:
+      - secret-cert-exporter-psp
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secret-cert-exporter-psp
+subjects:
+  - kind: ServiceAccount
+    name: secret-cert-exporter
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: secret-cert-exporter-psp
+  apiGroup: rbac.authorization.k8s.io

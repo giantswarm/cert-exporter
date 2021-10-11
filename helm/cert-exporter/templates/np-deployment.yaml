@@ -3,13 +3,13 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: cert-exporter
+  name: secret-cert-exporter
   labels:
-    app: cert-exporter
+    app: secret-cert-exporter
 spec:
   podSelector:
     matchLabels:
-      app: cert-exporter
+      app: secret-cert-exporter
   policyTypes:
     - Ingress
     - Egress
@@ -27,10 +27,10 @@ spec:
     {{ end }}
   egress:
   - ports:
-    - port: 53
-      protocol: UDP
-    # DNS uses TCP when the response is larger than 512 bytes
-    - port: 53
+    - port: 443
+      protocol: TCP
+    # legacy port kept for compatibility
+    - port: 6443
       protocol: TCP
     to:
     {{ range $index, $privateSubnet := $privateSubnets }}
