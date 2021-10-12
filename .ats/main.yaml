@@ -1,3 +1,4 @@
+app-tests-app-config-file: tests/test_values.yaml
 app-tests-deploy-namespace: kube-system
 
 smoke-tests-cluster-type: kind
