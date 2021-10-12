@@ -172,15 +172,15 @@ workflows:
             tags:
               only: /^v.*/
 
-      # - architect/run-tests-with-ats:
-      #     name: execute tests
-      #     requires:
-      #       - push-cert-exporter-to-control-plane-app-catalog
-      #     resource_class: xlarge
-      #     filters:
-      #       # Do not trigger the job on master branch or release tags.
-      #       branches:
-      #         ignore:
-      #           - master
-      #       tags:
-      #         ignore: /^v.*/
+      - architect/run-tests-with-ats:
+          name: execute tests
+          requires:
+            - push-cert-exporter-to-control-plane-app-catalog
+          # resource_class: xlarge
+          filters:
+            # Do not trigger the job on master branch or release tags.
+            branches:
+              ignore:
+                - master
+            tags:
+              ignore: /^v.*/

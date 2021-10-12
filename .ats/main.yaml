@@ -1,4 +1,4 @@
-# app-tests-app-config-file: tests/kind_config.yaml
+app-tests-deploy-namespace: kube-system
 
 smoke-tests-cluster-type: kind
 smoke-tests-cluster-config-file: tests/kind_config.yaml

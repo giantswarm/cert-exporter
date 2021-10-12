@@ -6,3 +6,5 @@
 .vscode
 
 build
+
+test_results_*.xml

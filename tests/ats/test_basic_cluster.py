@@ -1,16 +1,17 @@
 import logging
 import requests
 import time
-from contextlib import contextmanager
 from functools import partial
 from json import dumps
-from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import pykube
 import pytest
 from pytest_helm_charts.fixtures import Cluster
-from pytest_helm_charts.utils import wait_for_deployments_to_run
+from pytest_helm_charts.utils import (
+    wait_for_deployments_to_run,
+    wait_for_daemon_sets_to_run,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +48,6 @@ def test_cluster_info(
     assert cluster_type != ""
 
 
-# scope "module" means this is run only once, for the first test case requesting! It might be tricky
-# if you want to assert this multiple times
 @pytest.fixture(scope="module")
 def certexporter_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
     return wait_for_deployment(kube_cluster)
@@ -57,115 +56,86 @@ def certexporter_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
 def wait_for_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
     deployments = wait_for_deployments_to_run(
         kube_cluster.kube_client,
-        [app_name],
+        ["secret-cert-exporter"],
         namespace_name,
         timeout,
     )
     return deployments
 
 
-def try_ingress(port, host, expected_status):
-    retries = 5
-    last_status = 0
-    while retries != 0:
-        logger.info(f"trying GET http://127.0.0.1:{port}/ with Host: {host}")
-        try:
-            r = requests.get(f"http://127.0.0.1:{port}/", headers={"Host": host})
-            last_status = r.status_code
-        except Exception as e:
-            logger.info(f"Request failed: {e}")
-        else:
-            logger.info(f"Result: {last_status}. Expected {expected_status}")
+@pytest.fixture(scope="module")
+def certexporter_daemonset(kube_cluster: Cluster) -> List[pykube.DaemonSet]:
+    daemonsets = wait_for_daemon_sets_to_run(
+        kube_cluster.kube_client,
+        ["cert-exporter"],
+        namespace_name,
+        timeout,
+    )
+    return daemonsets
 
-        retries = retries - 1
-        if retries == 0:
-            break
-
-        time.sleep(1)
-
-    return last_status == expected_status
-
-
-# when we start the tests on circleci, we have to wait for pods to be available, hence
-# this additional delay and retries
 @pytest.mark.smoke
-@pytest.mark.flaky(reruns=5, reruns_delay=10)
-def test_pods_available(kube_cluster: Cluster, ic_deployment: List[pykube.Deployment]):
-    for s in ic_deployment:
+def test_pods_available(
+    kube_cluster: Cluster,
+    certexporter_deployment: List[pykube.Deployment],
+    certexporter_daemonset: List[pykube.DaemonSet],
+):
+    for s in certexporter_deployment:
+        logger.info(
+            f"Deployment '{s.name}' has {s.obj['status']['readyReplicas']} readyReplicas"
+        )
         assert int(s.obj["status"]["readyReplicas"]) > 0
+    for ds in certexporter_daemonset:
+        logger.info(
+            f"DaemonSet '{ds.name}' has status numberReady = {ds.obj['status']['numberReady']}"
+        )
+        assert int(ds.obj["status"]["numberReady"]) > 0
 
 
-# @pytest.mark.functional
-# def test_ingress_creation(
-#     request, kube_cluster: Cluster, ic_deployment: List[pykube.Deployment]
-# ):
-#     kube_cluster.kubectl("apply", filename=Path(request.fspath.dirname) / "test-ingress.yaml", output_format="")
+@pytest.mark.smoke
+def test_exporters_reachable(
+    kube_cluster: Cluster,
+    certexporter_deployment: List[pykube.Deployment],
+    certexporter_daemonset: List[pykube.DaemonSet],
+):
+    kubectl = partial(kube_cluster.kubectl, namespace=namespace_name, output_format="")
 
-#     kube_cluster.kubectl(
-#         "wait deployment helloworld --for=condition=Available",
-#         timeout="60s",
-#         output_format="",
-#         namespace="helloworld",
-#     )
+    # patch services to be NodePort services
+    # otherwise tests won't work
+    ce_patch = dumps(
+        {
+            "spec": {
+                "type": "NodePort",
+                "ports": [{"name": "cert-exporter", "port": 9005, "nodePort": 30007}],
+            }
+        }
+    )
+    kubectl("patch service cert-exporter", patch=ce_patch)
+    logger.info("Patched cert-exporter service")
 
-#     # try the ingress
-#     retries = 10
-#     last_status = 0
-#     while last_status != 200:
-#         r = requests.get("http://127.0.0.1:8080/", headers={"Host": "helloworld"})
-#         last_status = r.status_code
+    sce_patch = dumps(
+        {
+            "spec": {
+                "type": "NodePort",
+                "ports": [
+                    {"name": "secret-cert-exporter", "port": 9005, "nodePort": 30008}
+                ],
+            }
+        }
+    )
+    kubectl("patch service secret-cert-exporter", patch=sce_patch)
+    logger.info("Patched secret-cert-exporter service")
 
-#         if last_status == 200 or retries == 0:
-#             break
+    # let the dust settle
+    time.sleep(10)
 
-#         retries = retries - 1
-#         time.sleep(5)
+    ports = [
+        30017,
+        30018,
+        30027,
+        30028,
+    ]  # change this if your want to change the kind config
 
-#     assert last_status == 200
+    for port in ports:
+        r = requests.get(f"http://127.0.0.1:{port}/metrics")
 
-
-# @pytest.mark.functional
-# @pytest.mark.flaky(reruns=5, reruns_delay=10)
-# def test_multiple_ingress_controllers(
-#     request, kube_cluster: Cluster, ic_deployment: List[pykube.Deployment], chart_version
-# ):
-#     logger.info("applying manifests")
-#     # apply test manifests
-#     kube_cluster.kubectl(
-#         "apply", filename=Path(request.fspath.dirname) / "multi-controller-manifests.yaml", output_format=""
-#     )
-
-#     # shortcut function with fixed namespace
-#     # (defined in multi-controller-manifests.yaml)
-#     kubectl = partial(
-#         kube_cluster.kubectl, namespace="second-ingress-controller", output_format=""
-#     )
-#     logger.info("patching app with current chart version")
-#     # patch the app cr with the right version
-#     patch = dumps([{"op": "replace", "path": "/spec/version", "value": chart_version}])
-#     kubectl(f"patch app second-ingress-controller --type=json", patch=patch)
-
-#     logger.info("waiting until second controller deployment is ready")
-#     wait_for_deployments_to_run(
-#         kube_cluster.kube_client,
-#         ["second-ingress-controller"],
-#         "second-ingress-controller",
-#         timeout,
-#     )
-
-#     logger.info("waiting until second helloworld deployment is ready")
-#     wait_for_deployments_to_run(
-#         kube_cluster.kube_client,
-#         ["helloworld-2"],
-#         "helloworld-2",
-#         timeout,
-#     )
-
-#     logger.info("Checking if controller handle their respective Ingresses")
-#     # try the ingresses and expect 404 or 200 on port 8080 and 8081
-#     assert try_ingress(8081, "helloworld-2", 200)
-#     assert try_ingress(8081, "helloworld", 404)
-
-#     # try the ingress on port 8080 and expect 404
-#     assert try_ingress(8080, "helloworld-2", 404)
-#     assert try_ingress(8080, "helloworld", 200)
+        assert r.status_code == 200
