@@ -5,5 +5,3 @@ smoke-tests-cluster-type: kind
 smoke-tests-cluster-config-file: tests/kind_config.yaml
 functional-tests-cluster-type: kind
 functional-tests-cluster-config-file: tests/kind_config.yaml
-
-skip-steps: functional

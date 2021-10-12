@@ -8,3 +8,9 @@
 build
 
 test_results_*.xml
+
+tests/ats/kind-mounts
+
+*.kube.config
+
+.ats-cache

@@ -11,13 +11,7 @@ nodes:
     hostPort: 30018
     listenAddress: "127.0.0.1"
     protocol: TCP
-- role: worker
-  extraPortMappings:
-  - containerPort: 30007 # cert-exporter service is patched in tests
-    hostPort: 30027
-    listenAddress: "127.0.0.1"
-    protocol: TCP
-  - containerPort: 30008 # secret-cert-exporter service is patched in tests
-    hostPort: 30028
-    listenAddress: "127.0.0.1"
-    protocol: TCP
+  extraMounts:
+  - hostPath: tests/ats/kind-mounts/control-plane
+    containerPath: /certs
+    propagation: HostToContainer
