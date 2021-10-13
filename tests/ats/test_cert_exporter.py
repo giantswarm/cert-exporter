@@ -4,6 +4,7 @@ import time
 import tempfile
 import subprocess
 from functools import partial
+from pathlib import Path
 from json import dumps
 from typing import Dict, List
 from datetime import datetime, timedelta
@@ -155,7 +156,7 @@ def check_expiry(ts):
     return check
 
 
-def assert_metric(metrics: List[str], metric: str, validator) -> None:
+def assert_metric(metrics: List[str], metric: str, validator=None) -> None:
     if validator is None:
         found = [m for m in metrics if m.startswith(metric)]
     else:
@@ -309,21 +310,42 @@ def test_secret_metrics(
     )
 
 
-# @pytest.mark.functional
-# def test_certificate_cr_metrics(
-#     request,
-#     kube_cluster: Cluster,
-#     certexporter_deployment: List[pykube.Deployment],
-#     certexporter_daemonset: List[pykube.DaemonSet],
-#     cert_manager_app_cr: ConfiguredApp,
-# ):
-#     # patch services to be type: NodePort
-#     prepare_services(kube_cluster)
-#
-#
-#     # Create cert-manager certificate and
-#
-#     # Create a kubernetes.io/tls secret
-#
-#     # Request metrics from the exporters and check if they match expected values
-#
+@pytest.mark.functional
+def test_certificate_cr_metrics(
+    request,
+    kube_cluster: Cluster,
+    certexporter_deployment: List[pykube.Deployment],
+    certexporter_daemonset: List[pykube.DaemonSet],
+    cert_manager_app_cr: ConfiguredApp,
+):
+    # patch services to be type: NodePort
+    prepare_services(kube_cluster)
+
+    # apply certificate
+    kube_cluster.kubectl(
+        "apply",
+        filename=Path(request.fspath.dirname) / "cert-manager-certificate.yaml",
+        output_format="",
+    )
+
+    # let the dust settle
+    time.sleep(10)
+
+    # Request metrics from the exporters and check if they match expected values
+    metric_name = "cert_exporter_certificate_cr_not_after"
+
+    def validate_cert_metric(m):
+        return (
+            ('issuer_ref="selfsigned-giantswarm"' in m)
+            and ('managed_issuer="true",name="test-cert",namespace="default"' in m)
+            and ('name="test-cert",namespace="default"' in m)
+            and ('namespace="default"' in m)
+        )
+
+    # request from deployment port
+    deploy_metrics = retrieve_metrics(deployment_port)
+    assert_metric(deploy_metrics, metric_name, validate_cert_metric)
+
+    # request from daemonset port
+    ds_metrics = retrieve_metrics(daemonset_port)
+    assert len([m for m in ds_metrics if m.startswith(metric_name)]) == 0
