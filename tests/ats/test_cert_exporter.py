@@ -1,13 +1,12 @@
-# import sys
-# sys.path.append(os.basename(sys.argv[0]))
-
 import logging
 import requests
 import time
+import tempfile
+import subprocess
 from functools import partial
 from json import dumps
-from pathlib import Path
 from typing import Dict, List
+from datetime import datetime, timedelta
 
 import pykube
 import pytest
@@ -20,8 +19,6 @@ from pytest_helm_charts.giantswarm_app_platform.app import (
     AppFactoryFunc,
     ConfiguredApp,
 )
-
-# from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
 
 from cert_util import cert_gen
 
@@ -141,16 +138,28 @@ def retrieve_metrics(port: int) -> List[str]:
 
     raw_metrics = r.text
 
-    metrics_lines = [metric for metric in raw_metrics.splitlines() if not metric.startswith("#")]
+    metrics_lines = [
+        line for line in raw_metrics.splitlines() if not line.startswith("#")
+    ]
 
     assert len(metrics_lines) != 0
 
     return metrics_lines
 
 
-def assert_metric(metrics: List[str], metric: str) -> None:
-    # found = [m for m in cp_ds_metrics if m.startswith()]
-    found = [m for m in metrics if m.startswith(metric)]
+def check_expiry(ts):
+    def check(metric):
+        val = metric.split(" ")[1]
+        return abs(int(float(val)) - ts) < 5
+
+    return check
+
+
+def assert_metric(metrics: List[str], metric: str, validator) -> None:
+    if validator is None:
+        found = [m for m in metrics if m.startswith(metric)]
+    else:
+        found = [m for m in metrics if m.startswith(metric) and validator(m)]
     assert len(found) == 1
 
 
@@ -191,7 +200,6 @@ def test_exporters_reachable(
 
 @pytest.mark.functional
 def test_file_certificate_metrics(
-    request,
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
     certexporter_daemonset: List[pykube.DaemonSet],
@@ -201,28 +209,104 @@ def test_file_certificate_metrics(
 
     metric_name = "cert_exporter_not_after"
 
-    mount_dir = Path(f"{request.fspath.dirname}/kind-mounts/control-plane")
+    cert_name = "filesystem-cert"
 
-    cert_name = "control-plane-cert"
+    expires_in_secs = 3600
+    expected_expiry = int(
+        (datetime.now() + timedelta(seconds=expires_in_secs)).strftime("%s")
+    )
 
-    # Create certificate file on node
-    logger.info(f"Writing certificate file to {mount_dir}")
-    cert_gen(name=cert_name, target_dir=mount_dir)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        cert = cert_gen(name=cert_name, not_after=expires_in_secs)[0]
+        cert_path = f"{tmpdirname}/{cert_name}.crt"
+
+        with open(cert_path, "wt") as f:
+            f.write(cert)
+
+        # kind-control-plane is the container name
+        subprocess.run(
+            ["docker", "cp", cert_path, "kind-control-plane:/certs"],
+            check=True,
+        )
 
     # let the dust settle
     time.sleep(5)
 
     # request from daemonset port
     ds_metrics = retrieve_metrics(daemonset_port)
-    logger.info(ds_metrics)
-    assert_metric(ds_metrics, f"{metric_name}{{path=\"/certs/{cert_name}.crt\"}}")
+    assert_metric(
+        ds_metrics,
+        f'{metric_name}{{path="/certs/{cert_name}.crt"}}',
+        check_expiry(expected_expiry),
+    )
 
     # request from deployment port
     deploy_metrics = retrieve_metrics(deployment_port)
-    logger.info(deploy_metrics)
     assert len([m for m in deploy_metrics if m.startswith(metric_name)]) == 0
 
+    # cleanup
+    subprocess.run(
+        ["docker", "exec", "kind-control-plane", "bash", "-c", "rm -rf /certs/*"],
+        check=True,
+    )
 
+
+@pytest.mark.functional
+def test_secret_metrics(
+    kube_cluster: Cluster,
+    certexporter_deployment: List[pykube.Deployment],
+):
+    # patch services to be type: NodePort
+    prepare_services(kube_cluster)
+
+    metric_name = "cert_exporter_secret_not_after"
+
+    cert_name = "secret-cert"
+
+    expires_in_secs = 3600
+    expected_expiry = int(
+        (datetime.now() + timedelta(seconds=expires_in_secs)).strftime("%s")
+    )
+
+    # Create a kubernetes.io/tls secret
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        (cert, key) = cert_gen(name=cert_name, not_after=expires_in_secs)
+        cert_path = f"{tmpdirname}/{cert_name}.crt"
+        key_path = f"{tmpdirname}/{cert_name}.key"
+
+        with open(cert_path, "wt") as f:
+            f.write(cert)
+
+        with open(key_path, "wt") as f:
+            f.write(key)
+
+        kube_cluster.kubectl(
+            f"create secret tls {cert_name}",
+            output_format="",
+            cert=cert_path,
+            key=key_path,
+        )
+
+    # let the dust settle
+    time.sleep(5)
+
+    # request from deployment port
+    deploy_metrics = retrieve_metrics(deployment_port)
+    assert_metric(
+        deploy_metrics,
+        f'{metric_name}{{name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
+        check_expiry(expected_expiry),
+    )
+
+    # request from daemonset port
+    ds_metrics = retrieve_metrics(daemonset_port)
+    assert len([m for m in ds_metrics if m.startswith(metric_name)]) == 0
+
+    # cleanup
+    kube_cluster.kubectl(
+        f"delete secret {cert_name}",
+        output_format="",
+    )
 
 
 # @pytest.mark.functional
