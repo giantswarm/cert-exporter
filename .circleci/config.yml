@@ -2,6 +2,30 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@4.6.0
 
+jobs:
+  test:
+    machine: true
+    environment:
+      KIND_VERSION: v0.11.1
+      KUBERNETES_VERSION: v1.21.1
+    steps:
+      - checkout
+      - run:
+          name: Download kind
+          command: |
+            curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
+
+      - run:
+          name: Spin up cluster
+          command: |
+            kind create cluster --config tests/kind_config.yaml --kubeconfig kind.kube.config
+
+      - architect/run-tests-with-ats:
+          chart_archive_prefix: "cert-exporter"
+          app-test-suite_version: "v0.1.4"
+          app-test-suite_container_tag: "0.1.4"
+          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
+
 workflows:
   build:
     jobs:
@@ -172,7 +196,7 @@ workflows:
             tags:
               only: /^v.*/
 
-      - architect/run-tests-with-ats:
+      - test:
           name: execute tests
           requires:
             - push-cert-exporter-to-control-plane-app-catalog

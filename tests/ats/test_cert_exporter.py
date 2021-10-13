@@ -209,15 +209,18 @@ def test_file_certificate_metrics(
     logger.info(f"Writing certificate file to {mount_dir}")
     cert_gen(name=cert_name, target_dir=mount_dir)
 
-    # request from control-plane node
-    cp_ds_metrics = retrieve_metrics(daemonset_port)
-    logger.info(cp_ds_metrics)
-    assert_metric(cp_ds_metrics, f"{metric_name}{{path=\"/certs/{cert_name}.crt\"}}")
+    # let the dust settle
+    time.sleep(5)
 
-    # request from deployment port control-plane node
-    cp_deploy_metrics = retrieve_metrics(deployment_port)
-    logger.info(cp_deploy_metrics)
-    assert len([m for m in cp_deploy_metrics if m.startswith(metric_name)]) == 0
+    # request from daemonset port
+    ds_metrics = retrieve_metrics(daemonset_port)
+    logger.info(ds_metrics)
+    assert_metric(ds_metrics, f"{metric_name}{{path=\"/certs/{cert_name}.crt\"}}")
+
+    # request from deployment port
+    deploy_metrics = retrieve_metrics(deployment_port)
+    logger.info(deploy_metrics)
+    assert len([m for m in deploy_metrics if m.startswith(metric_name)]) == 0
 
 
 
