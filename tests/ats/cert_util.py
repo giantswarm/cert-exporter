@@ -3,6 +3,8 @@
 
 from OpenSSL import crypto
 
+import subprocess
+
 
 def cert_gen(
     name="commonName",
@@ -28,5 +30,8 @@ def cert_gen(
 
     with open(f"{target_dir}/{name}.crt", "wt") as f:
         f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode("utf-8"))
-    with open(f"{target_dir}/{name}.key", "wt") as f:
-        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
+
+    subprocess.run(
+        ["docker", "cp", f"{target_dir}/{name}.crt", "kind-control-plane:/certs"],
+        check=True,
+    )
