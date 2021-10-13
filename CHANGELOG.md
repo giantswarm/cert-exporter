@@ -10,6 +10,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Changed
 
 - Export presence of `giantswarm.io/service-type: managed` label in cert-manager `Issuer` and `ClusterIssuer` CR referenced by `Certificate` CR `issuerRef` spec field to `cert_exporter_certificate_cr_not_after` metric as `managed_issuer` label.
+- Add `--monitor-files` and `--monitor-secrets` flags.
+- Add Deployment to helm chart to avoid exporting secrets and certificate metrics from DaemonSets.
 
 ## [1.8.0] - 2021-08-25
 
