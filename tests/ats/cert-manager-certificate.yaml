@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: test-cert
+spec:
+  secretName: test-cert-secret
+  dnsNames:
+  - example.com
+  - foo.example.com
+  issuerRef:
+    name: selfsigned-giantswarm
+    kind: ClusterIssuer
+    group: cert-manager.io

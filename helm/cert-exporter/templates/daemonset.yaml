@@ -26,7 +26,6 @@ spec:
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
-        # image: "{{ .Values.registry.domain }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         image: {{ include "certExporter.containerImage" . | quote }}
         args:
         - --monitor-secrets=false
@@ -36,6 +35,12 @@ spec:
         - --cert-paths={{ .Values.exporter.certPath }}
         {{ else }}
         - --cert-paths=/etc/kubernetes/ssl
+        {{ end }}
+        {{ if ne .Values.exporter.tokenPath "" }}
+        - --token-path={{ .Values.exporter.tokenPath }}
+        {{ end }}
+        {{ if ne .Values.vaultAddress "" }}
+        - --vault-url={{ .Values.vaultAddress }}
         {{ end }}
         ports:
         - name: cert-exporter

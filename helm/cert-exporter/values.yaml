@@ -1,7 +1,6 @@
 exporter:
   certPath: ""
   tokenPath: ""
-  namespace: monitoring
 
 image:
   repository: giantswarm/cert-exporter
