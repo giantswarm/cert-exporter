@@ -5,8 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: secret-cert-exporter
-  annotations:
-    prometheus.io/scrape: "true"
+    giantswarm.io/monitoring: "true"
 spec:
   ports:
   - name: secret-cert-exporter
