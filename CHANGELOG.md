@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.0.0] - 2021-10-20
+
 ### Changed
 
 - Export presence of `giantswarm.io/service-type: managed` label in cert-manager `Issuer` and `ClusterIssuer` CR referenced by `Certificate` CR `issuerRef` spec field to `cert_exporter_certificate_cr_not_after` metric as `managed_issuer` label.
@@ -110,7 +112,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v1.8.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/giantswarm/cert-exporter/compare/v1.8.0...v2.0.0
 [1.8.0]: https://github.com/giantswarm/cert-exporter/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/giantswarm/cert-exporter/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/giantswarm/cert-exporter/compare/v1.6.1...v1.7.0
