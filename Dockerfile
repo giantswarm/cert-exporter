@@ -1,8 +1,11 @@
-FROM alpine:3.14.2
+FROM quay.io/giantswarm/alpine:3.14.2-giantswarm
 
-RUN apk add --update ca-certificates \
-    && rm -rf /var/cache/apk/*
+USER root
 
-ADD ./cert-exporter /cert-exporter
+RUN apk add --no-cache ca-certificates
+
+USER giantswarm
+
+COPY ./cert-exporter /cert-exporter
 
 ENTRYPOINT ["/cert-exporter"]

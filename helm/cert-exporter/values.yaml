@@ -1,11 +1,10 @@
 exporter:
   certPath: ""
   tokenPath: ""
-  namespace: monitoring
 
 image:
   repository: giantswarm/cert-exporter
-  tag: "[[ .Version ]]"
+  tag: ""
 
 registry:
   domain: docker.io

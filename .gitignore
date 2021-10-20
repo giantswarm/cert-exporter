@@ -2,3 +2,15 @@
 
 # don't apply earlier restrictions under vendor
 !vendor/**
+
+.vscode
+
+build
+
+test_results_*.xml
+
+tests/ats/kind-mounts
+
+*.kube.config
+
+.ats-cache

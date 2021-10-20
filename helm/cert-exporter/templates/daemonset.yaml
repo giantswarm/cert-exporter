@@ -26,10 +26,13 @@ spec:
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
-        image: "{{ .Values.registry.domain }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: {{ include "certExporter.containerImage" . | quote }}
         args:
+        - --monitor-secrets=false
+        - --monitor-certificates=false
+        - --monitor-files=true
         {{ if ne .Values.exporter.certPath "" }}
-        - --cert-paths={{ .Values.exporter.certPath }} 
+        - --cert-paths={{ .Values.exporter.certPath }}
         {{ else }}
         - --cert-paths=/etc/kubernetes/ssl
         {{ end }}
@@ -47,7 +50,13 @@ spec:
             cpu: 50m
             memory: 50Mi
           limits:
+            cpu: 150m
             memory: 50Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
         volumeMounts:
         {{ if ne .Values.exporter.certPath "" }}
         - mountPath: {{ .Values.exporter.certPath }}

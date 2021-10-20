@@ -1,7 +1,7 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: cert-exporter-psp
+  name: secret-cert-exporter-psp
 spec:
   privileged: false
   allowPrivilegeEscalation: false
@@ -24,7 +24,6 @@ spec:
         max: 1000
   volumes:
     - 'secret'
-    - 'hostPath'
   hostNetwork: false
   hostIPC: false
   hostPID: false

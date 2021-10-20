@@ -1,0 +1,17 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30007 # cert-exporter service is patched in tests
+    hostPort: 30017
+    listenAddress: "127.0.0.1"
+    protocol: TCP
+  - containerPort: 30008 # secret-cert-exporter service is patched in tests
+    hostPort: 30018
+    listenAddress: "127.0.0.1"
+    protocol: TCP
+  # extraMounts:
+  # - hostPath: tests/ats/kind-mounts/control-plane
+  #   containerPath: /certs
+  #   propagation: HostToContainer
