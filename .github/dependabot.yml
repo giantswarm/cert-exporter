@@ -11,7 +11,7 @@ updates:
       time: "04:00"
     open-pull-requests-limit: 10
     reviewers:
-      - giantswarm/team-ludacris
+      - giantswarm/sig-security
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
@@ -19,7 +19,7 @@ updates:
       time: "04:00"
     open-pull-requests-limit: 10
     reviewers:
-      - giantswarm/team-ludacris
+      - giantswarm/sig-security
     ignore:
       - dependency-name: zricethezav/gitleaks-action
   - package-ecosystem: gomod
@@ -29,8 +29,16 @@ updates:
       time: "04:00"
     open-pull-requests-limit: 10
     reviewers:
-      - giantswarm/team-ludacris
+      - giantswarm/sig-security
     ignore:
       - dependency-name: k8s.io/*
         versions:
           - ">=0.19.0"
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      time: "04:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - giantswarm/sig-security
