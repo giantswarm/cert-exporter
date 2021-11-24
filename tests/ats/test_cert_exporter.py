@@ -115,6 +115,7 @@ def cert_manager_app_cr(app_factory: AppFactoryFunc) -> ConfiguredApp:
         "cert-manager-app",
         cert_manager_app_chart_version,
         "giantswarm-stable",
+        "cert-manager-app"
         "https://giantswarm.github.io/giantswarm-catalog/",
         namespace="cert-manager-app",
         timeout_sec=timeout,
