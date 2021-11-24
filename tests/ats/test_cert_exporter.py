@@ -71,6 +71,7 @@ def prepare_services(kube_cluster: Cluster) -> None:
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_api_working(kube_cluster: Cluster) -> None:
     """Very minimalistic example of using the [kube_cluster](pytest_helm_charts.fixtures.kube_cluster)
     fixture to get an instance of [Cluster](pytest_helm_charts.clusters.Cluster) under test
@@ -84,6 +85,7 @@ def test_api_working(kube_cluster: Cluster) -> None:
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_cluster_info(
     kube_cluster: Cluster, cluster_type: str, chart_extra_info: Dict[str, str]
 ) -> None:
@@ -165,6 +167,7 @@ def assert_metric(metrics: List[str], metric: str, validator=None) -> None:
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_pods_available(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -183,6 +186,7 @@ def test_pods_available(
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_exporters_reachable(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -200,6 +204,7 @@ def test_exporters_reachable(
 
 
 @pytest.mark.functional
+@pytest.mark.upgrade
 def test_file_certificate_metrics(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -253,6 +258,7 @@ def test_file_certificate_metrics(
 
 
 @pytest.mark.functional
+@pytest.mark.upgrade
 def test_secret_metrics(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -311,6 +317,7 @@ def test_secret_metrics(
 
 
 @pytest.mark.functional
+@pytest.mark.upgrade
 def test_certificate_cr_metrics(
     request,
     kube_cluster: Cluster,

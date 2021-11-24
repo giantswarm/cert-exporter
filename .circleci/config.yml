@@ -22,8 +22,6 @@ jobs:
 
       - architect/run-tests-with-ats:
           chart_archive_prefix: "cert-exporter"
-          app-test-suite_version: "v0.1.4"
-          app-test-suite_container_tag: "0.1.4"
           additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 workflows:
