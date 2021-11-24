@@ -1,12 +1,13 @@
 app-tests-app-config-file: tests/test_values.yaml
 app-tests-deploy-namespace: kube-system
 
-smoke-tests-cluster-type: kind
-smoke-tests-cluster-config-file: tests/kind_config.yaml
-functional-tests-cluster-type: kind
-functional-tests-cluster-config-file: tests/kind_config.yaml
+smoke-tests-cluster-type: external
+functional-tests-cluster-type: external
+upgrade-tests-cluster-type: external
 
-upgrade-tests-cluster-type: kind
-upgrade-tests-cluster-config-file: tests/kind_config.yaml
+external-cluster-kubeconfig-path: kind.kube.config
+external-cluster-type: kind
+external-cluster-version: v1.21.1
+
 upgrade-tests-app-catalog-url: https://giantswarm.github.io/control-plane-catalog
 upgrade-tests-app-config-file: tests/test_values.yaml
