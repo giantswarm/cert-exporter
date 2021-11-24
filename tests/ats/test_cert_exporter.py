@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 app_name = "cert-exporter"
 namespace_name = "kube-system"
-cert_manager_app_chart_version = "2.11.0"
+cert_manager_app_chart_version = "2.11.1"
 # change this if your want to change the kind config
 daemonset_port = 30017
 deployment_port = 30018
