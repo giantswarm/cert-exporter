@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "788e9b25f894c7e1302d6e95635543b27c22c7c104ae505de253ef09afceb243"
+            "sha256": "1ed0f78d09cfb2de7213c66ce7317f97a10f121bc38e92ebf45dc43d22d46885"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -178,11 +178,11 @@
         },
         "pykube-ng": {
             "hashes": [
-                "sha256:06d73e639d4c63979798042247330e6b9e7072e4a2be84a0ea4793e633787970",
-                "sha256:d0824fab6b5c1f25ca5d4b348a9556545603d1ff9251e126fd4008a34e142dc3"
+                "sha256:62799fcfd1630c20e2e7fd89f54cd8ab4ec40806f7bf706f3ab50511b98a1c91",
+                "sha256:78defb7f2cf1a38bdd27c7250e0cde22f070e0e4f27e65c6d1414ebe48cf916c"
             ],
             "index": "pypi",
-            "version": "==21.3.0"
+            "version": "==21.10.0"
         },
         "pyopenssl": {
             "hashes": [
@@ -210,11 +210,11 @@
         },
         "pytest-helm-charts": {
             "hashes": [
-                "sha256:193c74f9638831fe0a9ddf83b68e798b9677f59e5c62c0bd2f536789a30403e4",
-                "sha256:b07f37c703edfd8a9b83103d83bfa9cafe02bad574bed190bae9887b19cb8100"
+                "sha256:13972a00a9705bda2e9923e641528f76470cfd3abade54290060bef9cb7d3d66",
+                "sha256:a94451c08f7f85525e6089ec23fccf11c324468d32cf3a3a1e59a6a0927a5501"
             ],
             "index": "pypi",
-            "version": "==0.5.3"
+            "version": "==0.6.0"
         },
         "pytest-rerunfailures": {
             "hashes": [
