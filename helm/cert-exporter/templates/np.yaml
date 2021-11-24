@@ -5,11 +5,11 @@ metadata:
   namespace: {{ .Release.Namespace }}
   name: cert-exporter
   labels:
-    app: cert-exporter
+    {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: cert-exporter
+      {{- include "certExporter.daemonset.matchLabels" . | nindent 6 }}
   policyTypes:
     - Ingress
     - Egress

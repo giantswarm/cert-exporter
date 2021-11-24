@@ -4,18 +4,18 @@ metadata :
   name: secret-cert-exporter
   namespace: {{ .Release.Namespace }}
   labels:
-    app: secret-cert-exporter
+    {{- include "certExporter.deployment.labels" . | nindent 4 }}
 spec:
   updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: secret-cert-exporter
+      {{- include "certExporter.deployment.matchLabels" . | nindent 6 }}
   template:
     metadata:
       name: secret-cert-exporter
       labels:
-        app: secret-cert-exporter
+        {{- include "certExporter.deployment.labels" . | nindent 8 }}
       annotations:
         releaseRevision: {{ .Release.Revision | quote }}
     spec:
