@@ -10,6 +10,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Changed
 
 - Equalise labels in the helm chart.
+- Add Job through Helm hook to delete old DaemonSet and Deployment.
 
 ## [2.0.0] - 2021-10-20
 

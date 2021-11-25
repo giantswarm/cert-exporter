@@ -318,7 +318,7 @@ def test_secret_metrics(
 
 
 @pytest.mark.functional
-@pytest.mark.upgrade
+# @pytest.mark.upgrade
 def test_certificate_cr_metrics(
     request,
     kube_cluster: Cluster,
