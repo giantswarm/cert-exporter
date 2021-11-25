@@ -112,14 +112,14 @@ def certexporter_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
 @pytest.fixture(scope="module")
 def cert_manager_app_cr(app_factory: AppFactoryFunc) -> ConfiguredApp:
     res = app_factory(
-        "cert-manager-app",
-        cert_manager_app_chart_version,
-        "giantswarm-stable",
-        "cert-manager-app"
-        "https://giantswarm.github.io/giantswarm-catalog/",
+        app_name="cert-manager-app",  # app_name
+        app_version=cert_manager_app_chart_version,  # app_version
+        catalog_name="giantswarm-stable",  # catalog_name
+        catalog_namespace="giantswarm",  # catalog_namespace
+        catalog_url="https://giantswarm.github.io/giantswarm-catalog/",  # catalog_url
         namespace="cert-manager-app",
-        timeout_sec=timeout,
         deployment_namespace="cert-manager-app",
+        timeout_sec=timeout,
     )
     return res
 
