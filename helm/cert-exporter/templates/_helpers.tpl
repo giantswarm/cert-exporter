@@ -11,6 +11,14 @@
 {{- default .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "certExporter.daemonset.name" -}}
+{{- printf "%s-%s" ( include "certExporter.name" . | trunc 54 | trimSuffix "-" ) "daemonset" -}}
+{{- end -}}
+
+{{- define "certExporter.deployment.name" -}}
+{{- printf "%s-%s" ( include "certExporter.name" . | trunc 53 | trimSuffix "-" ) "deployment" -}}
+{{- end -}}
+
 {{/* Create chart name and version as used by the chart label. */}}
 {{- define "certExporter.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
@@ -23,13 +31,13 @@ helm.sh/chart: "{{ template "certExporter.chart" . }}"
 {{- end -}}
 
 {{- define "certExporter.daemonset.matchLabels" -}}
-app: cert-exporter
-app.kubernetes.io/name: "{{ template "certExporter.name" . }}-daemonset"
+app.kubernetes.io/name: "{{ template "certExporter.daemonset.name" . }}"
+app.kubernetes.io/instance: "{{ template "certExporter.name" . }}"
 {{- end -}}
 
 {{- define "certExporter.deployment.matchLabels" -}}
-app: secret-cert-exporter
-app.kubernetes.io/name: "{{ template "certExporter.name" . }}-deployment"
+app.kubernetes.io/name: "{{ template "certExporter.deployment.name" . }}"
+app.kubernetes.io/instance: "{{ template "certExporter.name" . }}"
 {{- end -}}
 
 {{- define "certExporter.daemonset.labels" -}}
@@ -40,4 +48,23 @@ app.kubernetes.io/name: "{{ template "certExporter.name" . }}-deployment"
 {{- define "certExporter.deployment.labels" -}}
 {{ include "certExporter.commonLabels" . }}
 {{ include "certExporter.deployment.matchLabels" . }}
+{{- end -}}
+
+{{- define "certExporter.fixJob" -}}
+{{- printf "%s-%s" ( include "certExporter.name" . | trunc 56 | trimSuffix "-" ) "fix-job" -}}
+{{- end -}}
+
+{{- define "certExporter.fixJobSelectorLabels" -}}
+app.kubernetes.io/name: "{{ template "certExporter.fixJob" . }}"
+app.kubernetes.io/instance: "{{ template "certExporter.fixJob" . }}"
+{{- end -}}
+
+{{- define "certExporter.fixJobAnnotations" -}}
+"helm.sh/hook": "pre-install,pre-upgrade"
+"helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded,hook-failed"
+{{- end -}}
+
+{{/* Create a label which can be used to select any orphaned fix-job hook resources */}}
+{{- define "certExporter.fixJobSelector" -}}
+{{- printf "%s" "fix-job-hook" -}}
 {{- end -}}

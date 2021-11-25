@@ -10,3 +10,7 @@ registry:
   domain: docker.io
 
 vaultAddress: ""
+
+# This can be removed in versions > 2.0.0
+fixJob:
+  enabled: true
