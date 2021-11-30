@@ -1,7 +1,7 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: secret-cert-exporter-psp
+  name: "{{ template "certExporter.deployment.name" . }}"
   labels:
     {{- include "certExporter.deployment.labels" . | nindent 4 }}
 spec:

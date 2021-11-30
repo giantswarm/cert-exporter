@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: cert-exporter-psp
+  name: "{{ template "certExporter.daemonset.name" . }}"
   labels:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 rules:
@@ -12,19 +12,19 @@ rules:
     verbs:
       - use
     resourceNames:
-      - cert-exporter-psp
+      - "{{ template "certExporter.daemonset.name" . }}"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: cert-exporter-psp
+  name: "{{ template "certExporter.daemonset.name" . }}"
   labels:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: cert-exporter
+    name: "{{ template "certExporter.daemonset.name" . }}"
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: cert-exporter-psp
+  name: "{{ template "certExporter.daemonset.name" . }}"
   apiGroup: rbac.authorization.k8s.io

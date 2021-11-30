@@ -3,7 +3,7 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: cert-exporter
+  name: "{{ template "certExporter.daemonset.name" . }}"
   labels:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 spec:

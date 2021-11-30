@@ -13,7 +13,6 @@ spec:
       {{- include "certExporter.deployment.matchLabels" . | nindent 6 }}
   template:
     metadata:
-      name: secret-cert-exporter
       labels:
         {{- include "certExporter.deployment.labels" . | nindent 8 }}
       annotations:
@@ -22,7 +21,7 @@ spec:
       tolerations:
       # Tolerate all taints for observability
       - operator: "Exists"
-      serviceAccountName: secret-cert-exporter
+      serviceAccountName: "{{ template "certExporter.deployment.name" . }}"
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
