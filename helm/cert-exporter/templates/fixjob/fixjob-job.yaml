@@ -43,9 +43,6 @@ spec:
           kubectl -n {{ .Release.Namespace }} delete --cascade='foreground' daemonset,networkpolicy -l app=cert-exporter 2>&1
           kubectl -n {{ .Release.Namespace }} delete --cascade='foreground' deployment,networkpolicy -l app=secret-cert-exporter 2>&1
 
-          kubectl -n {{ .Release.Namespace }} wait --for=delete daemonset -l app=cert-exporter 2>&1
-          kubectl -n {{ .Release.Namespace }} wait --for=delete deployment -l app=secret-cert-exporter 2>&1
-
           kubectl delete --ignore-not-found=true --cascade='foreground' podsecuritypolicy,clusterrole,clusterrolebinding,serviceaccount cert-exporter cert-exporter-psp secret-cert-exporter secret-cert-exporter-psp 2>&1
 
         resources:
