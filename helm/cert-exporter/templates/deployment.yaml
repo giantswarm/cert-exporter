@@ -6,7 +6,7 @@ metadata :
   labels:
     {{- include "certExporter.deployment.labels" . | nindent 4 }}
 spec:
-  updateStrategy:
+  strategy:
     type: RollingUpdate
   selector:
     matchLabels:
