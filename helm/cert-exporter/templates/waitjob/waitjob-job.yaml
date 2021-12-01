@@ -1,0 +1,54 @@
+{{- if .Values.waitJob.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "certExporter.waitJob" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    # create hook dependencies in the right order
+    "helm.sh/hook-weight": "-1"
+    {{- include "certExporter.waitJobAnnotations" . | nindent 4 }}
+    ignore-check.kube-linter.io/no-read-only-root-fs: "kubectl"
+  labels:
+    app.kubernetes.io/component: {{ include "certExporter.waitJob" . | quote }}
+    {{- include "certExporter.waitJobSelectorLabels" . | nindent 4 }}
+    role: {{ include "certExporter.waitJobSelector" . | quote }}
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: {{ include "certExporter.waitJob" . | quote }}
+        {{- include "certExporter.waitJobSelectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "certExporter.waitJob" . }}
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: kubectl
+        image: "{{ .Values.registry.domain }}/giantswarm/docker-kubectl:latest"
+        command:
+        - sh
+        - -c
+        - |
+          set -o errexit ; set -o xtrace ; set -o nounset
+
+          # piping stderr to stdout means kubectl's errors are surfaced
+          # in the pod's logs.
+
+          kubectl -n {{ .Release.Namespace }} rollout status daemonset/cert-exporter 2>&1
+          kubectl -n {{ .Release.Namespace }} wait deployment/secret-cert-exporter --for condition=available 2>&1
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      restartPolicy: Never
+  backoffLimit: 4
+{{- end }}

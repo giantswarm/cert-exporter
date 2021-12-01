@@ -1,0 +1,54 @@
+{{- if .Values.waitJob.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "certExporter.waitJob" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    # create hook dependencies in the right order
+    "helm.sh/hook-weight": "-3"
+    {{- include "certExporter.waitJobAnnotations" . | nindent 4 }}
+  labels:
+    app.kubernetes.io/component: {{ include "certExporter.waitJob" . | quote }}
+    {{- include "certExporter.waitJobSelectorLabels" . | nindent 4 }}
+    role: {{ include "certExporter.waitJobSelector" . | quote }}
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  verbs:
+  - list
+  - get
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - {{ include "certExporter.waitJob" . }}
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "certExporter.waitJob" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    # create hook dependencies in the right order
+    "helm.sh/hook-weight": "-2"
+    {{- include "certExporter.waitJobAnnotations" . | nindent 4 }}
+  labels:
+    app.kubernetes.io/component: {{ include "certExporter.waitJob" . | quote }}
+    {{- include "certExporter.waitJobSelectorLabels" . | nindent 4 }}
+    role: {{ include "certExporter.waitJobSelector" . | quote }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "certExporter.waitJob" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "certExporter.waitJob" . }}
+    namespace: {{ .Release.Namespace | quote }}
+{{- end }}

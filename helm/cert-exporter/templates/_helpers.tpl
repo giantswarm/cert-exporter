@@ -68,3 +68,22 @@ app.kubernetes.io/instance: "{{ template "certExporter.fixJob" . }}"
 {{- define "certExporter.fixJobSelector" -}}
 {{- printf "%s" "fix-job-hook" -}}
 {{- end -}}
+
+{{- define "certExporter.waitJob" -}}
+{{- printf "%s-%s" ( include "certExporter.name" . | trunc 55 | trimSuffix "-" ) "wait-job" -}}
+{{- end -}}
+
+{{- define "certExporter.waitJobSelectorLabels" -}}
+app.kubernetes.io/name: "{{ template "certExporter.waitJob" . }}"
+app.kubernetes.io/instance: "{{ template "certExporter.waitJob" . }}"
+{{- end -}}
+
+{{- define "certExporter.waitJobAnnotations" -}}
+"helm.sh/hook": "post-install,post-upgrade"
+"helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded,hook-failed"
+{{- end -}}
+
+{{/* Create a label which can be used to select any orphaned wait-job hook resources */}}
+{{- define "certExporter.waitJobSelector" -}}
+{{- printf "%s" "wait-job-hook" -}}
+{{- end -}}
