@@ -1,4 +1,4 @@
-{{- if .Values.fixJob.enabled }}
+{{- if and .Release.IsUpgrade .Values.fixJob.enabled }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:

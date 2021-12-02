@@ -60,7 +60,7 @@ app.kubernetes.io/instance: "{{ template "certExporter.fixJob" . }}"
 {{- end -}}
 
 {{- define "certExporter.fixJobAnnotations" -}}
-"helm.sh/hook": "pre-install,pre-upgrade"
+"helm.sh/hook": "pre-upgrade"
 "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded,hook-failed"
 {{- end -}}
 

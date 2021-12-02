@@ -1,4 +1,4 @@
-{{- if .Values.fixJob.enabled }}
+{{- if and .Release.IsUpgrade .Values.fixJob.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
