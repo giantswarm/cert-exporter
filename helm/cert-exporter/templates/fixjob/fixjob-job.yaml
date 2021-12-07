@@ -40,10 +40,12 @@ spec:
           # in the pod's logs.
 
           # Temporary fix to work around selector changes
-          kubectl -n {{ .Release.Namespace }} delete --cascade='foreground' daemonset,networkpolicy -l app=cert-exporter 2>&1
-          kubectl -n {{ .Release.Namespace }} delete --cascade='foreground' deployment,networkpolicy -l app=secret-cert-exporter 2>&1
+          #kubectl -n {{ .Release.Namespace }} delete --cascade='foreground' daemonset,networkpolicy -l app=cert-exporter 2>&1
+          #kubectl -n {{ .Release.Namespace }} delete --cascade='foreground' --wait=true deployment,networkpolicy -l app=secret-cert-exporter 2>&1
 
-          kubectl delete --ignore-not-found=true --cascade='foreground' podsecuritypolicy,clusterrole,clusterrolebinding,serviceaccount cert-exporter cert-exporter-psp secret-cert-exporter secret-cert-exporter-psp 2>&1
+          #kubectl delete --ignore-not-found=true --cascade='foreground' --wait=true podsecuritypolicy,clusterrole,clusterrolebinding,serviceaccount cert-exporter cert-exporter-psp secret-cert-exporter secret-cert-exporter-psp 2>&1
+
+          kubectl delete -n giantswarm chart cert-exporter 2>&1
 
         resources:
           requests:

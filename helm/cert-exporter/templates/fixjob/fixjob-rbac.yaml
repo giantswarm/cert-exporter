@@ -51,6 +51,13 @@ rules:
   - list
   - delete
 - apiGroups:
+  - "charts.application.giantswarm.io"
+  resources:
+  - charts
+  verbs:
+  - list
+  - delete
+- apiGroups:
   - policy
   resources:
   - podsecuritypolicies
