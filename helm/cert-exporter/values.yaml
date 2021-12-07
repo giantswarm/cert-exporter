@@ -12,7 +12,7 @@ registry:
 vaultAddress: ""
 
 waitJob:
-  enabled: true
+  enabled: false
 
 # This can be removed in versions > 2.0.0
 fixJob:
