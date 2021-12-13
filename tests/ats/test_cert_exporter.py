@@ -53,8 +53,8 @@ def prepare_services(kube_cluster: Cluster) -> None:
             }
         }
     )
-    kubectl("patch service cert-exporter", patch=ce_patch)
-    logger.info("Patched cert-exporter service")
+    kubectl("patch service cert-exporter-daemonset", patch=ce_patch)
+    logger.info("Patched cert-exporter-daemonset service")
 
     sce_patch = dumps(
         {
@@ -66,8 +66,8 @@ def prepare_services(kube_cluster: Cluster) -> None:
             }
         }
     )
-    kubectl("patch service secret-cert-exporter", patch=sce_patch)
-    logger.info("Patched secret-cert-exporter service")
+    kubectl("patch service cert-exporter-deployment", patch=sce_patch)
+    logger.info("Patched cert-exporter-deployment service")
 
 
 @pytest.mark.smoke
@@ -102,7 +102,7 @@ def test_cluster_info(
 def certexporter_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
     deployments = wait_for_deployments_to_run(
         kube_cluster.kube_client,
-        ["secret-cert-exporter"],
+        ["cert-exporter-deployment"],
         namespace_name,
         timeout,
     )
@@ -128,7 +128,7 @@ def cert_manager_app_cr(app_factory: AppFactoryFunc) -> ConfiguredApp:
 def certexporter_daemonset(kube_cluster: Cluster) -> List[pykube.DaemonSet]:
     daemonsets = wait_for_daemon_sets_to_run(
         kube_cluster.kube_client,
-        ["cert-exporter"],
+        ["cert-exporter-daemonset"],
         namespace_name,
         timeout,
     )
