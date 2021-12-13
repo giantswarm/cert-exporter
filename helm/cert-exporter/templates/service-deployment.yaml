@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: secret-cert-exporter
+  name: "{{ template "certExporter.deployment.name" . }}"
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "certExporter.deployment.labels" . | nindent 4 }}
