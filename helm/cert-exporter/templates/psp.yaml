@@ -27,6 +27,15 @@ spec:
   volumes:
     - 'secret'
     - 'hostPath'
+  allowedHostPaths:
+  - pathPrefix: /etc/ssl/certs/
+    readOnly: true
+  - pathPrefix: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
+    readOnly: true
+  {{ if ne .Values.exporter.tokenPath "" }}
+  - pathPrefix: {{ .Values.exporter.tokenPath }}
+    readOnly: true
+  {{ end }}
   hostNetwork: false
   hostIPC: false
   hostPID: false

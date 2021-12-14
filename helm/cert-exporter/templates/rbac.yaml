@@ -20,11 +20,11 @@ metadata:
   name: "{{ template "certExporter.daemonset.name" . }}"
   labels:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
-subjects:
-  - kind: ServiceAccount
-    name: "{{ template "certExporter.daemonset.name" . }}"
-    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: "{{ template "certExporter.daemonset.name" . }}"
   apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: "{{ template "certExporter.daemonset.name" . }}"
+    namespace: {{ .Release.Namespace }}

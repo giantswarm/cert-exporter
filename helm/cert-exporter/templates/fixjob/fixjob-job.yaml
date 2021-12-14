@@ -45,7 +45,9 @@ spec:
 
           #kubectl delete --ignore-not-found=true --cascade='foreground' --wait=true podsecuritypolicy,clusterrole,clusterrolebinding,serviceaccount cert-exporter cert-exporter-psp secret-cert-exporter secret-cert-exporter-psp 2>&1
 
-          kubectl delete -n giantswarm chart cert-exporter 2>&1
+          #kubectl delete -n giantswarm chart cert-exporter 2>&1
+
+          kubectl delete --ignore-not-found=true --cascade='foreground' --wait=true podsecuritypolicy,clusterrole,clusterrolebinding,serviceaccount cert-exporter cert-exporter-psp secret-cert-exporter secret-cert-exporter-psp 2>&1
 
         resources:
           requests:
