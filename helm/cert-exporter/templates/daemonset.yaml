@@ -21,7 +21,7 @@ spec:
       tolerations:
       # Tolerate all taints for observability
       - operator: "Exists"
-      serviceAccountName: "{{ template "certExporter.daemonset.name" . }}"
+      serviceAccountName: "{{ template "certExporter.deployment.name" . }}"
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter

@@ -16,4 +16,4 @@ waitJob:
 
 # This can be removed in versions > 2.0.0
 fixJob:
-  enabled: true
+  enabled: false
