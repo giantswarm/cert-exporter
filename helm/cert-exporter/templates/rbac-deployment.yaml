@@ -28,7 +28,7 @@ rules:
     verbs:
       - list
   - apiGroups:
-      - policies
+      - extensions
     resources:
       - podsecuritypolicies
     verbs:
