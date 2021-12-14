@@ -6,7 +6,7 @@ metadata:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 rules:
   - apiGroups:
-      - policies
+      - extensions
     resources:
       - podsecuritypolicies
     verbs:
