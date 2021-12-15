@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.0.1] - 2021-12-15
+
 ### Changed
 
 - Equalise labels in the helm chart.
@@ -116,7 +118,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/giantswarm/cert-exporter/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/giantswarm/cert-exporter/compare/v1.8.0...v2.0.0
 [1.8.0]: https://github.com/giantswarm/cert-exporter/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/giantswarm/cert-exporter/compare/v1.7.0...v1.7.1
