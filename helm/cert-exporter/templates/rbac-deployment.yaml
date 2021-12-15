@@ -1,7 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: secret-cert-exporter
+  name: "{{ template "certExporter.deployment.name" . }}"
+  labels:
+    {{- include "certExporter.deployment.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - ""
@@ -25,25 +27,6 @@ rules:
       - "issuers"
     verbs:
       - list
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: secret-cert-exporter
-roleRef:
-  kind: ClusterRole
-  name: secret-cert-exporter
-  apiGroup: rbac.authorization.k8s.io
-subjects:
-  - kind: ServiceAccount
-    name: secret-cert-exporter
-    namespace: {{ .Release.Namespace }}
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: secret-cert-exporter-psp
-rules:
   - apiGroups:
       - extensions
     resources:
@@ -51,17 +34,19 @@ rules:
     verbs:
       - use
     resourceNames:
-      - secret-cert-exporter-psp
+      - "{{ template "certExporter.deployment.name" . }}"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: secret-cert-exporter-psp
-subjects:
-  - kind: ServiceAccount
-    name: secret-cert-exporter
-    namespace: {{ .Release.Namespace }}
+  name: "{{ template "certExporter.deployment.name" . }}"
+  labels:
+    {{- include "certExporter.deployment.labels" . | nindent 4 }}
 roleRef:
   kind: ClusterRole
-  name: secret-cert-exporter-psp
+  name: "{{ template "certExporter.deployment.name" . }}"
   apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: "{{ template "certExporter.deployment.name" . }}"
+    namespace: {{ .Release.Namespace }}

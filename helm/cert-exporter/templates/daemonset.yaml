@@ -1,28 +1,27 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: cert-exporter
+  name: "{{ template "certExporter.daemonset.name" . }}"
   namespace: {{ .Release.Namespace }}
   labels:
-    app: cert-exporter
+    {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 spec:
   updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: cert-exporter
+      {{- include "certExporter.daemonset.matchLabels" . | nindent 6 }}
   template:
     metadata:
-      name: cert-exporter
       labels:
-        app: cert-exporter
+        {{- include "certExporter.daemonset.labels" . | nindent 8 }}
       annotations:
         releaseRevision: {{ .Release.Revision | quote }}
     spec:
       tolerations:
       # Tolerate all taints for observability
       - operator: "Exists"
-      serviceAccountName: cert-exporter
+      serviceAccountName: "{{ template "certExporter.daemonset.name" . }}"
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter
@@ -31,11 +30,7 @@ spec:
         - --monitor-secrets=false
         - --monitor-certificates=false
         - --monitor-files=true
-        {{ if ne .Values.exporter.certPath "" }}
-        - --cert-paths={{ .Values.exporter.certPath }}
-        {{ else }}
-        - --cert-paths=/etc/kubernetes/ssl
-        {{ end }}
+        - --cert-paths={{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
         {{ if ne .Values.exporter.tokenPath "" }}
         - --token-path={{ .Values.exporter.tokenPath }}
         {{ end }}
@@ -58,27 +53,21 @@ spec:
           runAsUser: 1000
           runAsGroup: 1000
         volumeMounts:
-        {{ if ne .Values.exporter.certPath "" }}
-        - mountPath: {{ .Values.exporter.certPath }}
+        - mountPath: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
           name: certs-volume
-        {{ else }}
-        - mountPath: /etc/kubernetes/ssl
-          name: certs-volume
-        {{ end }}
+          readOnly: true
         {{ if ne .Values.exporter.tokenPath "" }}
         - mountPath: {{ .Values.exporter.tokenPath }}
           name: tokens-volume
+          readOnly: true
         {{ end }}
         - mountPath: /etc/ssl/certs/
           name: ca-certs
+          readOnly: true
       volumes:
       - name: certs-volume
         hostPath:
-          {{ if ne .Values.exporter.certPath "" }}
-          path: {{ .Values.exporter.certPath }}
-          {{ else }}
-          path: /etc/kubernetes/ssl
-          {{ end }}
+          path: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
       {{ if ne .Values.exporter.tokenPath "" }}
       - name: tokens-volume
         hostPath:

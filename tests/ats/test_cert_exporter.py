@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 app_name = "cert-exporter"
 namespace_name = "kube-system"
-cert_manager_app_chart_version = "2.11.0"
+cert_manager_app_chart_version = "2.11.1"
 # change this if your want to change the kind config
 daemonset_port = 30017
 deployment_port = 30018
@@ -53,8 +53,8 @@ def prepare_services(kube_cluster: Cluster) -> None:
             }
         }
     )
-    kubectl("patch service cert-exporter", patch=ce_patch)
-    logger.info("Patched cert-exporter service")
+    kubectl("patch service cert-exporter-daemonset", patch=ce_patch)
+    logger.info("Patched cert-exporter-daemonset service")
 
     sce_patch = dumps(
         {
@@ -66,11 +66,12 @@ def prepare_services(kube_cluster: Cluster) -> None:
             }
         }
     )
-    kubectl("patch service secret-cert-exporter", patch=sce_patch)
-    logger.info("Patched secret-cert-exporter service")
+    kubectl("patch service cert-exporter-deployment", patch=sce_patch)
+    logger.info("Patched cert-exporter-deployment service")
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_api_working(kube_cluster: Cluster) -> None:
     """Very minimalistic example of using the [kube_cluster](pytest_helm_charts.fixtures.kube_cluster)
     fixture to get an instance of [Cluster](pytest_helm_charts.clusters.Cluster) under test
@@ -84,6 +85,7 @@ def test_api_working(kube_cluster: Cluster) -> None:
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_cluster_info(
     kube_cluster: Cluster, cluster_type: str, chart_extra_info: Dict[str, str]
 ) -> None:
@@ -100,7 +102,7 @@ def test_cluster_info(
 def certexporter_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
     deployments = wait_for_deployments_to_run(
         kube_cluster.kube_client,
-        ["secret-cert-exporter"],
+        ["cert-exporter-deployment"],
         namespace_name,
         timeout,
     )
@@ -110,13 +112,14 @@ def certexporter_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
 @pytest.fixture(scope="module")
 def cert_manager_app_cr(app_factory: AppFactoryFunc) -> ConfiguredApp:
     res = app_factory(
-        "cert-manager-app",
-        cert_manager_app_chart_version,
-        "giantswarm-stable",
-        "https://giantswarm.github.io/giantswarm-catalog/",
+        app_name="cert-manager-app",  # app_name
+        app_version=cert_manager_app_chart_version,  # app_version
+        catalog_name="giantswarm-stable",  # catalog_name
+        catalog_namespace="giantswarm",  # catalog_namespace
+        catalog_url="https://giantswarm.github.io/giantswarm-catalog/",  # catalog_url
         namespace="cert-manager-app",
-        timeout_sec=timeout,
         deployment_namespace="cert-manager-app",
+        timeout_sec=timeout,
     )
     return res
 
@@ -125,7 +128,7 @@ def cert_manager_app_cr(app_factory: AppFactoryFunc) -> ConfiguredApp:
 def certexporter_daemonset(kube_cluster: Cluster) -> List[pykube.DaemonSet]:
     daemonsets = wait_for_daemon_sets_to_run(
         kube_cluster.kube_client,
-        ["cert-exporter"],
+        ["cert-exporter-daemonset"],
         namespace_name,
         timeout,
     )
@@ -165,6 +168,7 @@ def assert_metric(metrics: List[str], metric: str, validator=None) -> None:
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_pods_available(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -183,6 +187,7 @@ def test_pods_available(
 
 
 @pytest.mark.smoke
+@pytest.mark.upgrade
 def test_exporters_reachable(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -200,6 +205,7 @@ def test_exporters_reachable(
 
 
 @pytest.mark.functional
+@pytest.mark.upgrade
 def test_file_certificate_metrics(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -253,6 +259,7 @@ def test_file_certificate_metrics(
 
 
 @pytest.mark.functional
+@pytest.mark.upgrade
 def test_secret_metrics(
     kube_cluster: Cluster,
     certexporter_deployment: List[pykube.Deployment],
@@ -311,6 +318,7 @@ def test_secret_metrics(
 
 
 @pytest.mark.functional
+# @pytest.mark.upgrade
 def test_certificate_cr_metrics(
     request,
     kube_cluster: Cluster,

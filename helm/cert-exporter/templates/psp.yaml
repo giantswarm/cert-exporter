@@ -1,7 +1,9 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: cert-exporter-psp
+  name: "{{ template "certExporter.daemonset.name" . }}"
+  labels:
+    {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 spec:
   privileged: false
   allowPrivilegeEscalation: false
@@ -25,6 +27,15 @@ spec:
   volumes:
     - 'secret'
     - 'hostPath'
+  allowedHostPaths:
+  - pathPrefix: /etc/ssl/certs/
+    readOnly: true
+  - pathPrefix: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
+    readOnly: true
+  {{ if ne .Values.exporter.tokenPath "" }}
+  - pathPrefix: {{ .Values.exporter.tokenPath }}
+    readOnly: true
+  {{ end }}
   hostNetwork: false
   hostIPC: false
   hostPID: false

@@ -3,6 +3,14 @@ app-tests-deploy-namespace: kube-system
 
 smoke-tests-cluster-type: external
 functional-tests-cluster-type: external
+upgrade-tests-cluster-type: external
+
 external-cluster-kubeconfig-path: kind.kube.config
 external-cluster-type: kind
 external-cluster-version: v1.21.1
+
+upgrade-tests-app-catalog-url: https://giantswarm.github.io/control-plane-catalog
+upgrade-tests-app-config-file: tests/test_values.yaml
+
+# enable upgrade tests after release 2.0.1
+skip-steps: [upgrade]
