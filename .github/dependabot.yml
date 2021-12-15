@@ -1,6 +1,6 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@4.10.0
+#    devctl@4.11.0
 #
 version: 2
 updates:
@@ -10,16 +10,12 @@ updates:
       interval: weekly
       time: "04:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - giantswarm/sig-security
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
       time: "04:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - giantswarm/sig-security
     ignore:
       - dependency-name: zricethezav/gitleaks-action
   - package-ecosystem: gomod
@@ -28,8 +24,6 @@ updates:
       interval: weekly
       time: "04:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - giantswarm/sig-security
     ignore:
       - dependency-name: k8s.io/*
         versions:
@@ -40,5 +34,3 @@ updates:
       interval: weekly
       time: "04:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - giantswarm/sig-security
