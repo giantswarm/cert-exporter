@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Equalise labels in the helm chart.
+
 ## [2.0.0] - 2021-10-20
 
 ### Changed

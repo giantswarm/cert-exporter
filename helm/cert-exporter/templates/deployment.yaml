@@ -1,28 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata :
-  name: secret-cert-exporter
+  name: "{{ template "certExporter.deployment.name" . }}"
   namespace: {{ .Release.Namespace }}
   labels:
-    app: secret-cert-exporter
+    {{- include "certExporter.deployment.labels" . | nindent 4 }}
 spec:
-  updateStrategy:
+  strategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: secret-cert-exporter
+      {{- include "certExporter.deployment.matchLabels" . | nindent 6 }}
   template:
     metadata:
-      name: secret-cert-exporter
       labels:
-        app: secret-cert-exporter
+        {{- include "certExporter.deployment.labels" . | nindent 8 }}
       annotations:
         releaseRevision: {{ .Release.Revision | quote }}
     spec:
       tolerations:
       # Tolerate all taints for observability
       - operator: "Exists"
-      serviceAccountName: secret-cert-exporter
+      serviceAccountName: "{{ template "certExporter.deployment.name" . }}"
       priorityClassName: giantswarm-critical
       containers:
       - name: cert-exporter

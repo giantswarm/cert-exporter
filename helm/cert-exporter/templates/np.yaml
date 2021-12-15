@@ -3,13 +3,13 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: cert-exporter
+  name: "{{ template "certExporter.daemonset.name" . }}"
   labels:
-    app: cert-exporter
+    {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: cert-exporter
+      {{- include "certExporter.daemonset.matchLabels" . | nindent 6 }}
   policyTypes:
     - Ingress
     - Egress
