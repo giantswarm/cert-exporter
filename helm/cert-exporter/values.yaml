@@ -10,10 +10,3 @@ registry:
   domain: docker.io
 
 vaultAddress: ""
-
-waitJob:
-  enabled: false
-
-# This can be removed in versions > 2.0.0
-fixJob:
-  enabled: false
