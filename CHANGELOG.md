@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Make exporter's monitor flags configurable.
+
 ## [2.0.1] - 2021-12-15
 
 ### Changed

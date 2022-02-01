@@ -1,3 +1,13 @@
+config:
+  deployment:
+    monitorCertificates: true
+    monitorFiles: false
+    monitorSecrets: true
+  daemonset:
+    monitorCertificates: false
+    monitorFiles: true
+    monitorSecrets: false
+
 exporter:
   certPath: ""
   tokenPath: ""
