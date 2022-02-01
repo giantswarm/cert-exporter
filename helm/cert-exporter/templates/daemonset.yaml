@@ -27,9 +27,9 @@ spec:
       - name: cert-exporter
         image: {{ include "certExporter.containerImage" . | quote }}
         args:
-        - --monitor-secrets=false
-        - --monitor-certificates=false
-        - --monitor-files=true
+        - --monitor-secrets={{ .Values.config.daemonset.monitorSecrets }}
+        - --monitor-certificates={{ .Values.config.daemonset.monitorCertificates }}
+        - --monitor-files={{ .Values.config.daemonset.monitorFiles }}
         - --cert-paths={{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
         {{ if ne .Values.exporter.tokenPath "" }}
         - --token-path={{ .Values.exporter.tokenPath }}

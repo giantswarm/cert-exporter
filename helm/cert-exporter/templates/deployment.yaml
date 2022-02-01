@@ -27,9 +27,9 @@ spec:
       - name: cert-exporter
         image: {{ include "certExporter.containerImage" . | quote }}
         args:
-        - --monitor-secrets=true
-        - --monitor-certificates=true
-        - --monitor-files=false
+        - --monitor-secrets={{ .Values.config.deployment.monitorSecrets }}
+        - --monitor-certificates={{ .Values.config.deployment.monitorCertificates }}
+        - --monitor-files={{ .Values.config.deployment.monitorFiles }}
         ports:
         - name: cert-exporter
           containerPort: 9005
