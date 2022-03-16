@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.1.1] - 2022-03-16
+
 ### Fixed
 
 - Allow egress to port 1053 to make in-cluster DNS queries work.
@@ -129,7 +131,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/giantswarm/cert-exporter/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/giantswarm/cert-exporter/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/giantswarm/cert-exporter/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/giantswarm/cert-exporter/compare/v1.8.0...v2.0.0
