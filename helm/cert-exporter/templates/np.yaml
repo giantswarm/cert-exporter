@@ -32,6 +32,14 @@ spec:
     # DNS uses TCP when the response is larger than 512 bytes
     - port: 53
       protocol: TCP
+    - port: 1053
+      protocol: UDP
+    # DNS uses TCP when the response is larger than 512 bytes
+    - port: 1053
+      protocol: TCP
+    # To scrape the vault token expiration
+    - port: 443
+      protocol: TCP
     to:
     {{ range $index, $privateSubnet := $privateSubnets }}
     - ipBlock:
