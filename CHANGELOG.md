@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Fixed
+
+- Allow egress to port 1053 to make in-cluster DNS queries work.
+
 ## [2.1.0] - 2022-02-01
 
 ### Changed
