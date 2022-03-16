@@ -10,6 +10,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Fixed
 
 - Allow egress to port 1053 to make in-cluster DNS queries work.
+- Allow egress to port 443 to allow accessing vault.
 
 ## [2.1.0] - 2022-02-01
 
