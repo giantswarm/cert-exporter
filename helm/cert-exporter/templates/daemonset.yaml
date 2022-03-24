@@ -22,7 +22,7 @@ spec:
       # Tolerate all taints for observability
       - operator: "Exists"
       serviceAccountName: "{{ template "certExporter.daemonset.name" . }}"
-      priorityClassName: giantswarm-critical
+      priorityClassName: system-node-critical
       containers:
       - name: cert-exporter
         image: {{ include "certExporter.containerImage" . | quote }}

@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Change priorityClass to `system-node-critical` for the daemonset.
+
 ## [2.1.1] - 2022-03-16
 
 ### Fixed
