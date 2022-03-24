@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.2.0] - 2022-03-24
+
 ### Changed
 
 - Change priorityClass to `system-node-critical` for the daemonset.
@@ -135,7 +137,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/giantswarm/cert-exporter/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/giantswarm/cert-exporter/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/giantswarm/cert-exporter/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/giantswarm/cert-exporter/compare/v2.0.0...v2.0.1
