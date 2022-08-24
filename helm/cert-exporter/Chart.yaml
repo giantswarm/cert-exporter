@@ -7,5 +7,5 @@ home: https://github.com/giantswarm/cert-exporter
 version: 2.1.0
 appVersion: 2.0.0
 annotations:
-  application.giantswarm.io/team: "hydra"
+  application.giantswarm.io/team: "phoenix"
   config.giantswarm.io/version: 1.x.x
