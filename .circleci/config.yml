@@ -78,6 +78,7 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-app-catalog:
+          context: architect
           executor: app-build-suite
           name: push-cert-exporter-to-control-plane-app-catalog
           app_catalog: "control-plane-catalog"
