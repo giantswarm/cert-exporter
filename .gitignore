@@ -4,7 +4,6 @@
 !vendor/**
 
 .vscode
-/.idea
 
 build
 
