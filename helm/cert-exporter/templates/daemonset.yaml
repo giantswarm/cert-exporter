@@ -30,7 +30,7 @@ spec:
         - --monitor-secrets={{ .Values.config.daemonset.monitorSecrets }}
         - --monitor-certificates={{ .Values.config.daemonset.monitorCertificates }}
         - --monitor-files={{ .Values.config.daemonset.monitorFiles }}
-        - --cert-paths={{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
+        - --cert-paths={{ default "/etc/kubernetes/ssl,/etc/kubernetes/pki" .Values.exporter.certPath }}
         {{ if ne .Values.exporter.tokenPath "" }}
         - --token-path={{ .Values.exporter.tokenPath }}
         {{ end }}
