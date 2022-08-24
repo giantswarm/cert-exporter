@@ -65,6 +65,7 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-app-catalog:
+          context: architect
           executor: app-build-suite
           name: push-cert-exporter-to-default-app-catalog
           app_catalog: "default-catalog"
