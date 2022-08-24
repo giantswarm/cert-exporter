@@ -19,6 +19,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Update k8s.io/apimachinery to v0.23.10.
 - Update k8s.io/client-go to v0.23.10.
 
+### Added
+
+- Add /etc/kubernetes/pki to --cert-paths flag in DaemonSet deployment.
+
 ## [2.2.0] - 2022-03-24
 
 ### Changed
