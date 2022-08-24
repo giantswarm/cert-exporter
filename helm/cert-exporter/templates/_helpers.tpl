@@ -27,6 +27,7 @@
 {{- define "certExporter.commonLabels" -}}
 app.kubernetes.io/managed-by: "{{ .Release.Service }}"
 app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | quote }}
 helm.sh/chart: "{{ template "certExporter.chart" . }}"
 {{- end -}}
 
