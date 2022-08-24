@@ -1,6 +1,6 @@
 module github.com/giantswarm/cert-exporter
 
-go 1.19
+go 1.18
 
 require (
 	github.com/giantswarm/k8sclient/v7 v7.0.1

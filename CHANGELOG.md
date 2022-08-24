@@ -10,7 +10,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Changed
 
 - Update base container image to quay.io/giantswarm/alpine:3.16.2-giantswarm.
-- Update go to 1.19.
+- Update go to 1.18.
 - Update github.com/giantswarm/k8sclient to v7.0.1.
 - Update github.com/hashicorp/vault/api to v1.7.2.
 - Update github.com/prometheus/client_golang to v1.13.0.
