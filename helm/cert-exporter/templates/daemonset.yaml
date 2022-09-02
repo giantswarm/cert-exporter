@@ -56,6 +56,9 @@ spec:
         - mountPath: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
           name: certs-volume
           readOnly: true
+        - mountPath: {{ default "/etc/kubernetes/pki" .Values.exporter.capiCertPath }}
+          name: capi-certs-volume
+          readOnly: true
         {{ if ne .Values.exporter.tokenPath "" }}
         - mountPath: {{ .Values.exporter.tokenPath }}
           name: tokens-volume
@@ -68,6 +71,9 @@ spec:
       - name: certs-volume
         hostPath:
           path: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
+      - name: capi-certs-volume
+        hostPath:
+          path: {{ default "/etc/kubernetes/pki" .Values.exporter.capiCertPath }}
       {{ if ne .Values.exporter.tokenPath "" }}
       - name: tokens-volume
         hostPath:
