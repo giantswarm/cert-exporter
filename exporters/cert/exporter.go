@@ -59,6 +59,7 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 	}
 	err = afero.Walk(e.fs, path, func(fpath string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
+			e.logger.Log("debug", fmt.Sprintf("checking cert %s", fpath))
 			file, err := afero.ReadFile(e.fs, fpath)
 			if err != nil {
 				e.logger.Log("error", microerror.Mask(err))
@@ -90,6 +91,8 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))
 
 		}
+
+		e.logger.Log("debug", fmt.Sprintf("found cert path %s", path))
 		return nil
 	})
 	if err != nil {
