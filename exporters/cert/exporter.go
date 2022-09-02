@@ -26,14 +26,16 @@ type Exporter struct {
 }
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
-	e.logger.Log("info", fmt.Sprintf("start collecting metrics %s", strings.Join(e.paths, ",")))
+	e.logger.Log("info", fmt.Sprintf("start collecting metrics %s", strings.Join(e.paths, ";")))
 
 	// Check every path.
 	certsPathNotFoundErrorCount := 0
 	for _, p := range e.paths {
+		e.logger.Log("debug", fmt.Sprintf("checking cert path %s", p))
 		err := e.collectPath(ch, p)
 		if IsCertsPathNotFound(err) {
 			certsPathNotFoundErrorCount++
+			e.logger.Log("debug", fmt.Sprintf("cert path not found %s", p))
 		} else if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 		}
