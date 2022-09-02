@@ -32,6 +32,8 @@ spec:
     readOnly: true
   - pathPrefix: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
     readOnly: true
+  - pathPrefix: {{ default "/etc/kubernetes/pki" .Values.exporter.capiCertPath }}
+    readOnly: true
   {{ if ne .Values.exporter.tokenPath "" }}
   - pathPrefix: {{ .Values.exporter.tokenPath }}
     readOnly: true
