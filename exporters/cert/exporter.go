@@ -29,11 +29,20 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "start collecting metrics")
 
 	// Check every path.
+	certsPathNotFoundErrorCount := 0
 	for _, p := range e.paths {
 		err := e.collectPath(ch, p)
-		if err != nil {
+		if IsCertsPathNotFound(err) {
+			certsPathNotFoundErrorCount++
+		} else if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 		}
+	}
+
+	// Check if we found at least one certificates directory
+	foundCertsPaths := len(e.paths) - certsPathNotFoundErrorCount
+	if foundCertsPaths == 0 {
+		e.logger.Log("error", "at least one certificates path must exist")
 	}
 
 	e.logger.Log("info", "stop collecting metrics")
@@ -42,8 +51,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 	ok, err := afero.DirExists(e.fs, path)
 	if !ok {
-		e.logger.Log("error", microerror.Maskf(invalidConfigError, fmt.Sprintf("folder %s with certs has to exist", path)))
-		return nil
+		return microerror.Maskf(certsPathNotFoundError, fmt.Sprintf("folder %s with certs has to exist", path))
 	}
 	if err != nil {
 		e.logger.Log("error", microerror.Mask(err))
