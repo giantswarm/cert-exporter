@@ -1,10 +1,9 @@
 apiVersion: v1
 name: cert-exporter
 description: >-
-  The cert-exporter walks a directory path it has gotten as input and emits all
-  NotAfter timestamps as metrics.
+  The cert-exporter walks a directory path it has gotten as input and emits all NotAfter timestamps as metrics.
 home: https://github.com/giantswarm/cert-exporter
-version: 2.1.0
+version: 2.3.0
 appVersion: 2.0.0
 annotations:
   application.giantswarm.io/team: "phoenix"

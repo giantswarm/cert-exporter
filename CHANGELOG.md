@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.3.0] - 2022-09-05
+
 ### Changed
 
 - Update base container image to quay.io/giantswarm/alpine:3.16.2-giantswarm.
@@ -153,7 +155,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/giantswarm/cert-exporter/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/giantswarm/cert-exporter/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/giantswarm/cert-exporter/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/giantswarm/cert-exporter/compare/v2.0.1...v2.1.0
