@@ -30,7 +30,7 @@ spec:
         - --monitor-secrets={{ .Values.config.daemonset.monitorSecrets }}
         - --monitor-certificates={{ .Values.config.daemonset.monitorCertificates }}
         - --monitor-files={{ .Values.config.daemonset.monitorFiles }}
-        - --cert-paths={{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
+        - --cert-paths={{ default "/etc/kubernetes/ssl,/etc/kubernetes/pki" .Values.exporter.certPath }}
         {{ if ne .Values.exporter.tokenPath "" }}
         - --token-path={{ .Values.exporter.tokenPath }}
         {{ end }}
@@ -56,6 +56,9 @@ spec:
         - mountPath: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
           name: certs-volume
           readOnly: true
+        - mountPath: {{ default "/etc/kubernetes/pki" .Values.exporter.capiCertPath }}
+          name: capi-certs-volume
+          readOnly: true
         {{ if ne .Values.exporter.tokenPath "" }}
         - mountPath: {{ .Values.exporter.tokenPath }}
           name: tokens-volume
@@ -68,6 +71,9 @@ spec:
       - name: certs-volume
         hostPath:
           path: {{ default "/etc/kubernetes/ssl" .Values.exporter.certPath }}
+      - name: capi-certs-volume
+        hostPath:
+          path: {{ default "/etc/kubernetes/pki" .Values.exporter.capiCertPath }}
       {{ if ne .Values.exporter.tokenPath "" }}
       - name: tokens-volume
         hostPath:
