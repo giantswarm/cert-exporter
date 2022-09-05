@@ -38,6 +38,9 @@
         "exporter": {
             "type": "object",
             "properties": {
+                "capiCertPath": {
+                    "type": "string"
+                },
                 "certPath": {
                     "type": "string"
                 },
