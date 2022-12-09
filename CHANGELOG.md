@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Fixed
+
+- Allow eviction for cert-exporter-deployment.
+
 ## [2.3.0] - 2022-09-05
 
 ### Changed
