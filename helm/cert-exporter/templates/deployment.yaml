@@ -17,6 +17,7 @@ spec:
         {{- include "certExporter.deployment.labels" . | nindent 8 }}
       annotations:
         releaseRevision: {{ .Release.Revision | quote }}
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       tolerations:
       # Tolerate all taints for observability
