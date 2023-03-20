@@ -3,7 +3,6 @@ package token
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -83,7 +82,7 @@ func New(config Config) (*Exporter, error) {
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.logger.Log("info", "collecting vault metrics")
 
-	files, err := ioutil.ReadDir(e.path)
+	files, err := os.ReadDir(e.path)
 	if err != nil {
 		e.logger.Log("error", microerror.Mask(err))
 		return
