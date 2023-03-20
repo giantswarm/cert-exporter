@@ -39,6 +39,7 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-docker:
+          context: architect
           name: push-cert-exporter-to-quay
           image: "quay.io/giantswarm/cert-exporter"
           username_envar: "QUAY_USERNAME"
@@ -51,6 +52,7 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-docker:
+          context: architect
           name: push-cert-exporter-to-aliyun
           image: "giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/cert-exporter"
           username_envar: "ALIYUN_USERNAME"
