@@ -3,13 +3,13 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: "{{ template "certExporter.daemonset.name" . }}"
+  name: "{{ template "certExporter.deployment.name" . }}"
   labels:
-    {{- include "certExporter.daemonset.labels" . | nindent 4 }}
+    {{- include "certExporter.deployment.labels" . | nindent 4 }}
 spec:
   endpointSelector:
     matchLabels:
-      {{- include "certExporter.daemonset.matchLabels" . | nindent 6 }}
+      {{- include "certExporter.deployment.matchLabels" . | nindent 6 }}
   egress:
     # To scrape the vault token expiration
     - toEntities:
