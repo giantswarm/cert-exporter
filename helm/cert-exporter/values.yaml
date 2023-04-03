@@ -21,3 +21,6 @@ registry:
   domain: docker.io
 
 vaultAddress: ""
+
+ciliumNetworkPolicy:
+  enabled: false

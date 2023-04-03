@@ -115,5 +115,5 @@ func main() {
 	}
 
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(address, nil) // nolint: errcheck
+	http.ListenAndServe(address, nil) // nolint:errcheck,gosec
 }
