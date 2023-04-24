@@ -5,7 +5,7 @@ description: >-
 home: https://github.com/giantswarm/cert-exporter
 version: 2.4.0
 appVersion: 2.0.0
-icon: https://s.giantswarm.io/app-icons/prometheus-operator/2/dark.svg
+icon: https://s.giantswarm.io/app-icons/prometheus/1/light.svg
 annotations:
   application.giantswarm.io/team: "phoenix"
   config.giantswarm.io/version: 1.x.x
