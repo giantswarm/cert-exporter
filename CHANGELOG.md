@@ -9,6 +9,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Changed
 
+- Allow requests from the api-server.
 - Update icon
 
 ## [2.4.0] - 2023-04-03
