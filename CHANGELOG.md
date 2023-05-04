@@ -11,6 +11,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Changed
 
+- Allow requests from the api-server.
 - Update icon
 - Disable PSPs for k8s 1.25 and newer.
 
