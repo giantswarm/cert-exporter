@@ -19,9 +19,6 @@ spec:
         releaseRevision: {{ .Release.Revision | quote }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
-      tolerations:
-      # Tolerate all taints for observability
-      - operator: "Exists"
       serviceAccountName: "{{ template "certExporter.deployment.name" . }}"
       priorityClassName: giantswarm-critical
       containers:
