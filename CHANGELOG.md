@@ -7,6 +7,14 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.6.0] - 2023-06-01
+
+## [2.6.0] - 2023-06-01
+
+### Changed
+
+- Remove the `Exist` toleration from deployment. This allows the pod to be rescheduled on a drained node sometimes causing the drain of a node to fail and require a manual fix
+
 ## [2.5.1] - 2023-05-04
 
 ## [2.5.0] - 2023-05-04
@@ -177,7 +185,9 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.5.1...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/giantswarm/cert-exporter/compare/v2.6.0...v2.6.0
+[2.6.0]: https://github.com/giantswarm/cert-exporter/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/giantswarm/cert-exporter/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/giantswarm/cert-exporter/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/giantswarm/cert-exporter/compare/v2.3.1...v2.4.0
