@@ -9,8 +9,6 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [2.6.0] - 2023-06-01
 
-## [2.6.0] - 2023-06-01
-
 ### Changed
 
 - Remove the `Exist` toleration from deployment. This allows the pod to be rescheduled on a drained node sometimes causing the drain of a node to fail and require a manual fix
