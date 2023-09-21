@@ -1,0 +1,35 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: "{{ template "certExporter.daemonset.name" . }}"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "certExporter.daemonset.labels" . | nindent 4 }}
+spec:
+  endpoints:
+    - interval: {{ .Values.serviceMonitor.interval }}
+      path: /metrics
+      port: cert-exporter
+      scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
+      relabelings:
+      - action: replace
+        regex: ;(.*)
+        replacement: $1
+        separator: ;
+        sourceLabels:
+        - namespace
+        - __meta_kubernetes_namespace
+        targetLabel: namespace
+      - action: replace
+        sourceLabels:
+        - __meta_kubernetes_pod_label_app
+        targetLabel: app
+      - action: replace
+        sourceLabels:
+        - __meta_kubernetes_pod_node_name
+        targetLabel: node
+  selector:
+    matchLabels:
+      {{- include "certExporter.daemonset.matchLabels" . | nindent 6 }}
+{{- end }}

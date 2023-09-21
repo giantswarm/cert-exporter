@@ -7,7 +7,7 @@ upgrade-tests-cluster-type: external
 
 external-cluster-kubeconfig-path: kind.kube.config
 external-cluster-type: kind
-external-cluster-version: v1.21.1
+external-cluster-version: v1.24.0
 
 upgrade-tests-app-catalog-url: https://giantswarm.github.io/control-plane-catalog
 upgrade-tests-app-config-file: tests/test_values.yaml
