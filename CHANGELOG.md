@@ -7,11 +7,12 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
-## [2.6.0] - 2023-09-27
 
 ### Changed
 
 - Add Service Monitor.
+
+## [2.6.0] - 2023-06-01
 
 ### Changed
 
@@ -19,11 +20,14 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [2.5.1] - 2023-05-04
 
+### Changed
+
+- Allow requests from the api-server.
+
 ## [2.5.0] - 2023-05-04
 
 ### Changed
 
-- Allow requests from the api-server.
 - Update icon
 - Disable PSPs for k8s 1.25 and newer.
 
