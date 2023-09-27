@@ -7,11 +7,13 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
-## [2.6.0] - 2023-09-27
+## [2.7.0] - 2023-09-27
 
 ### Changed
 
 - Add Service Monitor.
+
+## [2.6.0] - 2023-06-01
 
 ### Changed
 
@@ -19,11 +21,14 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [2.5.1] - 2023-05-04
 
+### Changed
+
+- Allow requests from the api-server.
+
 ## [2.5.0] - 2023-05-04
 
 ### Changed
 
-- Allow requests from the api-server.
 - Update icon
 - Disable PSPs for k8s 1.25 and newer.
 
@@ -187,7 +192,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.7.0...HEAD
+[2.7.0]: https://github.com/giantswarm/cert-exporter/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/giantswarm/cert-exporter/compare/v2.6.0...v2.6.0
 [2.6.0]: https://github.com/giantswarm/cert-exporter/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/giantswarm/cert-exporter/compare/v2.5.0...v2.5.1
