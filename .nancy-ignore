@@ -1,2 +1,5 @@
 CVE-2022-41717
 CVE-2022-41721
+
+# pkg:golang/golang.org/x/net@v0.7.0
+CVE-2023-3978

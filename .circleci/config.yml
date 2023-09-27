@@ -11,7 +11,7 @@ jobs:
     machine: true
     environment:
       KIND_VERSION: v0.11.1
-      KUBERNETES_VERSION: v1.21.1
+      KUBERNETES_VERSION: v1.24.0
     steps:
       - checkout
       - run:
@@ -24,8 +24,8 @@ jobs:
             kind create cluster --config tests/kind_config.yaml --kubeconfig kind.kube.config
       - architect/run-tests-with-ats:
           chart_archive_prefix: "cert-exporter"
-          app-test-suite_version: "v0.2.2"
-          app-test-suite_container_tag: "0.2.2"
+          app-test-suite_version: "v0.4.1"
+          app-test-suite_container_tag: "0.4.1"
           additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 workflows:

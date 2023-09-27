@@ -12,10 +12,8 @@ from datetime import datetime, timedelta
 import pykube
 import pytest
 from pytest_helm_charts.fixtures import Cluster
-from pytest_helm_charts.utils import (
-    wait_for_deployments_to_run,
-    wait_for_daemon_sets_to_run,
-)
+from pytest_helm_charts.k8s.deployment import wait_for_deployments_to_run
+from pytest_helm_charts.k8s.daemon_set import wait_for_daemon_sets_to_run
 from pytest_helm_charts.giantswarm_app_platform.app import (
     AppFactoryFunc,
     ConfiguredApp,
@@ -61,7 +59,7 @@ def prepare_services(kube_cluster: Cluster) -> None:
             "spec": {
                 "type": "NodePort",
                 "ports": [
-                    {"name": "secret-cert-exporter", "port": 9005, "nodePort": 30008}
+                    {"name": "cert-exporter", "port": 9005, "nodePort": 30008}
                 ],
             }
         }
@@ -87,13 +85,13 @@ def test_api_working(kube_cluster: Cluster) -> None:
 @pytest.mark.smoke
 @pytest.mark.upgrade
 def test_cluster_info(
-    kube_cluster: Cluster, cluster_type: str, chart_extra_info: Dict[str, str]
+    kube_cluster: Cluster, cluster_type: str, test_extra_info: Dict[str, str]
 ) -> None:
     """Example shows how you can access additional information about the cluster the tests are running on"""
     logger.info(f"Running on cluster type {cluster_type}")
     key = "external_cluster_type"
-    if key in chart_extra_info:
-        logger.info(f"{key} is {chart_extra_info[key]}")
+    if key in test_extra_info:
+        logger.info(f"{key} is {test_extra_info[key]}")
     assert kube_cluster.kube_client is not None
     assert cluster_type != ""
 

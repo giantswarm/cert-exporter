@@ -23,6 +23,9 @@ spec:
           app: prometheus
     - podSelector:
         matchLabels:
+          app.kubernetes.io/name: prometheus
+    - podSelector:
+        matchLabels:
           app.kubernetes.io/name: api-server
     {{ range $index, $privateSubnet := $privateSubnets }}
     - ipBlock:

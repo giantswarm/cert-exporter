@@ -21,6 +21,9 @@ spec:
     - podSelector:
         matchLabels:
           app: prometheus
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prometheus
     {{ range $index, $privateSubnet := $privateSubnets }}
     - ipBlock:
         cidr: {{ $privateSubnet }}

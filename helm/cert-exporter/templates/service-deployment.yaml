@@ -5,10 +5,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "certExporter.deployment.labels" . | nindent 4 }}
-    giantswarm.io/monitoring: "true"
 spec:
   ports:
-  - name: secret-cert-exporter
+  - name: cert-exporter
     port: 9005
     targetPort: cert-exporter
   selector:
