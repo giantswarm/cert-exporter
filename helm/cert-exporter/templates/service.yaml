@@ -5,7 +5,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
-    giantswarm.io/monitoring: "true"
 spec:
   ports:
   - name: cert-exporter
