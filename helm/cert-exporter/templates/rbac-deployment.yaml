@@ -27,6 +27,7 @@ rules:
       - "issuers"
     verbs:
       - list
+{{- if not .Values.global.podSecurityStandards.enforced }}
   - apiGroups:
       - extensions
     resources:
@@ -35,6 +36,7 @@ rules:
       - use
     resourceNames:
       - "{{ template "certExporter.deployment.name" . }}"
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
