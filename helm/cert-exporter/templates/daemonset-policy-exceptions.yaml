@@ -1,4 +1,4 @@
-{{- if .Capabilities.APIVersions.Has "kyverno.io/v2alpha1/PolicyException" -}}
+{{ if .Capabilities.APIVersions.Has "kyverno.io/v2alpha1/PolicyException" }}
 apiVersion: kyverno.io/v2alpha1
 kind: PolicyException
 metadata:
@@ -36,7 +36,7 @@ spec:
         - ReplicaSet
         - Pod
         namespaces:
-        - {{ tpl .Release.Namespace . }}
+        - {{ .Release.Namespace }}
         names:
-        - {{ template "certExporter.daemonset.name" . }}*
-{{- end -}}
+        - "{{ template "certExporter.daemonset.name" . }}"*
+{{ end }}
