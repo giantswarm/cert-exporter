@@ -36,7 +36,7 @@ spec:
         - ReplicaSet
         - Pod
         namespaces:
-        - {{ tpl .Values.resource.default.namespace . }}
+        - {{ tpl .Release.Namespace . }}
         names:
-        - {{ tpl .Values.resource.default.name  . }}*
+        - {{ template "certExporter.deployment.name" . }}*
 {{- end -}}
