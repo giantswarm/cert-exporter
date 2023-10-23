@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Fix daemonset Kyverno PolicyException namespace.
+
 ## [2.8.1] - 2023-10-23
 
 ### Changed
