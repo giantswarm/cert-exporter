@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.8.2] - 2023-10-23
+
 ### Changed
 
 - Fix daemonset Kyverno PolicyException namespace.
@@ -208,7 +210,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.8.1...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.8.2...HEAD
+[2.8.2]: https://github.com/giantswarm/cert-exporter/compare/v2.8.1...v2.8.2
 [2.8.1]: https://github.com/giantswarm/cert-exporter/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/giantswarm/cert-exporter/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/giantswarm/cert-exporter/compare/v2.6.0...v2.7.0
