@@ -1,9 +1,10 @@
+{{- if .Values.kyvernoPolicyExceptions.enabled }}
 {{- if .Capabilities.APIVersions.Has "kyverno.io/v2alpha1/PolicyException" }}
 apiVersion: kyverno.io/v2alpha1
 kind: PolicyException
 metadata:
   name: {{ template "certExporter.deployment.name" . }}-policy-exceptions
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.kyvernoPolicyExceptions.namespace | default .Release.Namespace }}
   labels:
     {{- include "certExporter.deployment.labels" . | nindent 4 }}
   annotations:
@@ -39,4 +40,5 @@ spec:
         - {{ .Release.Namespace }}
         names:
         - {{ template "certExporter.deployment.name" . }}*
+{{- end }}
 {{- end }}

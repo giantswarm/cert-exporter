@@ -13,6 +13,11 @@ exporter:
   capiCertPath: ""
   tokenPath: ""
 
+# Enable Kyverno Policy Exceptions
+kyvernoPolicyExceptions:
+  enabled: true
+  namespace: giantswarm
+
 image:
   repository: giantswarm/cert-exporter
   tag: ""
