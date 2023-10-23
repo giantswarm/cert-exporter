@@ -4,7 +4,7 @@ apiVersion: kyverno.io/v2alpha1
 kind: PolicyException
 metadata:
   name: {{ template "certExporter.daemonset.name" . }}-policy-exceptions
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.kyvernoPolicyExceptions.namespace | default .Release.Namespace }}
   labels:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
   annotations:
