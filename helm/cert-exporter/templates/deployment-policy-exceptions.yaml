@@ -21,12 +21,15 @@ spec:
     - autogen-host-namespaces
   - policyName: disallow-privilege-escalation
     ruleNames:
+    - privilege-escalation
     - autogen-privilege-escalation
   - policyName: restrict-seccomp-strict
     ruleNames:
+    - check-seccomp-strict
     - autogen-check-seccomp-strict
   - policyName: disallow-capabilities-strict
     ruleNames:
+    - require-drop-all
     - autogen-require-drop-all
 
   match:
