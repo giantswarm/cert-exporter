@@ -11,6 +11,14 @@ metadata:
     "helm.sh/hook": "pre-install,pre-upgrade"
 spec:
   exceptions:
+  - policyName: disallow-host-path
+    ruleNames:
+    - host-path
+    - autogen-host-path
+  - policyName: restrict-volume-types
+    ruleNames:
+    - restricted-volumes
+    - autogen-restricted-volumes
   - policyName: disallow-host-ports
     ruleNames:
     - host-ports-none
