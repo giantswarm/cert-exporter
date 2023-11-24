@@ -9,7 +9,7 @@ pytest = "~=7.4.0"
 pykube-ng = "~=23.6.0"
 pytest-rerunfailures = "~=13.0"
 requests = "~=2.31.0"
-pyopenssl = "~=23.2.0"
+pyopenssl = "~=23.3.0"
 
 [requires]
 python_version = "3.9"
