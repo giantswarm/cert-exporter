@@ -8,7 +8,8 @@ orbs:
 # container of app-test-suite cannot work together
 jobs:
   test:
-    machine: true
+    machine:
+      image: ubuntu-2204:2023.07.2
     environment:
       KIND_VERSION: v0.11.1
       KUBERNETES_VERSION: v1.24.0
