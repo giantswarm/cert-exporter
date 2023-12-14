@@ -43,7 +43,6 @@ workflows:
           name: push-to-registries
           requires:
             - build
-            - hold-push-cert-exporter-to-aliyun-pr
           filters:
             tags:
               only: /^v.*/
@@ -75,15 +74,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-
-      - hold-push-cert-exporter-to-aliyun-pr:
-          type: approval
-          requires:
-            - build
-          # Needed to prevent job from being triggered on master branch.
-          filters:
-            branches:
-              ignore: master
 
       - architect/push-to-app-collection:
           context: architect
