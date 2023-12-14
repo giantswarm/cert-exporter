@@ -8,7 +8,8 @@ orbs:
 # container of app-test-suite cannot work together
 jobs:
   test:
-    machine: true
+    machine:
+      image: ubuntu-2204:2023.07.2
     environment:
       KIND_VERSION: v0.11.1
       KUBERNETES_VERSION: v1.24.0
@@ -43,7 +44,6 @@ workflows:
           name: push-to-registries
           requires:
             - build
-            - hold-push-cert-exporter-to-aliyun-pr
           filters:
             tags:
               only: /^v.*/
@@ -75,15 +75,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-
-      - hold-push-cert-exporter-to-aliyun-pr:
-          type: approval
-          requires:
-            - build
-          # Needed to prevent job from being triggered on master branch.
-          filters:
-            branches:
-              ignore: master
 
       - architect/push-to-app-collection:
           context: architect
