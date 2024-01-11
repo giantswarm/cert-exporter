@@ -300,7 +300,7 @@ def test_secret_metrics(
     deploy_metrics = retrieve_metrics(deployment_port)
     assert_metric(
         deploy_metrics,
-        f'{metric_name}{{name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
+        f'{metric_name}{{certificatename="",name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
         check_expiry(expected_expiry),
     )
 
