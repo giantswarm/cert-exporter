@@ -297,6 +297,7 @@ def test_secret_metrics(
 
     # request from deployment port
     deploy_metrics = retrieve_metrics(deployment_port)
+    print("Deploy Metrics:", deploy_metrics)
     assert_metric(
         deploy_metrics,
         f'{metric_name}{{certificatename="",name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
@@ -305,7 +306,6 @@ def test_secret_metrics(
 
     # request from daemonset port
     ds_metrics = retrieve_metrics(daemonset_port)
-    print("Daemonset Metrics:", ds_metrics)
     assert len([m for m in ds_metrics if m.startswith(metric_name)]) == 0
 
     # cleanup
