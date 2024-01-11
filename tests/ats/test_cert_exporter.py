@@ -297,7 +297,6 @@ def test_secret_metrics(
 
     # request from deployment port
     deploy_metrics = retrieve_metrics(deployment_port)
-    print("Deploy Metrics:", deploy_metrics)
     assert_metric(
         deploy_metrics,
         f'{metric_name}{{certificatename="",name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
