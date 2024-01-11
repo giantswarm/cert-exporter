@@ -139,7 +139,6 @@ def retrieve_metrics(port: int) -> List[str]:
     assert r.status_code == 200
 
     raw_metrics = r.text
-    print(raw_metrics)
     metrics_lines = [
         line for line in raw_metrics.splitlines() if not line.startswith("#")
     ]
@@ -305,8 +304,8 @@ def test_secret_metrics(
     )
 
     # request from daemonset port
-    print("Daemonset Metrics:", ds_metrics)
     ds_metrics = retrieve_metrics(daemonset_port)
+    print("Daemonset Metrics:", ds_metrics)
     assert len([m for m in ds_metrics if m.startswith(metric_name)]) == 0
 
     # cleanup
