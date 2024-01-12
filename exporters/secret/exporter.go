@@ -74,6 +74,10 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret) error {
 	secretName := secret.Name
 	secretNamespace := secret.Namespace
+	var certName string
+	if secret.Annotations != nil {
+		certName = secret.Annotations["cert-manager.io/certificate-name"]
+	}
 
 	for _, certKey := range certKeys {
 		certBytes, ok := secret.Data[certKey]
@@ -95,7 +99,7 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 
 		for _, cert := range certs {
 			timestamp := float64(cert.NotAfter.Unix())
-			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey)
+			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName)
 		}
 	}
 	e.logger.Log("info", fmt.Sprintf("added secret %s/%s to the metrics", secretNamespace, secretName))
@@ -146,6 +150,7 @@ func New(config Config) (*Exporter, error) {
 				"name",
 				"namespace",
 				"secretkey",
+				"certificatename",
 			},
 			nil,
 		),

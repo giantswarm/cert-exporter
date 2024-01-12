@@ -139,7 +139,6 @@ def retrieve_metrics(port: int) -> List[str]:
     assert r.status_code == 200
 
     raw_metrics = r.text
-
     metrics_lines = [
         line for line in raw_metrics.splitlines() if not line.startswith("#")
     ]
@@ -300,7 +299,7 @@ def test_secret_metrics(
     deploy_metrics = retrieve_metrics(deployment_port)
     assert_metric(
         deploy_metrics,
-        f'{metric_name}{{name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
+        f'{metric_name}{{certificatename="",name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
         check_expiry(expected_expiry),
     )
 

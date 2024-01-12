@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- Add cert name to secret metric.
+
 ## [2.8.5] - 2024-01-08
 
 ### Changed
