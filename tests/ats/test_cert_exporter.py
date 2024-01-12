@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 app_name = "cert-exporter"
 namespace_name = "kube-system"
-cert_manager_app_chart_version = "2.9.0"
+cert_manager_app_chart_version = "2.11.1"
 # change this if your want to change the kind config
 daemonset_port = 30017
 deployment_port = 30018
@@ -349,7 +349,6 @@ def test_certificate_cr_metrics(
 
     # request from deployment port
     deploy_metrics = retrieve_metrics(deployment_port)
-    print(deploy_metrics)
     assert_metric(deploy_metrics, metric_name, validate_cert_metric)
 
     # request from daemonset port
