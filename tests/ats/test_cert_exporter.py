@@ -161,7 +161,7 @@ def assert_metric(metrics: List[str], metric: str, validator=None) -> None:
         found = [m for m in metrics if m.startswith(metric)]
     else:
         found = [m for m in metrics if m.startswith(metric) and validator(m)]
-    assert len(found) == 1
+    assert len(found) == 1, f"Expected 1 metric for '{metric}', but found {len(found)}.\nMetrics: {metrics}"
 
 
 @pytest.mark.smoke
