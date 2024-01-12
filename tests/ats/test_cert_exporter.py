@@ -342,7 +342,7 @@ def test_certificate_cr_metrics(
     def validate_cert_metric(m):
         return (
             ('issuer_ref="selfsigned-giantswarm"' in m)
-            and ('managed_issuer="true",name="test-cert",namespace="default"' in m)
+            and ('managed_issuer="false",name="test-cert",namespace="default"' in m)
             and ('name="test-cert",namespace="default"' in m)
             and ('namespace="default"' in m)
         )
