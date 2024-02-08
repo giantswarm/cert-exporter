@@ -6,7 +6,7 @@ require (
 	github.com/giantswarm/k8sclient/v7 v7.2.0
 	github.com/giantswarm/microerror v0.4.1
 	github.com/giantswarm/micrologger v1.1.1
-	github.com/hashicorp/vault/api v1.11.0
+	github.com/hashicorp/vault/api v1.12.0
 	github.com/prometheus/client_golang v1.18.0
 	github.com/spf13/afero v1.11.0
 	k8s.io/api v0.28.3
