@@ -1,5 +1,5 @@
 # pkg:golang/google.golang.org/protobuf@v1.32.0
 CVE-2024-24786
 
-# pkg:golang/github.com/hashicorp/vault/api@v1.12.0
-CVE-2024-2048
+# pkg:golang/github.com/hashicorp/vault/api@v1.13.0
+CVE-2024-2660
