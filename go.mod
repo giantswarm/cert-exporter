@@ -2,7 +2,7 @@ module github.com/giantswarm/cert-exporter
 
 go 1.21
 
-toolchain go1.22.2
+toolchain go1.22.3
 
 require (
 	github.com/giantswarm/k8sclient/v7 v7.2.0
