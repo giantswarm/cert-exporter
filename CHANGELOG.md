@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.9.1] - 2024-07-05
+
 ### Changed
 
 - Chart: Update PolicyExceptions to v2beta1. ([#358](https://github.com/giantswarm/cert-exporter/pull/358))
@@ -238,7 +240,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.1...HEAD
+[2.9.1]: https://github.com/giantswarm/cert-exporter/compare/v2.9.0...v2.9.1
 [2.9.0]: https://github.com/giantswarm/cert-exporter/compare/v2.8.5...v2.9.0
 [2.8.5]: https://github.com/giantswarm/cert-exporter/compare/v2.8.4...v2.8.5
 [2.8.4]: https://github.com/giantswarm/cert-exporter/compare/v2.8.3...v2.8.4
