@@ -1,6 +1,6 @@
 {{- if .Values.kyvernoPolicyExceptions.enabled }}
 {{- if .Capabilities.APIVersions.Has "kyverno.io/v2alpha1/PolicyException" }}
-apiVersion: kyverno.io/v2alpha1
+apiVersion: kyverno.io/v2beta1
 kind: PolicyException
 metadata:
   name: {{ template "certExporter.daemonset.name" . }}-policy-exceptions
