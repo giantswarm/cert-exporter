@@ -1,5 +1,5 @@
-# pkg:golang/google.golang.org/protobuf@v1.32.0
-CVE-2024-24786
+# pkg:golang/github.com/hashicorp/go-retryablehttp@v0.7.6
+CVE-2024-6104
 
-# pkg:golang/github.com/hashicorp/vault/api@v1.13.0
+# pkg:golang/github.com/hashicorp/vault/api@v1.14.0
 CVE-2024-2660
