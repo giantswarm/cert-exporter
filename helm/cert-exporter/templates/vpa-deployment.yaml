@@ -1,0 +1,23 @@
+{{- if .Values.deployment.autoscaling.enabled }}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: "{{ template "certExporter.deployment.name" . }}"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "certExporter.deployment.labels" . | nindent 4 }}
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: "{{ template "certExporter.deployment.name" . }}"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: cert-exporter
+      controlledValues: RequestsAndLimits
+      mode: Auto
+      minAllowed:
+        {{- toYaml .Values.deployment.autoscaling.minAllowed | nindent 8 }}
+  updatePolicy:
+    updateMode: Auto
+{{- end }}

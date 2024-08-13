@@ -40,3 +40,27 @@ serviceMonitor:
 global:
   podSecurityStandards:
     enforced: false
+
+deployment:
+  autoscaling:
+    enabled: true
+    # -- Lower bounds for vertical autoscaling.
+    minAllowed:
+      cpu: 50m
+      memory: 50Mi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      cpu: 150m
+      memory: 150Mi
+
+daemonset:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      cpu: 150m
+      memory: 50Mi
