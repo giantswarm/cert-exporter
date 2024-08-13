@@ -81,6 +81,9 @@
                 "autoscaling": {
                     "type": "object",
                     "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
                         "minAllowed": {
                             "type": "object",
                             "properties": {

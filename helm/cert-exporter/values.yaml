@@ -43,6 +43,7 @@ global:
 
 deployment:
   autoscaling:
+    enabled: true
     # -- Lower bounds for vertical autoscaling.
     minAllowed:
       cpu: 50m
