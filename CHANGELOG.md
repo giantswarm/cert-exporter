@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Chart: Add VPA and resources configuration for deployment. ([#382](https://github.com/giantswarm/cert-exporter/pull/382))
+
 ## [2.9.1] - 2024-07-05
 
 ### Changed
