@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.9.2] - 2024-08-13
+
 ### Added
 
 - Chart: Add VPA and resources configuration for deployment and daemonset. ([#382](https://github.com/giantswarm/cert-exporter/pull/382))
@@ -244,7 +246,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.1...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.2...HEAD
+[2.9.2]: https://github.com/giantswarm/cert-exporter/compare/v2.9.1...v2.9.2
 [2.9.1]: https://github.com/giantswarm/cert-exporter/compare/v2.9.0...v2.9.1
 [2.9.0]: https://github.com/giantswarm/cert-exporter/compare/v2.8.5...v2.9.0
 [2.8.5]: https://github.com/giantswarm/cert-exporter/compare/v2.8.4...v2.8.5
