@@ -41,12 +41,7 @@ spec:
         - name: cert-exporter
           containerPort: 9005
         resources:
-          requests:
-            cpu: 50m
-            memory: 50Mi
-          limits:
-            cpu: 150m
-            memory: 50Mi
+          {{- toYaml .Values.daemonset.resources | nindent 10 }}
         securityContext:
           readOnlyRootFilesystem: true
           runAsNonRoot: true
