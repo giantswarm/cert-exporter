@@ -82,7 +82,7 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 	for _, certKey := range certKeys {
 		certBytes, ok := secret.Data[certKey]
 		if !ok {
-			e.logger.Log("error", microerror.Maskf(certNotFoundError, fmt.Sprintf("secret %s/%s contains no key matching '%s'", secretNamespace, secretName, certKey)))
+			e.logger.Log("error", microerror.Maskf(certNotFoundError, "secret %s/%s contains no key matching '%s'", secretNamespace, secretName, certKey))
 			continue
 		}
 

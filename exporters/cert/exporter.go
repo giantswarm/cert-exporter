@@ -53,7 +53,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 	ok, err := afero.DirExists(e.fs, path)
 	if !ok {
-		return microerror.Maskf(certsPathNotFoundError, fmt.Sprintf("folder %s with certs has to exist", path))
+		return microerror.Maskf(certsPathNotFoundError, "folder %s with certs has to exist", path)
 	}
 	if err != nil {
 		e.logger.Log("error", microerror.Mask(err))
