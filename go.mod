@@ -9,7 +9,7 @@ require (
 	github.com/giantswarm/microerror v0.4.1
 	github.com/giantswarm/micrologger v1.1.1
 	github.com/hashicorp/vault/api v1.14.0
-	github.com/prometheus/client_golang v1.20.0
+	github.com/prometheus/client_golang v1.20.1
 	github.com/spf13/afero v1.11.0
 	k8s.io/api v0.31.0
 	k8s.io/apimachinery v0.31.0
