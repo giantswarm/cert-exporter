@@ -3,3 +3,7 @@ CVE-2024-6104
 
 # pkg:golang/github.com/hashicorp/vault/api@v1.14.0
 CVE-2024-2660
+
+# pkg:golang/golang.org/x/net@v0.26.0
+CVE-2024-8421
+
