@@ -9,7 +9,7 @@ orbs:
 jobs:
   test:
     machine:
-      image: ubuntu-2204:2023.07.2
+      image: ubuntu-2404
     environment:
       KIND_VERSION: v0.11.1
       KUBERNETES_VERSION: v1.24.0
@@ -25,8 +25,8 @@ jobs:
             kind create cluster --config tests/kind_config.yaml --kubeconfig kind.kube.config
       - architect/run-tests-with-ats:
           chart_archive_prefix: "cert-exporter"
-          app-test-suite_version: "v0.6.1"
-          app-test-suite_container_tag: "0.6.1"
+          app-test-suite_version: "v0.8.1"
+          app-test-suite_container_tag: "0.8.1"
           additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 workflows:
