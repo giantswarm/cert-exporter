@@ -1,4 +1,5 @@
 version: 2.1
+
 orbs:
   architect: giantswarm/architect@5.10.1
 
@@ -24,10 +25,10 @@ jobs:
           command: |
             kind create cluster --config tests/kind_config.yaml --kubeconfig kind.kube.config
       - architect/run-tests-with-ats:
-          chart_archive_prefix: "cert-exporter"
-          app-test-suite_version: "v0.8.1"
-          app-test-suite_container_tag: "0.8.1"
-          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
+          chart_archive_prefix: cert-exporter
+          app-test-suite_version: v0.8.1
+          app-test-suite_container_tag: 0.8.1
+          additional_app-test-suite_flags: --external-cluster-version $KUBERNETES_VERSION
 
 workflows:
   build:
@@ -47,27 +48,35 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore:
+                - main
+                - master
 
       - architect/push-to-app-catalog:
           context: architect
           executor: app-build-suite
           name: push-cert-exporter-to-default-app-catalog
-          app_catalog: "default-catalog"
-          app_catalog_test: "default-test-catalog"
-          chart: "cert-exporter"
+          app_catalog: default-catalog
+          app_catalog_test: default-test-catalog
+          chart: cert-exporter
           requires:
             - push-to-registries
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore:
+                - main
+                - master
 
       - architect/push-to-app-catalog:
           context: architect
           executor: app-build-suite
           name: push-cert-exporter-to-control-plane-app-catalog
-          app_catalog: "control-plane-catalog"
-          app_catalog_test: "control-plane-test-catalog"
-          chart: "cert-exporter"
+          app_catalog: control-plane-catalog
+          app_catalog_test: control-plane-test-catalog
+          chart: cert-exporter
           requires:
             - push-to-registries
           persist_chart_archive: true
@@ -75,13 +84,17 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore:
+                - main
+                - master
 
       - architect/push-to-app-collection:
           context: architect
           name: push-cert-exporter-to-aws-app-collection
-          app_name: "cert-exporter"
-          app_namespace: "monitoring"
-          app_collection_repo: "aws-app-collection"
+          app_name: cert-exporter
+          app_namespace: monitoring
+          app_collection_repo: aws-app-collection
           requires:
             - push-cert-exporter-to-control-plane-app-catalog
           filters:
@@ -93,9 +106,9 @@ workflows:
       - architect/push-to-app-collection:
           context: architect
           name: push-cert-exporter-to-azure-app-collection
-          app_name: "cert-exporter"
-          app_namespace: "monitoring"
-          app_collection_repo: "azure-app-collection"
+          app_name: cert-exporter
+          app_namespace: monitoring
+          app_collection_repo: azure-app-collection
           requires:
             - push-cert-exporter-to-control-plane-app-catalog
           filters:
