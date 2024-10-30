@@ -9,7 +9,7 @@ orbs:
 jobs:
   test:
     machine:
-      image: ubuntu-2404
+      image: ubuntu-2404:current
     environment:
       KIND_VERSION: v0.11.1
       KUBERNETES_VERSION: v1.24.0
@@ -105,12 +105,10 @@ workflows:
               only: /^v.*/
 
       - test:
-          name: execute tests
+          name: run-tests-with-ats
           requires:
             - push-cert-exporter-to-control-plane-app-catalog
-          # resource_class: xlarge
           filters:
-            # Do not trigger the job on master branch or release tags.
             branches:
               ignore:
                 - master
