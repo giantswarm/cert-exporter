@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Repository: Some chores. ([#418](https://github.com/giantswarm/cert-exporter/pull/418))
+
 ## [2.9.3] - 2024-11-05
 
 ### Changed
