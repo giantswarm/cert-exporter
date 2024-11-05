@@ -39,7 +39,7 @@ serviceMonitor:
 
 global:
   podSecurityStandards:
-    enforced: false
+    enforced: true
 
 deployment:
   autoscaling:
