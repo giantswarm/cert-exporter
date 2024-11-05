@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.9.3] - 2024-11-05
+
 ### Changed
 
 - Chart: Enable `global.podSecurityStandards.enforced`. ([#420](https://github.com/giantswarm/cert-exporter/pull/420))
@@ -250,7 +252,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.2...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.3...HEAD
+[2.9.3]: https://github.com/giantswarm/cert-exporter/compare/v2.9.2...v2.9.3
 [2.9.2]: https://github.com/giantswarm/cert-exporter/compare/v2.9.1...v2.9.2
 [2.9.1]: https://github.com/giantswarm/cert-exporter/compare/v2.9.0...v2.9.1
 [2.9.0]: https://github.com/giantswarm/cert-exporter/compare/v2.8.5...v2.9.0
