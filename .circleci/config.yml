@@ -3,32 +3,26 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@5.11.1
 
-# external cluster is used because tests use
-# docker cp.
-# otherwise the kind cluster containers and the
-# container of app-test-suite cannot work together
 jobs:
   test:
     machine:
       image: ubuntu-2404:current
     environment:
-      KIND_VERSION: v0.11.1
-      KUBERNETES_VERSION: v1.24.0
+      KIND_VERSION: v0.24.0
+      KUBERNETES_VERSION: v1.29.2
     steps:
       - checkout
       - run:
-          name: Download kind
-          command: |
-            curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
+          name: Install KIND
+          command: sudo curl --fail --location "https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-linux-amd64" --output /usr/bin/kind && sudo chmod +x /usr/bin/kind
       - run:
-          name: Spin up cluster
-          command: |
-            kind create cluster --config tests/kind_config.yaml --kubeconfig kind.kube.config
+          name: Create cluster
+          command: kind create cluster --image "kindest/node:${KUBERNETES_VERSION}" --config tests/cluster.yaml --kubeconfig kind.kube.config
       - architect/run-tests-with-ats:
           chart_archive_prefix: cert-exporter
-          app-test-suite_version: v0.8.1
-          app-test-suite_container_tag: 0.8.1
-          additional_app-test-suite_flags: --external-cluster-version $KUBERNETES_VERSION
+          app-test-suite_version: v0.10.2
+          app-test-suite_container_tag: 0.10.2
+          additional_app-test-suite_flags: --external-cluster-version "${KUBERNETES_VERSION}"
 
 workflows:
   build:
@@ -37,94 +31,97 @@ workflows:
           name: build
           binary: cert-exporter
           filters:
+            branches:
+              ignore:
+                - main
+                - master
             tags:
               only: /^v.*/
 
       - architect/push-to-registries:
-          context: architect
           name: push-to-registries
+          context: architect
           requires:
             - build
           filters:
-            tags:
-              only: /^v.*/
             branches:
               ignore:
                 - main
                 - master
+            tags:
+              only: /^v.*/
 
       - architect/push-to-app-catalog:
+          name: push-to-default-catalog
           context: architect
           executor: app-build-suite
-          name: push-cert-exporter-to-default-app-catalog
+          chart: cert-exporter
           app_catalog: default-catalog
           app_catalog_test: default-test-catalog
-          chart: cert-exporter
+          persist_chart_archive: true
           requires:
             - push-to-registries
           filters:
-            tags:
-              only: /^v.*/
             branches:
               ignore:
                 - main
                 - master
+            tags:
+              only: /^v.*/
 
       - architect/push-to-app-catalog:
+          name: push-to-control-plane-catalog
           context: architect
           executor: app-build-suite
-          name: push-cert-exporter-to-control-plane-app-catalog
+          chart: cert-exporter
           app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
-          chart: cert-exporter
           requires:
             - push-to-registries
-          persist_chart_archive: true
-          # Needed to trigger job also on git tag.
           filters:
-            tags:
-              only: /^v.*/
             branches:
               ignore:
                 - main
                 - master
-
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-cert-exporter-to-aws-app-collection
-          app_name: cert-exporter
-          app_namespace: monitoring
-          app_collection_repo: aws-app-collection
-          requires:
-            - push-cert-exporter-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
-      - architect/push-to-app-collection:
-          context: architect
-          name: push-cert-exporter-to-azure-app-collection
-          app_name: cert-exporter
-          app_namespace: monitoring
-          app_collection_repo: azure-app-collection
-          requires:
-            - push-cert-exporter-to-control-plane-app-catalog
-          filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^v.*/
 
       - test:
-          name: execute tests
+          name: run-tests-with-ats
           requires:
-            - push-cert-exporter-to-control-plane-app-catalog
+            - push-to-default-catalog
           filters:
-            # Do not trigger the job on master branch or release tags.
             branches:
               ignore:
+                - main
                 - master
             tags:
-              ignore: /^v.*/
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          name: push-to-aws-app-collection
+          context: architect
+          app_collection_repo: aws-app-collection
+          app_name: cert-exporter
+          app_namespace: monitoring
+          requires:
+            - push-to-control-plane-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          name: push-to-azure-app-collection
+          context: architect
+          app_collection_repo: azure-app-collection
+          app_name: cert-exporter
+          app_namespace: monitoring
+          requires:
+            - push-to-control-plane-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/

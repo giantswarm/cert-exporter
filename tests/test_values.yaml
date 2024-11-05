@@ -1,7 +1,0 @@
-exporter:
-  certPath: "/certs"
-
-# ci only pushes to quay.io
-# this prevents ImagePullBackOff in tests
-registry:
-  domain: quay.io
