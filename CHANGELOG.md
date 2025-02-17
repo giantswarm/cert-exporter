@@ -10,6 +10,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Changed
 
 - Repository: Some chores. ([#418](https://github.com/giantswarm/cert-exporter/pull/418))
+- Go: Update `go.mod` and `.nancy-ignore`. ([#437](https://github.com/giantswarm/cert-exporter/pull/437))
 
 ## [2.9.3] - 2024-11-05
 
