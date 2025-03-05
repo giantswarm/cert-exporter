@@ -1,2 +1,8 @@
+# pkg:golang/github.com/go-jose/go-jose/v4@v4.0.4
+CVE-2025-27144
+
 # pkg:golang/github.com/hashicorp/vault/api@v1.16.0
 CVE-2024-2660
+
+# pkg:golang/golang.org/x/crypto@v0.33.0
+CVE-2025-22869
