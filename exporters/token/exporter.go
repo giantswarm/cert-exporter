@@ -112,7 +112,6 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			e.logger.Log("error", microerror.Mask(err))
 			continue
 		}
-		// Defer closing the file and log any error during close.
 		defer func() {
 			err := f.Close()
 			if err != nil {
