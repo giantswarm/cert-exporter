@@ -107,12 +107,18 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 		fpath := filepath.Join(e.path, file.Name())
 
-		f, err := os.Open(fpath)
+		f, err := os.Open(fpath) // #nosec G304
 		if err != nil {
 			e.logger.Log("error", microerror.Mask(err))
 			continue
 		}
-		defer f.Close()
+		// Defer closing the file and log any error during close.
+		defer func() {
+			err := f.Close()
+			if err != nil {
+				e.logger.Log("error", microerror.Mask(err))
+			}
+		}()
 
 		// Read only the first line.
 		s := bufio.NewScanner(f)
