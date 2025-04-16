@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix linting issues.
+
 ## [2.9.5] - 2025-03-17
 
 ### Changed
