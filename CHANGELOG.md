@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.9.6] - 2025-06-03
+
 ### Fixed
 
 - Fix linting issues.
@@ -269,7 +271,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.5...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.6...HEAD
+[2.9.6]: https://github.com/giantswarm/cert-exporter/compare/v2.9.5...v2.9.6
 [2.9.5]: https://github.com/giantswarm/cert-exporter/compare/v2.9.4...v2.9.5
 [2.9.4]: https://github.com/giantswarm/cert-exporter/compare/v2.9.3...v2.9.4
 [2.9.3]: https://github.com/giantswarm/cert-exporter/compare/v2.9.2...v2.9.3
