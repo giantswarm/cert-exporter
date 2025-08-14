@@ -9,9 +9,9 @@ require (
 	github.com/hashicorp/vault/api v1.20.0
 	github.com/prometheus/client_golang v1.23.0
 	github.com/spf13/afero v1.14.0
-	k8s.io/api v0.33.3
-	k8s.io/apimachinery v0.33.3
-	k8s.io/client-go v0.33.3
+	k8s.io/api v0.33.4
+	k8s.io/apimachinery v0.33.4
+	k8s.io/client-go v0.33.4
 )
 
 require (
