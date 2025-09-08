@@ -8,7 +8,7 @@ require (
 	github.com/giantswarm/micrologger v1.1.2
 	github.com/hashicorp/vault/api v1.20.0
 	github.com/prometheus/client_golang v1.23.2
-	github.com/spf13/afero v1.14.0
+	github.com/spf13/afero v1.15.0
 	k8s.io/api v0.34.0
 	k8s.io/apimachinery v0.34.0
 	k8s.io/client-go v0.34.0
