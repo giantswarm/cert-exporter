@@ -57,6 +57,7 @@ deployment:
       memory: 150Mi
 
 daemonset:
+  enabled: true
   resources:
     requests:
       cpu: 50m

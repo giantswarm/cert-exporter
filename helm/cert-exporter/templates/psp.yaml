@@ -1,3 +1,4 @@
+{{- if .Values.daemonset.enabled }}
 {{- if not .Values.global.podSecurityStandards.enforced }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
@@ -43,4 +44,5 @@ spec:
   hostIPC: false
   hostPID: false
   readOnlyRootFilesystem: true
+{{- end }}
 {{- end }}
