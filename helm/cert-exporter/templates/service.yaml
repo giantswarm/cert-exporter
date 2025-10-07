@@ -1,3 +1,4 @@
+{{- if .Values.daemonset.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -12,3 +13,4 @@ spec:
     targetPort: cert-exporter
   selector:
     {{- include "certExporter.daemonset.matchLabels" . | nindent 4 }}
+{{- end }}

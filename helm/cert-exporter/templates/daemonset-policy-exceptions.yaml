@@ -1,3 +1,4 @@
+{{- if .Values.daemonset.enabled }}
 {{- if .Values.kyvernoPolicyExceptions.enabled }}
 {{- if .Capabilities.APIVersions.Has "kyverno.io/v2/PolicyException" }}
 apiVersion: kyverno.io/v2
@@ -51,5 +52,6 @@ spec:
         - {{ .Release.Namespace }}
         names:
         - {{ template "certExporter.daemonset.name" . }}*
+{{- end }}
 {{- end }}
 {{- end }}

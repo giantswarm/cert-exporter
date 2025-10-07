@@ -1,3 +1,4 @@
+{{- if .Values.daemonset.enabled }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -77,3 +78,4 @@ spec:
       - name: ca-certs
         hostPath:
           path: /etc/ssl/certs/
+{{- end }}

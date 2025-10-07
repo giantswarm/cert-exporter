@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Changed
+
+- Chart: Add value to toggle creation of Daemonset resources.
+
 ## [2.9.10] - 2025-10-02
 
 ### Changed

@@ -46,6 +46,10 @@
         "daemonset": {
             "type": "object",
             "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
                 "resources": {
                     "type": "object",
                     "properties": {
