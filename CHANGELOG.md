@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.9.13] - 2025-11-01
+
 ### Changed
 
 - Go: Update dependencies.
@@ -312,7 +314,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.12...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.13...HEAD
+[2.9.13]: https://github.com/giantswarm/cert-exporter/compare/v2.9.12...v2.9.13
 [2.9.12]: https://github.com/giantswarm/cert-exporter/compare/v2.9.11...v2.9.12
 [2.9.11]: https://github.com/giantswarm/cert-exporter/compare/v2.9.10...v2.9.11
 [2.9.10]: https://github.com/giantswarm/cert-exporter/compare/v2.9.9...v2.9.10
