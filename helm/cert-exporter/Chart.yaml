@@ -1,8 +1,8 @@
 apiVersion: v2
 name: cert-exporter
 description: The cert-exporter walks a directory path it has gotten as input and emits all NotAfter timestamps as metrics.
-version: [[ .Version ]]
-appVersion: [[ .AppVersion ]]
+version: [[.Version]]
+appVersion: 2.9.15
 home: https://github.com/giantswarm/cert-exporter
 icon: https://s.giantswarm.io/app-icons/prometheus/1/light.svg
 annotations:
