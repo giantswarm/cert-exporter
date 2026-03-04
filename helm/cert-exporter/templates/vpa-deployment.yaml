@@ -16,8 +16,7 @@ spec:
     - containerName: cert-exporter
       controlledValues: RequestsAndLimits
       mode: Auto
-      minAllowed:
-        {{- toYaml .Values.deployment.autoscaling.minAllowed | nindent 8 }}
+      minAllowed: {{- toYaml .Values.deployment.resources.requests | nindent 8 }}
   updatePolicy:
     updateMode: Auto
 {{- end }}
