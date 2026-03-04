@@ -7,6 +7,14 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- DaemonSet: Add VPA.
+
+### Changed
+
+- Values: Tune resources.
+
 ## [2.9.16] - 2026-02-04
 
 ### Changed

@@ -42,12 +42,6 @@ global:
     enforced: true
 
 deployment:
-  autoscaling:
-    enabled: true
-    # -- Lower bounds for vertical autoscaling.
-    minAllowed:
-      cpu: 50m
-      memory: 50Mi
   resources:
     requests:
       cpu: 50m
@@ -55,6 +49,8 @@ deployment:
     limits:
       cpu: 150m
       memory: 150Mi
+  autoscaling:
+    enabled: true
 
 daemonset:
   enabled: true
@@ -65,3 +61,5 @@ daemonset:
     limits:
       cpu: 150m
       memory: 50Mi
+  autoscaling:
+    enabled: true

@@ -46,9 +46,16 @@
         "daemonset": {
             "type": "object",
             "properties": {
+                "autoscaling": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                },
                 "enabled": {
-                    "type": "boolean",
-                    "default": true
+                    "type": "boolean"
                 },
                 "resources": {
                     "type": "object",
@@ -87,17 +94,6 @@
                     "properties": {
                         "enabled": {
                             "type": "boolean"
-                        },
-                        "minAllowed": {
-                            "type": "object",
-                            "properties": {
-                                "cpu": {
-                                    "type": "string"
-                                },
-                                "memory": {
-                                    "type": "string"
-                                }
-                            }
                         }
                     }
                 },
