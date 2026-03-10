@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-03-10
+
 ### Added
 
 - DaemonSet: Add VPA.
@@ -340,7 +342,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.9.16...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.10.0...HEAD
+[2.10.0]: https://github.com/giantswarm/cert-exporter/compare/v2.9.16...v2.10.0
 [2.9.16]: https://github.com/giantswarm/cert-exporter/compare/v2.9.15...v2.9.16
 [2.9.15]: https://github.com/giantswarm/cert-exporter/compare/v2.9.14...v2.9.15
 [2.9.14]: https://github.com/giantswarm/cert-exporter/compare/v2.9.13...v2.9.14
