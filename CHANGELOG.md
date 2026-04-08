@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.10.1] - 2026-04-08
+
 ### Fixed
 
 - Parse all PEM blocks in secrets and certificate files, not just the first one. This fixes false alerts when multiple certificates are concatenated (e.g. Kyverno webhook cert rotation).
@@ -346,7 +348,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.10.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.10.1...HEAD
+[2.10.1]: https://github.com/giantswarm/cert-exporter/compare/v2.10.0...v2.10.1
 [2.10.0]: https://github.com/giantswarm/cert-exporter/compare/v2.9.16...v2.10.0
 [2.9.16]: https://github.com/giantswarm/cert-exporter/compare/v2.9.15...v2.9.16
 [2.9.15]: https://github.com/giantswarm/cert-exporter/compare/v2.9.14...v2.9.15
