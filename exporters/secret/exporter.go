@@ -86,20 +86,24 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 			continue
 		}
 
-		block, _ := pem.Decode(certBytes)
-		if block == nil {
-			continue
-		}
+		rest := certBytes
+		for {
+			block, remaining := pem.Decode(rest)
+			if block == nil {
+				break
+			}
+			rest = remaining
 
-		certs, err := x509.ParseCertificates(block.Bytes)
-		if err != nil {
-			e.logger.Log("warning", fmt.Sprintf("%s in secret %s/%s could not be parsed as a certificate: %s", certKey, secretName, secretNamespace, microerror.Mask(err)))
-			continue
-		}
+			certs, err := x509.ParseCertificates(block.Bytes)
+			if err != nil {
+				e.logger.Log("warning", fmt.Sprintf("%s in secret %s/%s could not be parsed as a certificate: %s", certKey, secretName, secretNamespace, microerror.Mask(err)))
+				continue
+			}
 
-		for _, cert := range certs {
-			timestamp := float64(cert.NotAfter.Unix())
-			ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName)
+			for _, cert := range certs {
+				timestamp := float64(cert.NotAfter.Unix())
+				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName)
+			}
 		}
 	}
 	e.logger.Log("info", fmt.Sprintf("added secret %s/%s to the metrics", secretNamespace, secretName))

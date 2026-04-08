@@ -73,22 +73,24 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				return nil
 			}
 
-			block, _ := pem.Decode(file)
-			if block == nil {
-				return nil
-			}
-			certs, err := x509.ParseCertificates(block.Bytes)
-			if err != nil {
-				e.logger.Log("warning", fmt.Sprintf("%s could not be parsed as a certificate: %s", fpath, microerror.Mask(err)))
-				return nil
-			}
-			if certs == nil {
-				return nil
-			}
+			rest := file
+			for {
+				block, remaining := pem.Decode(rest)
+				if block == nil {
+					break
+				}
+				rest = remaining
 
-			for _, cert := range certs {
-				timestamp := float64(cert.NotAfter.Unix())
-				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath)
+				certs, err := x509.ParseCertificates(block.Bytes)
+				if err != nil {
+					e.logger.Log("warning", fmt.Sprintf("%s could not be parsed as a certificate: %s", fpath, microerror.Mask(err)))
+					continue
+				}
+
+				for _, cert := range certs {
+					timestamp := float64(cert.NotAfter.Unix())
+					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath)
+				}
 			}
 			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))
 
