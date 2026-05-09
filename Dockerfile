@@ -1,8 +1,11 @@
+FROM --platform=$BUILDPLATFORM gsoci.azurecr.io/giantswarm/alpine:3.20.3-giantswarm AS prep
+USER root
+RUN apk add --no-cache ca-certificates
+
 FROM gsoci.azurecr.io/giantswarm/alpine:3.20.3-giantswarm
 
-USER root
-
-RUN apk add --no-cache ca-certificates
+COPY --from=prep /etc/ssl/certs /etc/ssl/certs
+COPY --from=prep /usr/share/ca-certificates /usr/share/ca-certificates
 
 USER giantswarm
 
