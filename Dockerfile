@@ -6,6 +6,7 @@ RUN apk add --no-cache ca-certificates
 
 USER giantswarm
 
-COPY ./cert-exporter /cert-exporter
+ARG TARGETARCH
+COPY ./cert-exporter-linux-${TARGETARCH} /cert-exporter
 
 ENTRYPOINT ["/cert-exporter"]
