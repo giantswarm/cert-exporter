@@ -31,6 +31,7 @@ workflows:
           matrix:
             parameters:
               architecture: ["linux/amd64", "linux/arm64"]
+          name: go-build-cert-exporter-<<matrix.architecture>>
           binary: cert-exporter
           filters:
             branches:
@@ -45,7 +46,8 @@ workflows:
           context: architect
           multiarch: true
           requires:
-            - architect/go-build
+            - go-build-cert-exporter-linux/amd64
+            - go-build-cert-exporter-linux/arm64
           filters:
             branches:
               ignore:
