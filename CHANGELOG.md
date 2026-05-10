@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-05-10
+
 ### Changed
 
 - Build and publish a multi-arch (linux/amd64 + linux/arm64) container image. Required so the cert-exporter daemonset can run on Graviton/arm64 nodepools without `exec format error`.
@@ -352,7 +354,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.10.1...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.11.0...HEAD
+[2.11.0]: https://github.com/giantswarm/cert-exporter/compare/v2.10.1...v2.11.0
 [2.10.1]: https://github.com/giantswarm/cert-exporter/compare/v2.10.0...v2.10.1
 [2.10.0]: https://github.com/giantswarm/cert-exporter/compare/v2.9.16...v2.10.0
 [2.9.16]: https://github.com/giantswarm/cert-exporter/compare/v2.9.15...v2.9.16
