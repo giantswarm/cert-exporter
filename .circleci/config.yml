@@ -45,7 +45,6 @@ workflows:
       - architect/push-to-registries:
           name: push-to-registries
           context: architect
-          multiarch: true
           requires:
             - go-build-cert-exporter-linux/amd64
             - go-build-cert-exporter-linux/arm64
