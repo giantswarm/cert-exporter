@@ -28,11 +28,9 @@ workflows:
   build:
     jobs:
       - architect/go-build:
+          name: go-build
           context: architect
-          matrix:
-            parameters:
-              architectures: ["linux/amd64", "linux/arm64"]
-          name: go-build-cert-exporter-<<matrix.architectures>>
+          architectures: linux/amd64,linux/arm64
           binary: cert-exporter
           filters:
             branches:
@@ -46,8 +44,7 @@ workflows:
           name: push-to-registries
           context: architect
           requires:
-            - go-build-cert-exporter-linux/amd64
-            - go-build-cert-exporter-linux/arm64
+            - go-build
           filters:
             branches:
               ignore:
