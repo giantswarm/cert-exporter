@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@8.3.0
+  architect: giantswarm/architect@9.0.0
 
 jobs:
   test:
@@ -28,11 +28,9 @@ workflows:
   build:
     jobs:
       - architect/go-build:
+          name: go-build
           context: architect
-          matrix:
-            parameters:
-              architecture: ["linux/amd64", "linux/arm64"]
-          name: go-build-cert-exporter-<<matrix.architecture>>
+          architectures: linux/amd64,linux/arm64
           binary: cert-exporter
           filters:
             branches:
@@ -45,10 +43,8 @@ workflows:
       - architect/push-to-registries:
           name: push-to-registries
           context: architect
-          multiarch: true
           requires:
-            - go-build-cert-exporter-linux/amd64
-            - go-build-cert-exporter-linux/arm64
+            - go-build
           filters:
             branches:
               ignore:
