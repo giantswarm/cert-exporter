@@ -1,4 +1,4 @@
-CVE-2026-34986 until=2026-06-05 # github.com/go-jose/go-jose/v4@v4.1.3
+CVE-2026-34986 until=2026-07-05 # github.com/go-jose/go-jose/v4@v4.1.3
 CVE-2026-27136 until=2026-06-27 # golang.org/x/net@v0.49.0
 CVE-2026-39821 until=2026-06-27 # golang.org/x/net@v0.49.0
 CVE-2026-42502 until=2026-06-27 # golang.org/x/net@v0.49.0
