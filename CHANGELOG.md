@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.11.1] - 2026-06-26
+
 ### Fixed
 
 - Add a `serialnumber` label to the `cert_exporter_not_after` and `cert_exporter_secret_not_after` metrics so concatenated certificates no longer collide into identical series. The collision made the registry fail `Gather()`, which blanked out the entire `/metrics` endpoint (regression from v2.10.1).
@@ -359,7 +361,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.11.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.11.1...HEAD
+[2.11.1]: https://github.com/giantswarm/cert-exporter/compare/v2.11.0...v2.11.1
 [2.11.0]: https://github.com/giantswarm/cert-exporter/compare/v2.10.1...v2.11.0
 [2.10.1]: https://github.com/giantswarm/cert-exporter/compare/v2.10.0...v2.10.1
 [2.10.0]: https://github.com/giantswarm/cert-exporter/compare/v2.9.16...v2.10.0
