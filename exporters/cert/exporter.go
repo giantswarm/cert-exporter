@@ -89,7 +89,8 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 
 				for _, cert := range certs {
 					timestamp := float64(cert.NotAfter.Unix())
-					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath)
+					serialNumber := fmt.Sprintf("%x", cert.SerialNumber)
+					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath, serialNumber)
 				}
 			}
 			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))
@@ -137,6 +138,7 @@ func New(config Config) (*Exporter, error) {
 			"Timestamp after which the cert is invalid.",
 			[]string{
 				"path",
+				"serialnumber",
 			},
 			nil,
 		),

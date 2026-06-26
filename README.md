@@ -6,11 +6,11 @@ Exposes three metrics to Prometheus regarding certificates/tokens:
 
 ## `cert_exporter_not_after`
 
-Timestamp after which the cert is invalid (for certificate files mounted from the host filesystem).
+Timestamp after which the cert is invalid (for certificate files mounted from the host filesystem). When a file contains multiple concatenated certificates, one series is emitted per certificate, distinguished by the `serialnumber` label.
 
 ## `cert_exporter_secret_not_after`
 
-Timestamp after which the cert is invalid (for certificates stored in Kubernetes secrets).
+Timestamp after which the cert is invalid (for certificates stored in Kubernetes secrets). When a secret key contains multiple concatenated certificates, one series is emitted per certificate, distinguished by the `serialnumber` label.
 
 ## `cert_exporter_token_not_after`
 

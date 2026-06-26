@@ -102,7 +102,8 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 
 			for _, cert := range certs {
 				timestamp := float64(cert.NotAfter.Unix())
-				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName)
+				serialNumber := fmt.Sprintf("%x", cert.SerialNumber)
+				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName, serialNumber)
 			}
 		}
 	}
@@ -155,6 +156,7 @@ func New(config Config) (*Exporter, error) {
 				"namespace",
 				"secretkey",
 				"certificatename",
+				"serialnumber",
 			},
 			nil,
 		),

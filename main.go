@@ -114,6 +114,10 @@ func main() {
 		prometheus.MustRegister(crExporter)
 	}
 
-	http.Handle("/metrics", promhttp.Handler())
+	// Use ContinueOnError so that a single problematic metric (e.g. a duplicate
+	// series) cannot fail the whole scrape and blank out all other metrics.
+	http.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
+		ErrorHandling: promhttp.ContinueOnError,
+	}))
 	http.ListenAndServe(address, nil) // nolint:errcheck,gosec
 }

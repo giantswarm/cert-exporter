@@ -29,7 +29,7 @@ func newTestExporter(t *testing.T) *Exporter {
 		cert: prometheus.NewDesc(
 			prometheus.BuildFQName("cert_exporter", "secret", "not_after"),
 			"Timestamp after which the cert is invalid.",
-			[]string{"name", "namespace", "secretkey", "certificatename"},
+			[]string{"name", "namespace", "secretkey", "certificatename", "serialnumber"},
 			nil,
 		),
 		ctx:    context.Background(),
@@ -46,7 +46,9 @@ func generateSelfSignedCertPEM(t *testing.T, notAfter time.Time) []byte {
 	}
 
 	template := &x509.Certificate{
-		SerialNumber: big.NewInt(1),
+		// Derive a unique serial from the expiry so concatenated certs in a
+		// test get distinct serial numbers, mirroring real-world certificates.
+		SerialNumber: big.NewInt(notAfter.Unix()),
 		NotBefore:    time.Now().Add(-1 * time.Hour),
 		NotAfter:     notAfter,
 	}
@@ -131,6 +133,51 @@ func TestCalculateExpiry_MultipleCertsInSameKey(t *testing.T) {
 	// tls.crt has 2 certs, ca.crt has 1 = 3 total
 	if len(metrics) != 3 {
 		t.Fatalf("expected 3 metrics for concatenated certs, got %d", len(metrics))
+	}
+}
+
+// secretCollector adapts calculateExpiry to the prometheus.Collector interface
+// so the metrics can be exercised through a real registry Gather(), which is
+// where duplicate-series collisions surface (a plain channel read does not).
+type secretCollector struct {
+	e      *Exporter
+	secret v1.Secret
+}
+
+func (c *secretCollector) Describe(ch chan<- *prometheus.Desc) { ch <- c.e.cert }
+func (c *secretCollector) Collect(ch chan<- prometheus.Metric) { _ = c.e.calculateExpiry(ch, c.secret) }
+
+// TestGather_MultipleCertsInSameKey guards against the regression where two
+// certs concatenated in a single secret key produced metrics with identical
+// label sets, causing Gather() to fail and blanking out the whole scrape.
+func TestGather_MultipleCertsInSameKey(t *testing.T) {
+	e := newTestExporter(t)
+
+	certPEM1 := generateSelfSignedCertPEM(t, time.Now().Add(1*time.Hour))
+	certPEM2 := generateSelfSignedCertPEM(t, time.Now().Add(48*time.Hour))
+	combined := append(certPEM1, certPEM2...)
+
+	secret := v1.Secret{
+		ObjectMeta: metav1.ObjectMeta{Name: "kyverno-webhook", Namespace: "kyverno"},
+		Data:       map[string][]byte{"tls.crt": combined},
+	}
+
+	reg := prometheus.NewRegistry()
+	if err := reg.Register(&secretCollector{e: e, secret: secret}); err != nil {
+		t.Fatal(err)
+	}
+
+	mfs, err := reg.Gather()
+	if err != nil {
+		t.Fatalf("Gather() failed (duplicate series regression): %v", err)
+	}
+
+	var series int
+	for _, mf := range mfs {
+		series += len(mf.GetMetric())
+	}
+	if series != 2 {
+		t.Fatalf("expected 2 distinct series for concatenated certs, got %d", series)
 	}
 }
 

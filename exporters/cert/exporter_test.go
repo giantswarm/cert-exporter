@@ -27,7 +27,7 @@ func newTestExporter(t *testing.T, fs afero.Fs, paths []string) *Exporter {
 		cert: prometheus.NewDesc(
 			prometheus.BuildFQName("cert_exporter", "", "not_after"),
 			"Timestamp after which the cert is invalid.",
-			[]string{"path"},
+			[]string{"path", "serialnumber"},
 			nil,
 		),
 		fs:     fs,
@@ -45,7 +45,9 @@ func generateSelfSignedCertPEM(t *testing.T, notAfter time.Time) []byte {
 	}
 
 	template := &x509.Certificate{
-		SerialNumber: big.NewInt(1),
+		// Derive a unique serial from the expiry so concatenated certs in a
+		// test get distinct serial numbers, mirroring real-world certificates.
+		SerialNumber: big.NewInt(notAfter.Unix()),
 		NotBefore:    time.Now().Add(-1 * time.Hour),
 		NotAfter:     notAfter,
 	}
@@ -110,6 +112,40 @@ func TestCollectPath_MultipleCertsInSameFile(t *testing.T) {
 
 	if len(metrics) != 2 {
 		t.Fatalf("expected 2 metrics for concatenated certs, got %d", len(metrics))
+	}
+}
+
+// TestGather_MultipleCertsInSameFile guards against the regression where two
+// certs concatenated in a single file produced metrics with identical label
+// sets, causing Gather() to fail and blanking out the whole scrape.
+func TestGather_MultipleCertsInSameFile(t *testing.T) {
+	fs := afero.NewMemMapFs()
+
+	cert1 := generateSelfSignedCertPEM(t, time.Now().Add(1*time.Hour))
+	cert2 := generateSelfSignedCertPEM(t, time.Now().Add(48*time.Hour))
+	combined := append(cert1, cert2...)
+
+	_ = fs.MkdirAll("/certs", 0755)
+	_ = afero.WriteFile(fs, "/certs/tls.crt", combined, 0644)
+
+	e := newTestExporter(t, fs, []string{"/certs"})
+
+	reg := prometheus.NewRegistry()
+	if err := reg.Register(e); err != nil {
+		t.Fatal(err)
+	}
+
+	mfs, err := reg.Gather()
+	if err != nil {
+		t.Fatalf("Gather() failed (duplicate series regression): %v", err)
+	}
+
+	var series int
+	for _, mf := range mfs {
+		series += len(mf.GetMetric())
+	}
+	if series != 2 {
+		t.Fatalf("expected 2 distinct series for concatenated certs, got %d", series)
 	}
 }
 
