@@ -237,10 +237,13 @@ def test_file_certificate_metrics(
     time.sleep(5)
 
     # request from daemonset port
+    # Match on the label prefix (no closing brace) so this works against both
+    # the previous chart and the new one, which appends a serialnumber label.
+    # The upgrade scenario runs these tests against the released chart too.
     ds_metrics = retrieve_metrics(daemonset_port)
     assert_metric(
         ds_metrics,
-        f'{metric_name}{{path="/certs/{cert_name}.crt"}}',
+        f'{metric_name}{{path="/certs/{cert_name}.crt"',
         check_expiry(expected_expiry),
     )
 
@@ -296,10 +299,13 @@ def test_secret_metrics(
     time.sleep(5)
 
     # request from deployment port
+    # Match on the label prefix (no closing brace) so this works against both
+    # the previous chart and the new one, which appends a serialnumber label.
+    # The upgrade scenario runs these tests against the released chart too.
     deploy_metrics = retrieve_metrics(deployment_port)
     assert_metric(
         deploy_metrics,
-        f'{metric_name}{{certificatename="",name="{cert_name}",namespace="default",secretkey="tls.crt"}}',
+        f'{metric_name}{{certificatename="",name="{cert_name}",namespace="default",secretkey="tls.crt"',
         check_expiry(expected_expiry),
     )
 
