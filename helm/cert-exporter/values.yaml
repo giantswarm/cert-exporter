@@ -16,7 +16,7 @@ exporter:
 # Enable Kyverno Policy Exceptions
 kyvernoPolicyExceptions:
   enabled: true
-  namespace: giantswarm
+  namespace: kube-system
 
 image:
   repository: giantswarm/cert-exporter
