@@ -10,6 +10,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Changed
 
 - Go: Update dependencies.
+- Templates: Move PolicyException to `kube-system` namespace.
 
 ## [2.11.1] - 2026-06-26
 
