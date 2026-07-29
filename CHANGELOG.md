@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.12.0] - 2026-07-29
+
 ### Added
 
 - Regression tests covering the v2.11.1 metrics endpoint fix: concatenated and repeated certificates in secrets and files, and an endpoint level test asserting `/metrics` keeps returning 200 and serving the remaining metrics when a duplicate series is emitted.
@@ -377,7 +379,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.11.2...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.12.0...HEAD
+[2.12.0]: https://github.com/giantswarm/cert-exporter/compare/v2.11.2...v2.12.0
 [2.11.2]: https://github.com/giantswarm/cert-exporter/compare/v2.11.1...v2.11.2
 [2.11.1]: https://github.com/giantswarm/cert-exporter/compare/v2.11.0...v2.11.1
 [2.11.0]: https://github.com/giantswarm/cert-exporter/compare/v2.10.1...v2.11.0
