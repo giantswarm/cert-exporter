@@ -19,6 +19,15 @@ import (
 	"github.com/giantswarm/cert-exporter/pkg/project"
 )
 
+// metricsHandler serves /metrics with ContinueOnError so that a single
+// problematic metric (e.g. a duplicate series) cannot fail the whole scrape and
+// blank out all other metrics.
+func metricsHandler(gatherer prometheus.Gatherer) http.Handler {
+	return promhttp.HandlerFor(gatherer, promhttp.HandlerOpts{
+		ErrorHandling: promhttp.ContinueOnError,
+	})
+}
+
 func main() {
 	// Print version.
 	if (len(os.Args) > 1) && (os.Args[1] == "version") {
@@ -114,10 +123,6 @@ func main() {
 		prometheus.MustRegister(crExporter)
 	}
 
-	// Use ContinueOnError so that a single problematic metric (e.g. a duplicate
-	// series) cannot fail the whole scrape and blank out all other metrics.
-	http.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
-		ErrorHandling: promhttp.ContinueOnError,
-	}))
+	http.Handle("/metrics", metricsHandler(prometheus.DefaultGatherer))
 	http.ListenAndServe(address, nil) // nolint:errcheck,gosec
 }

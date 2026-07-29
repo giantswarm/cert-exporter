@@ -321,6 +321,122 @@ def test_secret_metrics(
 
 
 @pytest.mark.functional
+# Not marked as upgrade: the previous released chart does not contain the fix
+# this test asserts on, so it can only run against the chart under test.
+def test_secret_metrics_with_concatenated_certificates(
+    kube_cluster: Cluster,
+    certexporter_deployment: List[pykube.Deployment],
+):
+    """Regression test for https://github.com/giantswarm/roadmap/issues/4323.
+
+    A secret key holding several concatenated certificates (as produced by e.g.
+    Kyverno webhook cert rotation) used to emit samples with identical label
+    sets. Prometheus rejected the scrape with HTTP 500, so the whole /metrics
+    endpoint went blank, not just that secret's metric. Each certificate in the
+    chain must be reported, and unrelated secrets must keep being served even
+    though the chain repeats a certificate.
+    """
+    # patch services to be type: NodePort
+    prepare_services(kube_cluster)
+
+    metric_name = "cert_exporter_secret_not_after"
+
+    chain_name = "concatenated-cert"
+    unrelated_name = "unrelated-cert"
+
+    leaf_expires_in_secs = 3600
+    ca_expires_in_secs = 7200
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Distinct serial numbers, as real certificates have.
+        (leaf, leaf_key) = cert_gen(
+            name=chain_name, not_after=leaf_expires_in_secs, serial=1001
+        )
+        (ca, _) = cert_gen(
+            name=f"{chain_name}-ca", not_after=ca_expires_in_secs, serial=1002
+        )
+        (unrelated, unrelated_key) = cert_gen(
+            name=unrelated_name, not_after=leaf_expires_in_secs, serial=1003
+        )
+
+        chain_path = f"{tmpdirname}/{chain_name}.crt"
+        chain_key_path = f"{tmpdirname}/{chain_name}.key"
+        unrelated_path = f"{tmpdirname}/{unrelated_name}.crt"
+        unrelated_key_path = f"{tmpdirname}/{unrelated_name}.key"
+
+        # Leaf, its CA, and the CA a second time. The repeated certificate is
+        # what used to produce two samples with identical labels.
+        with open(chain_path, "wt") as f:
+            f.write(leaf + ca + ca)
+
+        with open(chain_key_path, "wt") as f:
+            f.write(leaf_key)
+
+        with open(unrelated_path, "wt") as f:
+            f.write(unrelated)
+
+        with open(unrelated_key_path, "wt") as f:
+            f.write(unrelated_key)
+
+        kube_cluster.kubectl(
+            f"create secret tls {chain_name}",
+            output_format="",
+            cert=chain_path,
+            key=chain_key_path,
+        )
+        kube_cluster.kubectl(
+            f"create secret tls {unrelated_name}",
+            output_format="",
+            cert=unrelated_path,
+            key=unrelated_key_path,
+        )
+
+    # let the dust settle
+    time.sleep(5)
+
+    try:
+        # retrieve_metrics asserts the endpoint answers 200 and returns samples,
+        # which is the core of the regression: it used to be 500 and empty.
+        deploy_metrics = retrieve_metrics(deployment_port)
+
+        chain_prefix = (
+            f'{metric_name}{{certificatename="",name="{chain_name}",'
+            f'namespace="default",secretkey="tls.crt"'
+        )
+        chain_metrics = [m for m in deploy_metrics if m.startswith(chain_prefix)]
+
+        # Leaf and CA, each reported exactly once. The repeated CA must not add
+        # a second, colliding sample.
+        assert len(chain_metrics) == 2, (
+            f"expected 2 samples for the concatenated chain, got {len(chain_metrics)}: "
+            f"{chain_metrics}"
+        )
+
+        expected_expiries = [
+            int((datetime.now() + timedelta(seconds=s)).strftime("%s"))
+            for s in (leaf_expires_in_secs, ca_expires_in_secs)
+        ]
+        for expected_expiry in expected_expiries:
+            assert (
+                len([m for m in chain_metrics if check_expiry(expected_expiry)(m)]) == 1
+            )
+
+        # The unrelated secret must still be exported. This is what silently
+        # disappeared when the colliding samples failed the whole scrape.
+        assert_metric(
+            deploy_metrics,
+            f'{metric_name}{{certificatename="",name="{unrelated_name}",'
+            f'namespace="default",secretkey="tls.crt"',
+        )
+    finally:
+        # cleanup
+        kube_cluster.kubectl(
+            f"delete secret {chain_name} {unrelated_name}",
+            output_format="",
+        )
+
+
+@pytest.mark.functional
 # @pytest.mark.upgrade
 def test_certificate_cr_metrics(
     request,

@@ -113,6 +113,21 @@ func (e *Exporter) fileIsPrivateKey(f []byte) bool {
 	return strings.Contains(string(f), "RSA PRIVATE KEY")
 }
 
+// newCertDesc describes the exported metric. Kept separate from New so tests can
+// assert against the real label set instead of a copy of it. The serialnumber
+// label is what keeps concatenated certificates from colliding into one series.
+func newCertDesc() *prometheus.Desc {
+	return prometheus.NewDesc(
+		prometheus.BuildFQName("cert_exporter", "", "not_after"),
+		"Timestamp after which the cert is invalid.",
+		[]string{
+			"path",
+			"serialnumber",
+		},
+		nil,
+	)
+}
+
 func DefaultConfig() Config {
 	return Config{
 		Paths: []string{},
@@ -133,15 +148,7 @@ func New(config Config) (*Exporter, error) {
 	logger.Log("info", "creating new exporter")
 
 	return &Exporter{
-		cert: prometheus.NewDesc(
-			prometheus.BuildFQName("cert_exporter", "", "not_after"),
-			"Timestamp after which the cert is invalid.",
-			[]string{
-				"path",
-				"serialnumber",
-			},
-			nil,
-		),
+		cert:   newCertDesc(),
 		fs:     fs,
 		logger: logger,
 		paths:  config.Paths,
