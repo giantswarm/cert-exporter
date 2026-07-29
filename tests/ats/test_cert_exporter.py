@@ -347,16 +347,24 @@ def test_secret_metrics_with_concatenated_certificates(
     leaf_expires_in_secs = 3600
     ca_expires_in_secs = 7200
 
+    # Pinned so the test can assert on the serialnumber label without depending
+    # on how long key generation took.
+    leaf_serial = 1001
+    ca_serial = 1002
+    unrelated_serial = 1003
+
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Distinct serial numbers, as real certificates have.
         (leaf, leaf_key) = cert_gen(
-            name=chain_name, not_after=leaf_expires_in_secs, serial=1001
+            name=chain_name, not_after=leaf_expires_in_secs, serial=leaf_serial
         )
         (ca, _) = cert_gen(
-            name=f"{chain_name}-ca", not_after=ca_expires_in_secs, serial=1002
+            name=f"{chain_name}-ca", not_after=ca_expires_in_secs, serial=ca_serial
         )
         (unrelated, unrelated_key) = cert_gen(
-            name=unrelated_name, not_after=leaf_expires_in_secs, serial=1003
+            name=unrelated_name,
+            not_after=leaf_expires_in_secs,
+            serial=unrelated_serial,
         )
 
         chain_path = f"{tmpdirname}/{chain_name}.crt"
@@ -412,21 +420,29 @@ def test_secret_metrics_with_concatenated_certificates(
             f"{chain_metrics}"
         )
 
-        expected_expiries = [
-            int((datetime.now() + timedelta(seconds=s)).strftime("%s"))
-            for s in (leaf_expires_in_secs, ca_expires_in_secs)
-        ]
-        for expected_expiry in expected_expiries:
-            assert (
-                len([m for m in chain_metrics if check_expiry(expected_expiry)(m)]) == 1
-            )
+        # Both certificates are there, told apart by the serialnumber label that
+        # v2.11.1 added. Asserting on the serials instead of on expiry
+        # timestamps keeps this independent of how long key generation and
+        # secret creation took. The exporter formats the serial as lowercase hex.
+        expected_serials = {f"{leaf_serial:x}", f"{ca_serial:x}"}
+        got_serials = {m.split('serialnumber="')[1].split('"')[0] for m in chain_metrics}
+        assert got_serials == expected_serials, (
+            f"expected serials {sorted(expected_serials)}, got {sorted(got_serials)}: "
+            f"{chain_metrics}"
+        )
 
         # The unrelated secret must still be exported. This is what silently
         # disappeared when the colliding samples failed the whole scrape.
-        assert_metric(
-            deploy_metrics,
+        unrelated_prefix = (
             f'{metric_name}{{certificatename="",name="{unrelated_name}",'
-            f'namespace="default",secretkey="tls.crt"',
+            f'namespace="default",secretkey="tls.crt"'
+        )
+        unrelated_metrics = [
+            m for m in deploy_metrics if m.startswith(unrelated_prefix)
+        ]
+        assert len(unrelated_metrics) == 1, (
+            "expected the unrelated secret to still be exported, got "
+            f"{unrelated_metrics}"
         )
     finally:
         # cleanup
