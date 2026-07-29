@@ -34,6 +34,24 @@ type Exporter struct {
 	namespaces []string
 }
 
+// newCertDesc describes the exported metric. Kept separate from New so tests can
+// assert against the real label set instead of a copy of it. The serialnumber
+// label is what keeps concatenated certificates from colliding into one series.
+func newCertDesc() *prometheus.Desc {
+	return prometheus.NewDesc(
+		prometheus.BuildFQName("cert_exporter", "secret", "not_after"),
+		"Timestamp after which the cert is invalid.",
+		[]string{
+			"name",
+			"namespace",
+			"secretkey",
+			"certificatename",
+			"serialnumber",
+		},
+		nil,
+	)
+}
+
 func DefaultConfig() Config {
 	return Config{
 		Namespaces: []string{},
@@ -148,18 +166,7 @@ func New(config Config) (*Exporter, error) {
 	logger.Log("info", "creating new exporter")
 
 	return &Exporter{
-		cert: prometheus.NewDesc(
-			prometheus.BuildFQName("cert_exporter", "secret", "not_after"),
-			"Timestamp after which the cert is invalid.",
-			[]string{
-				"name",
-				"namespace",
-				"secretkey",
-				"certificatename",
-				"serialnumber",
-			},
-			nil,
-		),
+		cert:       newCertDesc(),
 		ctx:        ctx,
 		k8sClient:  k8sClient,
 		logger:     logger,

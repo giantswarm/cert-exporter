@@ -7,6 +7,15 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- Regression tests covering the v2.11.1 metrics endpoint fix: concatenated and repeated certificates in secrets and files, and an endpoint level test asserting `/metrics` keeps returning 200 and serving the remaining metrics when a duplicate series is emitted.
+- ATS: End to end test for a TLS secret whose `tls.crt` holds a concatenated certificate chain.
+
+### Changed
+
+- ATS: `cert_gen` now sets a certificate serial number, which defaulted to `0` for every generated certificate.
+
 ## [2.11.2] - 2026-07-28
 
 ### Changed
