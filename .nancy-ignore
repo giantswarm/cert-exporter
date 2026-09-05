@@ -1,1 +1,2 @@
-CVE-2026-56854 until=2026-10-01 # golang.org/x/crypto@v0.54.0
+CVE-2026-56854 until=2026-10-04 # golang.org/x/crypto@v0.54.0
+CVE-2026-56855 until=2026-10-04 # golang.org/x/crypto@v0.54.0
