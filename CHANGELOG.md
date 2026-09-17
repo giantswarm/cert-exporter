@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.12.1] - 2026-09-17
+
 ### Fixed
 
 - A cert file that cannot be read no longer aborts the scan of its whole cert path. Previously one unreadable file (such as a root-only `0600` `ca.crt` on an AKS node, where the exporter runs as an unprivileged user) stopped the walk, silently dropping every file sorting after it from the metrics. Unreadable files are now logged and skipped individually.
@@ -383,7 +385,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.12.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.12.1...HEAD
+[2.12.1]: https://github.com/giantswarm/cert-exporter/compare/v2.12.0...v2.12.1
 [2.12.0]: https://github.com/giantswarm/cert-exporter/compare/v2.11.2...v2.12.0
 [2.11.2]: https://github.com/giantswarm/cert-exporter/compare/v2.11.1...v2.11.2
 [2.11.1]: https://github.com/giantswarm/cert-exporter/compare/v2.11.0...v2.11.1
