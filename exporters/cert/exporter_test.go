@@ -9,6 +9,7 @@ import (
 	"math/big"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -296,5 +297,47 @@ func TestCollectPath_PrivateKeySkipped(t *testing.T) {
 	// Only tls.crt should produce a metric, not the private key.
 	if len(metrics) != 1 {
 		t.Fatalf("expected 1 metric (private key skipped), got %d", len(metrics))
+	}
+}
+
+// permDeniedFs makes a single path unreadable. MemMapFs does not enforce
+// permission bits, so a root-only file on a node has to be simulated.
+type permDeniedFs struct {
+	afero.Fs
+	denied string
+}
+
+func (fs permDeniedFs) Open(name string) (afero.File, error) {
+	if name == fs.denied {
+		return nil, &os.PathError{Op: "open", Path: name, Err: os.ErrPermission}
+	}
+	return fs.Fs.Open(name)
+}
+
+func TestCollectPath_UnreadableFileDoesNotAbortWalk(t *testing.T) {
+	base := afero.NewMemMapFs()
+
+	// The walk is lexical, so an unreadable ca.crt is reached before
+	// server.crt and used to abort collection before server.crt was read.
+	_ = base.MkdirAll("/certs", 0755)
+	_ = afero.WriteFile(base, "/certs/ca.crt", []byte("root only"), 0600)
+	_ = afero.WriteFile(base, "/certs/server.crt", generateSelfSignedCertPEM(t, time.Now().Add(24*time.Hour)), 0644)
+
+	e := newTestExporter(t, permDeniedFs{Fs: base, denied: "/certs/ca.crt"}, []string{"/certs"})
+
+	ch := make(chan prometheus.Metric, 10)
+	err := e.collectPath(ch, "/certs")
+	if err != nil {
+		t.Fatalf("an unreadable file must not fail collection: %v", err)
+	}
+	close(ch)
+
+	var metrics []prometheus.Metric
+	for m := range ch {
+		metrics = append(metrics, m)
+	}
+
+	if len(metrics) != 1 {
+		t.Fatalf("expected server.crt to still be collected past the unreadable ca.crt, got %d metrics", len(metrics))
 	}
 }

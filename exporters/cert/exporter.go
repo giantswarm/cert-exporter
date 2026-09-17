@@ -64,8 +64,12 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 			e.logger.Log("debug", fmt.Sprintf("checking cert %s", fpath))
 			file, err := afero.ReadFile(e.fs, fpath)
 			if err != nil {
-				e.logger.Log("error", microerror.Mask(err))
-				return err
+				// Returning the error here would abort the whole walk and
+				// silently drop every remaining file in the path. A single
+				// unreadable file (for example a root-only 0600 cert on a
+				// managed node) must only skip itself.
+				e.logger.Log("warning", fmt.Sprintf("skipping %s: %s", fpath, microerror.Mask(err)))
+				return nil
 			}
 
 			if e.fileIsPrivateKey(file) {

@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Fixed
+
+- A cert file that cannot be read no longer aborts the scan of its whole cert path. Previously one unreadable file (such as a root-only `0600` `ca.crt` on an AKS node, where the exporter runs as an unprivileged user) stopped the walk, silently dropping every file sorting after it from the metrics. Unreadable files are now logged and skipped individually.
+
 ## [2.12.0] - 2026-07-29
 
 ### Added
