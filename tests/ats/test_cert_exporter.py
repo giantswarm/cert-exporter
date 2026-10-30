@@ -453,6 +453,83 @@ def test_secret_metrics_with_concatenated_certificates(
 
 
 @pytest.mark.functional
+# Not marked as upgrade: the previous released chart does not contain the fix
+# this test asserts on, so it can only run against the chart under test.
+def test_secret_metrics_with_same_serial_certificates(
+    kube_cluster: Cluster,
+    certexporter_deployment: List[pykube.Deployment],
+):
+    """Kyverno regenerates its webhook CA with the same key and serial number 0
+    and keeps the expired CA in the secret for a year. Both certificates must be
+    exported, told apart by the fingerprint label, so the alert sees the newer one.
+    """
+    prepare_services(kube_cluster)
+
+    metric_name = "cert_exporter_secret_not_after"
+    secret_name = "same-serial-ca"
+
+    old_expires_in_secs = 3600
+    new_expires_in_secs = 7200
+    expected = {
+        int((datetime.now() + timedelta(seconds=s)).strftime("%s"))
+        for s in (old_expires_in_secs, new_expires_in_secs)
+    }
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Same serial for two different certificates, as Kyverno produces.
+        (old, old_key) = cert_gen(
+            name=secret_name, not_after=old_expires_in_secs, serial=0
+        )
+        (new, _) = cert_gen(name=secret_name, not_after=new_expires_in_secs, serial=0)
+
+        cert_path = f"{tmpdirname}/{secret_name}.crt"
+        key_path = f"{tmpdirname}/{secret_name}.key"
+
+        with open(cert_path, "wt") as f:
+            f.write(old + new)
+
+        with open(key_path, "wt") as f:
+            f.write(old_key)
+
+        kube_cluster.kubectl(
+            f"create secret tls {secret_name}",
+            output_format="",
+            cert=cert_path,
+            key=key_path,
+        )
+
+    # let the dust settle
+    time.sleep(5)
+
+    try:
+        metrics = retrieve_metrics(deployment_port)
+
+        prefix = (
+            f'{metric_name}{{certificatename="",name="{secret_name}",'
+            f'namespace="default",secretkey="tls.crt"'
+        )
+        samples = [m for m in metrics if m.startswith(prefix)]
+        assert len(samples) == 2, (
+            f"expected 2 samples for two certs with serial 0, got {samples}"
+        )
+
+        fingerprints = {m.split('fingerprint="')[1].split('"')[0] for m in samples}
+        assert len(fingerprints) == 2, f"expected distinct fingerprints, got {samples}"
+        assert all(
+            len(fp) == 16 and fp == fp.lower() for fp in fingerprints
+        ), fingerprints
+
+        # Both expiries are present, so max() over the series is the newer one.
+        got = {int(float(m.split(" ")[1])) for m in samples}
+        assert all(
+            any(abs(g - e) < 5 for g in got) for e in expected
+        ), f"expected {expected}, got {got}"
+    finally:
+        # cleanup
+        kube_cluster.kubectl(f"delete secret {secret_name}", output_format="")
+
+
+@pytest.mark.functional
 # @pytest.mark.upgrade
 def test_certificate_cr_metrics(
     request,

@@ -6,11 +6,26 @@ Exposes three metrics to Prometheus regarding certificates/tokens:
 
 ## `cert_exporter_not_after`
 
-Timestamp after which the cert is invalid (for certificate files mounted from the host filesystem). When a file contains multiple concatenated certificates, one series is emitted per certificate, distinguished by the `serialnumber` label.
+Timestamp after which the cert is invalid (for certificate files mounted from the host filesystem). When a file contains multiple concatenated certificates, one series is emitted per certificate, distinguished by the `serialnumber` label. Certificates that share a serial number (Kyverno regenerates its webhook CA with serial `0` and the same key) are told apart by the `fingerprint` label, the first 16 hex characters of the certificate's SHA-256 fingerprint.
+
+| Label | Value |
+|---|---|
+| `path` | File path of the certificate |
+| `serialnumber` | Certificate serial number, lowercase hex |
+| `fingerprint` | First 16 lowercase hex characters of the SHA-256 fingerprint of the certificate (DER) |
 
 ## `cert_exporter_secret_not_after`
 
-Timestamp after which the cert is invalid (for certificates stored in Kubernetes secrets). When a secret key contains multiple concatenated certificates, one series is emitted per certificate, distinguished by the `serialnumber` label.
+Timestamp after which the cert is invalid (for certificates stored in Kubernetes secrets). When a secret key contains multiple concatenated certificates, one series is emitted per certificate, distinguished by the `serialnumber` label. Certificates that share a serial number (Kyverno regenerates its webhook CA with serial `0` and the same key) are told apart by the `fingerprint` label, the first 16 hex characters of the certificate's SHA-256 fingerprint.
+
+| Label | Value |
+|---|---|
+| `name` | Secret name |
+| `namespace` | Secret namespace |
+| `secretkey` | Key within the secret (`ca.crt` or `tls.crt`) |
+| `certificatename` | `cert-manager.io/certificate-name` annotation, if any |
+| `serialnumber` | Certificate serial number, lowercase hex |
+| `fingerprint` | First 16 lowercase hex characters of the SHA-256 fingerprint of the certificate (DER) |
 
 ## `cert_exporter_token_not_after`
 
