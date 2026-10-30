@@ -13,7 +13,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Changed
 
-- `/metrics` logs gather errors (such as a dropped duplicate series) instead of discarding them silently.
+- `/metrics` logs gather and encoding errors (such as a dropped duplicate series) instead of discarding them silently.
+- A certificate repeated verbatim within one secret key or file is reported once, without producing a gather error on every scrape.
 
 ### Fixed
 

@@ -272,6 +272,13 @@ func TestScrape_DuplicateIdenticalCertInSameKey(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// A repeated identical certificate is expected and must not be reported
+	// as a gather error, otherwise ErrorLog fires on every scrape for a
+	// benign secret and buries real collisions.
+	if _, err := reg.Gather(); err != nil {
+		t.Fatalf("a repeated identical certificate must be deduplicated, not collide: %v", err)
+	}
+
 	code, body := serveMetrics(t, reg)
 	if code != http.StatusOK {
 		t.Fatalf("expected /metrics to return 200, got %d", code)

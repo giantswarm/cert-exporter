@@ -79,6 +79,10 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				return nil
 			}
 
+			// A certificate repeated verbatim in one file (a chain that lists
+			// its CA twice) would produce an identical label set and a gather
+			// error on every scrape; report each distinct certificate once.
+			seen := map[string]struct{}{}
 			rest := file
 			for {
 				block, remaining := pem.Decode(rest)
@@ -94,9 +98,16 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				}
 
 				for _, cert := range certs {
+					fp := fingerprint.SHA256(cert)
+					if _, ok := seen[fp]; ok {
+						e.logger.Log("debug", fmt.Sprintf("%s repeats certificate %s, reporting it once", fpath, fp))
+						continue
+					}
+					seen[fp] = struct{}{}
+
 					timestamp := float64(cert.NotAfter.Unix())
 					serialNumber := fmt.Sprintf("%x", cert.SerialNumber)
-					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath, serialNumber, fingerprint.SHA256(cert))
+					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath, serialNumber, fp)
 				}
 			}
 			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))

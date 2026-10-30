@@ -109,6 +109,10 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 			continue
 		}
 
+		// A certificate repeated verbatim in one key (a chain that lists its CA
+		// twice) would produce an identical label set and a gather error on
+		// every scrape; report each distinct certificate once instead.
+		seen := map[string]struct{}{}
 		rest := certBytes
 		for {
 			block, remaining := pem.Decode(rest)
@@ -124,9 +128,16 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 			}
 
 			for _, cert := range certs {
+				fp := fingerprint.SHA256(cert)
+				if _, ok := seen[fp]; ok {
+					e.logger.Log("debug", fmt.Sprintf("%s in secret %s/%s repeats certificate %s, reporting it once", certKey, secretNamespace, secretName, fp))
+					continue
+				}
+				seen[fp] = struct{}{}
+
 				timestamp := float64(cert.NotAfter.Unix())
 				serialNumber := fmt.Sprintf("%x", cert.SerialNumber)
-				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName, serialNumber, fingerprint.SHA256(cert))
+				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName, serialNumber, fp)
 			}
 		}
 	}
