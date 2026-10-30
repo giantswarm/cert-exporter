@@ -7,6 +7,19 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- `fingerprint` label (first 16 hex characters of the certificate's SHA-256 fingerprint) on `cert_exporter_not_after` and `cert_exporter_secret_not_after`.
+
+### Changed
+
+- `/metrics` now logs gather and encoding errors (such as a dropped duplicate series) instead of discarding them silently.
+- A truly identical certificate duplicated within one secret key or file is reported once, without producing a gather error on every scrape.
+
+### Fixed
+
+- Certificates sharing a serial number in one secret key or file no longer collide into one series. Previously only the first, expired certificate was exported.
+
 ## [2.12.2] - 2026-10-29
 
 ### Fixed

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -21,11 +22,22 @@ import (
 
 // metricsHandler serves /metrics with ContinueOnError so that a single
 // problematic metric (e.g. a duplicate series) cannot fail the whole scrape and
-// blank out all other metrics.
-func metricsHandler(gatherer prometheus.Gatherer) http.Handler {
+// blank out all other metrics. Gather errors are reported through errorLog so
+// a dropped series is visible instead of silently missing from the scrape.
+func metricsHandler(gatherer prometheus.Gatherer, errorLog promhttp.Logger) http.Handler {
 	return promhttp.HandlerFor(gatherer, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.ContinueOnError,
+		ErrorLog:      errorLog,
 	})
+}
+
+// promhttpLogger adapts micrologger to the promhttp.Logger interface.
+type promhttpLogger struct {
+	logger micrologger.Logger
+}
+
+func (l promhttpLogger) Println(v ...interface{}) {
+	l.logger.Log("level", "error", "message", strings.TrimSpace(fmt.Sprintln(v...)))
 }
 
 func main() {
@@ -123,6 +135,11 @@ func main() {
 		prometheus.MustRegister(crExporter)
 	}
 
-	http.Handle("/metrics", metricsHandler(prometheus.DefaultGatherer))
+	logger, err := micrologger.New(micrologger.Config{})
+	if err != nil {
+		panic(microerror.Mask(err))
+	}
+
+	http.Handle("/metrics", metricsHandler(prometheus.DefaultGatherer, promhttpLogger{logger: logger}))
 	http.ListenAndServe(address, nil) // nolint:errcheck,gosec
 }
