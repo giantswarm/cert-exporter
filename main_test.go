@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -50,7 +51,7 @@ func TestMetricsHandler_DuplicateSeriesDoesNotFailScrape(t *testing.T) {
 	}
 
 	rec := httptest.NewRecorder()
-	metricsHandler(reg).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/metrics", nil))
+	metricsHandler(reg, &recordingLogger{}).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/metrics", nil))
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected /metrics to return 200 despite a duplicate series, got %d", rec.Code)
@@ -63,5 +64,36 @@ func TestMetricsHandler_DuplicateSeriesDoesNotFailScrape(t *testing.T) {
 
 	if !strings.Contains(string(body), "cert_exporter_healthy_not_after") {
 		t.Fatal("expected unrelated metrics to still be served when another collector produces a duplicate series")
+	}
+}
+
+// recordingLogger captures what promhttp reports through HandlerOpts.ErrorLog.
+type recordingLogger struct {
+	lines []string
+}
+
+func (l *recordingLogger) Println(v ...interface{}) {
+	l.lines = append(l.lines, fmt.Sprintln(v...))
+}
+
+// TestMetricsHandler_DuplicateSeriesIsLogged: ContinueOnError must not hide the
+// collision. The 2026-10-30 Kyverno incident went unnoticed for months because
+// the dropped duplicate was never logged.
+func TestMetricsHandler_DuplicateSeriesIsLogged(t *testing.T) {
+	reg := prometheus.NewRegistry()
+	desc := prometheus.NewDesc("cert_exporter_test_not_after", "test", []string{"name"}, nil)
+	if err := reg.Register(&collidingCollector{desc: desc}); err != nil {
+		t.Fatal(err)
+	}
+
+	log := &recordingLogger{}
+	rec := httptest.NewRecorder()
+	metricsHandler(reg, log).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/metrics", nil))
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	if len(log.lines) == 0 || !strings.Contains(strings.Join(log.lines, "\n"), "was collected before with the same name and label values") {
+		t.Fatalf("expected the duplicate-series gather error to be logged, got %v", log.lines)
 	}
 }

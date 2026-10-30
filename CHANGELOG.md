@@ -11,6 +11,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 - `fingerprint` label (first 16 hex characters of the certificate's SHA-256 fingerprint) on `cert_exporter_not_after` and `cert_exporter_secret_not_after`.
 
+### Changed
+
+- `/metrics` logs gather errors (such as a dropped duplicate series) instead of discarding them silently.
+
 ### Fixed
 
 - Certificates sharing a serial number in one secret key or file (Kyverno regenerates its webhook CA with serial `0` and the same key, keeping the expired CA alongside the renewed one) no longer collide into one series. Previously only the first, expired certificate was exported, which kept `KyvernoCertificateSecretWillExpireInLessThanTwoDays` firing on every cluster older than a year.
