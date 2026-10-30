@@ -79,9 +79,7 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				return nil
 			}
 
-			// A certificate repeated verbatim in one file (a chain that lists
-			// its CA twice) would produce an identical label set and a gather
-			// error on every scrape; report each distinct certificate once.
+			// Store a fingerprint for each cert to differentiate otherwise identical metric series.
 			seen := map[string]struct{}{}
 			rest := file
 			for {
@@ -133,8 +131,7 @@ func (e *Exporter) fileIsPrivateKey(f []byte) bool {
 // newCertDesc describes the exported metric. Kept separate from New so tests can
 // assert against the real label set instead of a copy of it. The serialnumber
 // label keeps concatenated certificates from colliding into one series; the
-// fingerprint label keeps certificates that share a serial apart (Kyverno
-// regenerates its webhook CA with serial 0 and the same key).
+// fingerprint label differentiates certificates that share a serial.
 func newCertDesc() *prometheus.Desc {
 	return prometheus.NewDesc(
 		prometheus.BuildFQName("cert_exporter", "", "not_after"),

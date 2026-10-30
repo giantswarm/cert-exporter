@@ -377,10 +377,8 @@ func TestCollectPath_UnreadableFileDoesNotAbortWalk(t *testing.T) {
 	}
 }
 
-// TestScrape_SameSerialDifferentCertsInSameFile models Kyverno's CA rotation:
-// the renewed CA reuses the private key and SerialNumber 0, so only the
-// fingerprint label tells it apart from the expired one. Both must be served,
-// otherwise Prometheus only ever sees the expired certificate.
+// TestScrape_SameSerialDifferentCertsInSameFile tests that two certs with the same serial value
+// are still exposed as distinct series.
 func TestScrape_SameSerialDifferentCertsInSameFile(t *testing.T) {
 	fs := afero.NewMemMapFs()
 

@@ -59,8 +59,6 @@ func TestSHA256_IsPrefixOfDERDigest(t *testing.T) {
 	}
 }
 
-// Kyverno regenerates its CA with the same private key and SerialNumber 0; the
-// fingerprint is the only label that can tell the old and new CA apart.
 func TestSHA256_DistinguishesSameKeySameSerial(t *testing.T) {
 	key := newKey(t)
 	old := newCert(t, key, 0, time.Now().Add(time.Hour))

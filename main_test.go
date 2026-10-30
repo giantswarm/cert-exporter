@@ -76,9 +76,7 @@ func (l *recordingLogger) Println(v ...interface{}) {
 	l.lines = append(l.lines, fmt.Sprintln(v...))
 }
 
-// TestMetricsHandler_DuplicateSeriesIsLogged: ContinueOnError must not hide the
-// collision. The 2026-10-30 Kyverno incident went unnoticed for months because
-// the dropped duplicate was never logged.
+// TestMetricsHandler_DuplicateSeriesIsLogged: ContinueOnError must not hide the collision.
 func TestMetricsHandler_DuplicateSeriesIsLogged(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	desc := prometheus.NewDesc("cert_exporter_test_not_after", "test", []string{"name"}, nil)

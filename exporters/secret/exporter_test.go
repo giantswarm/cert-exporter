@@ -424,11 +424,8 @@ func TestCalculateExpiry_MissingKey(t *testing.T) {
 	}
 }
 
-// TestScrape_SameSerialDifferentCertsInSameKey is the fleet incident of
-// 2026-10-30: Kyverno's *.kyverno-tls-ca secret holds the expired previous CA
-// and the renewed CA, both SerialNumber 0 with the same key. Only the first
-// was exported, so KyvernoCertificateSecretWillExpireInLessThanTwoDays fired
-// on every cluster older than a year.
+// TestScrape_SameSerialDifferentCertsInSameKey tests that certs with the same serial value
+// are still exposed as distinct series.
 func TestScrape_SameSerialDifferentCertsInSameKey(t *testing.T) {
 	e := newTestExporter(t)
 

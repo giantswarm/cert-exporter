@@ -39,8 +39,7 @@ type Exporter struct {
 // newCertDesc describes the exported metric. Kept separate from New so tests can
 // assert against the real label set instead of a copy of it. The serialnumber
 // label keeps concatenated certificates from colliding into one series; the
-// fingerprint label keeps certificates that share a serial apart (Kyverno
-// regenerates its webhook CA with serial 0 and the same key).
+// fingerprint label differentiates certificates that share a serial apart.
 func newCertDesc() *prometheus.Desc {
 	return prometheus.NewDesc(
 		prometheus.BuildFQName("cert_exporter", "secret", "not_after"),
@@ -109,9 +108,7 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 			continue
 		}
 
-		// A certificate repeated verbatim in one key (a chain that lists its CA
-		// twice) would produce an identical label set and a gather error on
-		// every scrape; report each distinct certificate once instead.
+		// Store a fingerprint for each cert to differentiate otherwise identical metric series.
 		seen := map[string]struct{}{}
 		rest := certBytes
 		for {

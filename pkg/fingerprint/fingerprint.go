@@ -5,9 +5,7 @@
 // digest over the raw certificate, i.e. the prefix of
 // `openssl x509 -fingerprint -sha256` with the colons removed and lowercased.
 // Unlike the serial number, the Subject Key Identifier or the public key, it
-// differs for any two certificates that differ in a single byte, which is what
-// tells a renewed Kyverno CA (same key, serial 0) apart from the expired one
-// it replaces.
+// differs for any two certificates that differ in a single byte.
 package fingerprint
 
 import (

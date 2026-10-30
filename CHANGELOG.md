@@ -13,12 +13,12 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Changed
 
-- `/metrics` logs gather and encoding errors (such as a dropped duplicate series) instead of discarding them silently.
-- A certificate repeated verbatim within one secret key or file is reported once, without producing a gather error on every scrape.
+- `/metrics` now logs gather and encoding errors (such as a dropped duplicate series) instead of discarding them silently.
+- A truly identical certificate duplicated within one secret key or file is reported once, without producing a gather error on every scrape.
 
 ### Fixed
 
-- Certificates sharing a serial number in one secret key or file (Kyverno regenerates its webhook CA with serial `0` and the same key, keeping the expired CA alongside the renewed one) no longer collide into one series. Previously only the first, expired certificate was exported, which kept `KyvernoCertificateSecretWillExpireInLessThanTwoDays` firing on every cluster older than a year.
+- Certificates sharing a serial number in one secret key or file no longer collide into one series. Previously only the first, expired certificate was exported.
 
 ## [2.12.2] - 2026-10-29
 
