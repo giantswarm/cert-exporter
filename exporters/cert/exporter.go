@@ -11,6 +11,8 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
+
+	"github.com/giantswarm/cert-exporter/pkg/fingerprint"
 )
 
 type Config struct {
@@ -94,7 +96,7 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				for _, cert := range certs {
 					timestamp := float64(cert.NotAfter.Unix())
 					serialNumber := fmt.Sprintf("%x", cert.SerialNumber)
-					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath, serialNumber)
+					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath, serialNumber, fingerprint.SHA256(cert))
 				}
 			}
 			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))
@@ -119,7 +121,9 @@ func (e *Exporter) fileIsPrivateKey(f []byte) bool {
 
 // newCertDesc describes the exported metric. Kept separate from New so tests can
 // assert against the real label set instead of a copy of it. The serialnumber
-// label is what keeps concatenated certificates from colliding into one series.
+// label keeps concatenated certificates from colliding into one series; the
+// fingerprint label keeps certificates that share a serial apart (Kyverno
+// regenerates its webhook CA with serial 0 and the same key).
 func newCertDesc() *prometheus.Desc {
 	return prometheus.NewDesc(
 		prometheus.BuildFQName("cert_exporter", "", "not_after"),
@@ -127,6 +131,7 @@ func newCertDesc() *prometheus.Desc {
 		[]string{
 			"path",
 			"serialnumber",
+			"fingerprint",
 		},
 		nil,
 	)
