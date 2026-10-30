@@ -1,4 +1,5 @@
 import logging
+import re
 import requests
 import time
 import tempfile
@@ -164,6 +165,47 @@ def assert_metric(metrics: List[str], metric: str, validator=None) -> None:
     assert len(found) == 1
 
 
+LABEL_RE = re.compile(r'(\w+)="((?:[^"\\]|\\.)*)"')
+
+
+def parse_sample(line: str):
+    """Split an exposition line into (metric name, {label: value}, value)."""
+    name, _, rest = line.partition("{")
+    body, _, value = rest.rpartition("}")
+    labels = dict(LABEL_RE.findall(body))
+    return name, labels, float(value.split()[0])
+
+
+def samples_with(metrics: List[str], metric_name: str, **labels) -> List[str]:
+    """Lines of metric_name whose labels include every given label=value.
+
+    Prometheus renders labels in alphabetical order, so a label added by a
+    newer chart (serialnumber, fingerprint) can land anywhere in the line.
+    Matching on the label set instead of a textual prefix keeps these tests
+    independent of that, and lets the upgrade scenario run them against the
+    released chart as well as the chart under test.
+    """
+    found = []
+    for m in metrics:
+        if not m.startswith(metric_name + "{"):
+            continue
+        _, got, _ = parse_sample(m)
+        if all(got.get(k) == v for k, v in labels.items()):
+            found.append(m)
+    return found
+
+
+def assert_sample(
+    metrics: List[str], metric_name: str, labels: Dict[str, str], validator=None
+) -> None:
+    found = samples_with(metrics, metric_name, **labels)
+    if validator is not None:
+        found = [m for m in found if validator(m)]
+    assert (
+        len(found) == 1
+    ), f"expected exactly one {metric_name} sample with {labels}, got {found}"
+
+
 @pytest.mark.smoke
 @pytest.mark.upgrade
 def test_pods_available(
@@ -237,13 +279,14 @@ def test_file_certificate_metrics(
     time.sleep(5)
 
     # request from daemonset port
-    # Match on the label prefix (no closing brace) so this works against both
-    # the previous chart and the new one, which appends a serialnumber label.
-    # The upgrade scenario runs these tests against the released chart too.
+    # Match on the label set, not a textual prefix: the released chart and the
+    # chart under test differ in which labels they add (serialnumber,
+    # fingerprint), and the upgrade scenario runs this against both.
     ds_metrics = retrieve_metrics(daemonset_port)
-    assert_metric(
+    assert_sample(
         ds_metrics,
-        f'{metric_name}{{path="/certs/{cert_name}.crt"',
+        metric_name,
+        {"path": f"/certs/{cert_name}.crt"},
         check_expiry(expected_expiry),
     )
 
@@ -299,13 +342,19 @@ def test_secret_metrics(
     time.sleep(5)
 
     # request from deployment port
-    # Match on the label prefix (no closing brace) so this works against both
-    # the previous chart and the new one, which appends a serialnumber label.
-    # The upgrade scenario runs these tests against the released chart too.
+    # Match on the label set, not a textual prefix: the released chart and the
+    # chart under test differ in which labels they add (serialnumber,
+    # fingerprint), and the upgrade scenario runs this against both.
     deploy_metrics = retrieve_metrics(deployment_port)
-    assert_metric(
+    assert_sample(
         deploy_metrics,
-        f'{metric_name}{{certificatename="",name="{cert_name}",namespace="default",secretkey="tls.crt"',
+        metric_name,
+        {
+            "certificatename": "",
+            "name": cert_name,
+            "namespace": "default",
+            "secretkey": "tls.crt",
+        },
         check_expiry(expected_expiry),
     )
 
@@ -407,11 +456,14 @@ def test_secret_metrics_with_concatenated_certificates(
         # which is the core of the regression: it used to be 500 and empty.
         deploy_metrics = retrieve_metrics(deployment_port)
 
-        chain_prefix = (
-            f'{metric_name}{{certificatename="",name="{chain_name}",'
-            f'namespace="default",secretkey="tls.crt"'
+        chain_metrics = samples_with(
+            deploy_metrics,
+            metric_name,
+            certificatename="",
+            name=chain_name,
+            namespace="default",
+            secretkey="tls.crt",
         )
-        chain_metrics = [m for m in deploy_metrics if m.startswith(chain_prefix)]
 
         # Leaf and CA, each reported exactly once. The repeated CA must not add
         # a second, colliding sample.
@@ -433,13 +485,14 @@ def test_secret_metrics_with_concatenated_certificates(
 
         # The unrelated secret must still be exported. This is what silently
         # disappeared when the colliding samples failed the whole scrape.
-        unrelated_prefix = (
-            f'{metric_name}{{certificatename="",name="{unrelated_name}",'
-            f'namespace="default",secretkey="tls.crt"'
+        unrelated_metrics = samples_with(
+            deploy_metrics,
+            metric_name,
+            certificatename="",
+            name=unrelated_name,
+            namespace="default",
+            secretkey="tls.crt",
         )
-        unrelated_metrics = [
-            m for m in deploy_metrics if m.startswith(unrelated_prefix)
-        ]
         assert len(unrelated_metrics) == 1, (
             "expected the unrelated secret to still be exported, got "
             f"{unrelated_metrics}"
@@ -504,11 +557,14 @@ def test_secret_metrics_with_same_serial_certificates(
     try:
         metrics = retrieve_metrics(deployment_port)
 
-        prefix = (
-            f'{metric_name}{{certificatename="",name="{secret_name}",'
-            f'namespace="default",secretkey="tls.crt"'
+        samples = samples_with(
+            metrics,
+            metric_name,
+            certificatename="",
+            name=secret_name,
+            namespace="default",
+            secretkey="tls.crt",
         )
-        samples = [m for m in metrics if m.startswith(prefix)]
         assert len(samples) == 2, (
             f"expected 2 samples for two certs with serial 0, got {samples}"
         )
