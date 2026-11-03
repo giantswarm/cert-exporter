@@ -10,6 +10,7 @@ import (
 	"math/big"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -48,10 +49,19 @@ func generateSelfSignedCertPEM(t *testing.T, notAfter time.Time) []byte {
 		t.Fatal(err)
 	}
 
+	// Derive a unique serial from the expiry so concatenated certs in a
+	// test get distinct serial numbers, mirroring real-world certificates.
+	return generateCertPEM(t, key, notAfter.Unix(), notAfter)
+}
+
+// generateCertPEM issues a self-signed certificate with an explicit key and
+// serial, so a test can reproduce Kyverno's CA rotation: the renewed CA reuses
+// the private key and SerialNumber 0.
+func generateCertPEM(t *testing.T, key *ecdsa.PrivateKey, serial int64, notAfter time.Time) []byte {
+	t.Helper()
+
 	template := &x509.Certificate{
-		// Derive a unique serial from the expiry so concatenated certs in a
-		// test get distinct serial numbers, mirroring real-world certificates.
-		SerialNumber: big.NewInt(notAfter.Unix()),
+		SerialNumber: big.NewInt(serial),
 		NotBefore:    time.Now().Add(-1 * time.Hour),
 		NotAfter:     notAfter,
 	}
@@ -62,6 +72,24 @@ func generateSelfSignedCertPEM(t *testing.T, notAfter time.Time) []byte {
 	}
 
 	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
+}
+
+// valuesFor returns the set of sample values (NotAfter timestamps) carried by
+// the given exposition lines.
+func valuesFor(t *testing.T, samples []string) map[int64]bool {
+	t.Helper()
+
+	values := map[int64]bool{}
+	for _, s := range samples {
+		fields := strings.Fields(s)
+		v, err := strconv.ParseFloat(fields[len(fields)-1], 64)
+		if err != nil {
+			t.Fatalf("cannot parse sample value in %q: %v", s, err)
+		}
+		values[int64(v)] = true
+	}
+
+	return values
 }
 
 func TestCalculateExpiry_SingleCert(t *testing.T) {
@@ -225,8 +253,9 @@ func samplesFor(body, secretName string) []string {
 }
 
 // TestScrape_DuplicateIdenticalCertInSameKey covers a secret key holding the
-// *same* certificate twice, which the serialnumber label cannot tell apart. The
-// scrape must still succeed and report the certificate once.
+// *same* certificate twice, which neither the serialnumber nor the fingerprint
+// label can tell apart. The scrape must still succeed and report the
+// certificate once.
 func TestScrape_DuplicateIdenticalCertInSameKey(t *testing.T) {
 	e := newTestExporter(t)
 
@@ -241,6 +270,13 @@ func TestScrape_DuplicateIdenticalCertInSameKey(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	if err := reg.Register(&secretCollector{e: e, secret: secret}); err != nil {
 		t.Fatal(err)
+	}
+
+	// A repeated identical certificate is expected and must not be reported
+	// as a gather error, otherwise ErrorLog fires on every scrape for a
+	// benign secret and buries real collisions.
+	if _, err := reg.Gather(); err != nil {
+		t.Fatalf("a repeated identical certificate must be deduplicated, not collide: %v", err)
 	}
 
 	code, body := serveMetrics(t, reg)
@@ -385,5 +421,50 @@ func TestCalculateExpiry_MissingKey(t *testing.T) {
 
 	if len(metrics) != 1 {
 		t.Fatalf("expected 1 metric (only tls.crt), got %d", len(metrics))
+	}
+}
+
+// TestScrape_SameSerialDifferentCertsInSameKey tests that certs with the same serial value
+// are still exposed as distinct series.
+func TestScrape_SameSerialDifferentCertsInSameKey(t *testing.T) {
+	e := newTestExporter(t)
+
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expired := time.Now().Add(-24 * time.Hour).Truncate(time.Second)
+	renewed := time.Now().Add(300 * 24 * time.Hour).Truncate(time.Second)
+
+	secret := v1.Secret{
+		ObjectMeta: metav1.ObjectMeta{Name: "kyverno-svc.kyverno.svc.kyverno-tls-ca", Namespace: "kyverno"},
+		Data: map[string][]byte{
+			"tls.crt": append(generateCertPEM(t, key, 0, expired), generateCertPEM(t, key, 0, renewed)...),
+		},
+	}
+
+	reg := prometheus.NewRegistry()
+	if err := reg.Register(&secretCollector{e: e, secret: secret}); err != nil {
+		t.Fatal(err)
+	}
+
+	code, body := serveMetrics(t, reg)
+	if code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", code)
+	}
+	samples := samplesFor(body, "kyverno-svc.kyverno.svc.kyverno-tls-ca")
+	if len(samples) != 2 {
+		t.Fatalf("expected 2 samples for two CAs sharing serial 0, got %d: %v", len(samples), samples)
+	}
+	got := valuesFor(t, samples)
+	if !got[expired.Unix()] || !got[renewed.Unix()] {
+		t.Fatalf("expected both NotAfter values %d and %d, got %v", expired.Unix(), renewed.Unix(), got)
+	}
+	fps := map[string]bool{}
+	for _, s := range samples {
+		fps[strings.Split(strings.Split(s, `fingerprint="`)[1], `"`)[0]] = true
+	}
+	if len(fps) != 2 {
+		t.Fatalf("expected two distinct fingerprints, got %v", fps)
 	}
 }

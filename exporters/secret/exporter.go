@@ -14,6 +14,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+
+	"github.com/giantswarm/cert-exporter/pkg/fingerprint"
 )
 
 var certKeys = [2]string{"ca.crt", "tls.crt"}
@@ -36,7 +38,8 @@ type Exporter struct {
 
 // newCertDesc describes the exported metric. Kept separate from New so tests can
 // assert against the real label set instead of a copy of it. The serialnumber
-// label is what keeps concatenated certificates from colliding into one series.
+// label keeps concatenated certificates from colliding into one series; the
+// fingerprint label differentiates certificates that share a serial apart.
 func newCertDesc() *prometheus.Desc {
 	return prometheus.NewDesc(
 		prometheus.BuildFQName("cert_exporter", "secret", "not_after"),
@@ -47,6 +50,7 @@ func newCertDesc() *prometheus.Desc {
 			"secretkey",
 			"certificatename",
 			"serialnumber",
+			"fingerprint",
 		},
 		nil,
 	)
@@ -104,6 +108,8 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 			continue
 		}
 
+		// Store a fingerprint for each cert to differentiate otherwise identical metric series.
+		seen := map[string]struct{}{}
 		rest := certBytes
 		for {
 			block, remaining := pem.Decode(rest)
@@ -119,9 +125,16 @@ func (e *Exporter) calculateExpiry(ch chan<- prometheus.Metric, secret v1.Secret
 			}
 
 			for _, cert := range certs {
+				fp := fingerprint.SHA256(cert)
+				if _, ok := seen[fp]; ok {
+					e.logger.Log("debug", fmt.Sprintf("%s in secret %s/%s repeats certificate %s, reporting it once", certKey, secretNamespace, secretName, fp))
+					continue
+				}
+				seen[fp] = struct{}{}
+
 				timestamp := float64(cert.NotAfter.Unix())
 				serialNumber := fmt.Sprintf("%x", cert.SerialNumber)
-				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName, serialNumber)
+				ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, secretName, secretNamespace, certKey, certName, serialNumber, fp)
 			}
 		}
 	}

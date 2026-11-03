@@ -11,6 +11,8 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
+
+	"github.com/giantswarm/cert-exporter/pkg/fingerprint"
 )
 
 type Config struct {
@@ -77,6 +79,8 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				return nil
 			}
 
+			// Store a fingerprint for each cert to differentiate otherwise identical metric series.
+			seen := map[string]struct{}{}
 			rest := file
 			for {
 				block, remaining := pem.Decode(rest)
@@ -92,9 +96,16 @@ func (e *Exporter) collectPath(ch chan<- prometheus.Metric, path string) error {
 				}
 
 				for _, cert := range certs {
+					fp := fingerprint.SHA256(cert)
+					if _, ok := seen[fp]; ok {
+						e.logger.Log("debug", fmt.Sprintf("%s repeats certificate %s, reporting it once", fpath, fp))
+						continue
+					}
+					seen[fp] = struct{}{}
+
 					timestamp := float64(cert.NotAfter.Unix())
 					serialNumber := fmt.Sprintf("%x", cert.SerialNumber)
-					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath, serialNumber)
+					ch <- prometheus.MustNewConstMetric(e.cert, prometheus.GaugeValue, timestamp, fpath, serialNumber, fp)
 				}
 			}
 			e.logger.Log("info", fmt.Sprintf("added %s to the metrics", fpath))
@@ -119,7 +130,8 @@ func (e *Exporter) fileIsPrivateKey(f []byte) bool {
 
 // newCertDesc describes the exported metric. Kept separate from New so tests can
 // assert against the real label set instead of a copy of it. The serialnumber
-// label is what keeps concatenated certificates from colliding into one series.
+// label keeps concatenated certificates from colliding into one series; the
+// fingerprint label differentiates certificates that share a serial.
 func newCertDesc() *prometheus.Desc {
 	return prometheus.NewDesc(
 		prometheus.BuildFQName("cert_exporter", "", "not_after"),
@@ -127,6 +139,7 @@ func newCertDesc() *prometheus.Desc {
 		[]string{
 			"path",
 			"serialnumber",
+			"fingerprint",
 		},
 		nil,
 	)
