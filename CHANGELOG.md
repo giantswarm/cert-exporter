@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.13.0] - 2026-11-03
+
 ### Added
 
 - `fingerprint` label (first 16 hex characters of the certificate's SHA-256 fingerprint) on `cert_exporter_not_after` and `cert_exporter_secret_not_after`.
@@ -404,7 +406,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.12.2...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.13.0...HEAD
+[2.13.0]: https://github.com/giantswarm/cert-exporter/compare/v2.12.2...v2.13.0
 [2.12.2]: https://github.com/giantswarm/cert-exporter/compare/v2.12.1...v2.12.2
 [2.12.1]: https://github.com/giantswarm/cert-exporter/compare/v2.12.0...v2.12.1
 [2.12.0]: https://github.com/giantswarm/cert-exporter/compare/v2.11.2...v2.12.0
