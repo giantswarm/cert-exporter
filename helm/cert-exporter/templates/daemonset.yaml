@@ -7,8 +7,10 @@ metadata:
   labels:
     {{- include "certExporter.daemonset.labels" . | nindent 4 }}
 spec:
+  {{- with .Values.daemonset.updateStrategy }}
   updateStrategy:
-    {{- toYaml .Values.daemonset.updateStrategy | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "certExporter.daemonset.matchLabels" . | nindent 6 }}
