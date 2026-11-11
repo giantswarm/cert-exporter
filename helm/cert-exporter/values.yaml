@@ -63,3 +63,7 @@ daemonset:
       memory: 50Mi
   autoscaling:
     enabled: true
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%

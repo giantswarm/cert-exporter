@@ -7,6 +7,14 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Added
+
+- `daemonset.updateStrategy` Helm value to configure the DaemonSet update strategy.
+
+### Changed
+
+- The DaemonSet rolling update replaces up to 10% of the pods at a time by default (previously one pod at a time), so the rollout finishes within the Helm timeout on large workload clusters.
+
 ## [2.13.0] - 2026-11-03
 
 ### Added
