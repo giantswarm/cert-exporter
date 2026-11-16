@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.14.0-rc.1] - 2026-11-16
+
 ### Added
 
 - `daemonset.updateStrategy` Helm value to configure the DaemonSet update strategy.
@@ -414,7 +416,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.13.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.14.0-rc.1...HEAD
+[2.14.0-rc.1]: https://github.com/giantswarm/cert-exporter/compare/v2.13.0...v2.14.0-rc.1
 [2.13.0]: https://github.com/giantswarm/cert-exporter/compare/v2.12.2...v2.13.0
 [2.12.2]: https://github.com/giantswarm/cert-exporter/compare/v2.12.1...v2.12.2
 [2.12.1]: https://github.com/giantswarm/cert-exporter/compare/v2.12.0...v2.12.1
