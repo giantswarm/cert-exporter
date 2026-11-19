@@ -1,0 +1,1 @@
+CVE-2026-128100 until=2026-12-18 # github.com/hashicorp/vault/api@v1.23.0 since=2026-11-18
