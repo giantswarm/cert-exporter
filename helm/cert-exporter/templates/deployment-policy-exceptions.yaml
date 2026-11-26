@@ -1,4 +1,4 @@
-{{- if .Values.kyvernoPolicyExceptions.enabled }}
+{{- if and .Values.kyvernoPolicyExceptions.enabled .Values.kyvernoPolicyExceptions.legacy.enabled }}
 {{- if .Capabilities.APIVersions.Has "kyverno.io/v2/PolicyException" }}
 apiVersion: kyverno.io/v2
 kind: PolicyException
@@ -7,6 +7,7 @@ metadata:
   namespace: {{ .Values.kyvernoPolicyExceptions.namespace | default .Release.Namespace }}
   labels:
     {{- include "certExporter.deployment.labels" . | nindent 4 }}
+    policy.giantswarm.io/migrated-to-cel: "true"
   annotations:
     "helm.sh/hook": "pre-install,pre-upgrade"
 spec:
