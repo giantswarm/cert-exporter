@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.14.1] - 2026-11-26
+
 ### Added
 
 - Add a `policies.kyverno.io/v1` PolicyException next to the `kyverno.io/v2` one, so the exception also applies to the CEL (ValidatingPolicy) versions of the policies. The CEL one is always rendered; set `kyvernoPolicyExceptions.legacy.enabled: false` to stop rendering the legacy one.
@@ -421,7 +423,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.14.0...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.14.1...HEAD
+[2.14.1]: https://github.com/giantswarm/cert-exporter/compare/v2.14.0...v2.14.1
 [2.14.0]: https://github.com/giantswarm/cert-exporter/compare/v2.13.0...v2.14.0
 [2.13.0]: https://github.com/giantswarm/cert-exporter/compare/v2.12.2...v2.13.0
 [2.12.2]: https://github.com/giantswarm/cert-exporter/compare/v2.12.1...v2.12.2
