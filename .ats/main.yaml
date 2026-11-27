@@ -11,6 +11,9 @@ upgrade-tests-cluster-type: external
 # upgrade-tests-cluster-config-file: tests/cluster.yaml
 upgrade-tests-app-catalog-url: https://giantswarm.github.io/default-catalog
 upgrade-tests-app-config-file: tests/values.yaml
+# 2.14.1 cannot be installed without the policies.kyverno.io/v1 PolicyException
+# CRD. Remove this pin once a newer version is in the catalog.
+upgrade-tests-app-version: 2.14.0
 
 external-cluster-type: kind
 external-cluster-kubeconfig-path: kind.kube.config
