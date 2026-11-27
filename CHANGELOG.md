@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+### Fixed
+
+- Only render the `policies.kyverno.io/v1` PolicyException when the cluster serves that API, so the chart installs on clusters without the CEL PolicyException CRD.
+
 ## [2.14.1] - 2026-11-26
 
 ### Added
