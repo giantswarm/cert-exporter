@@ -7,6 +7,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
+## [2.14.2] - 2026-11-27
+
 ### Fixed
 
 - Only render the `policies.kyverno.io/v1` PolicyException when the cluster serves that API, so the chart installs on clusters without the CEL PolicyException CRD.
@@ -427,7 +429,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change priority class to `giantswarm-critical`.
 
-[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.14.1...HEAD
+[Unreleased]: https://github.com/giantswarm/cert-exporter/compare/v2.14.2...HEAD
+[2.14.2]: https://github.com/giantswarm/cert-exporter/compare/v2.14.1...v2.14.2
 [2.14.1]: https://github.com/giantswarm/cert-exporter/compare/v2.14.0...v2.14.1
 [2.14.0]: https://github.com/giantswarm/cert-exporter/compare/v2.13.0...v2.14.0
 [2.13.0]: https://github.com/giantswarm/cert-exporter/compare/v2.12.2...v2.13.0
